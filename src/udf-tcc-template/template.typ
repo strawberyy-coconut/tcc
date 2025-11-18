@@ -52,23 +52,88 @@
     pagebreak()
     it
  
+    v(1cm)
   }
   
   show heading.where(level: 2): it => {
-    v(1cm)
+    v(0.7cm)
     set text(size: 12pt, weight: "bold")
-    pagebreak()
+    //pagebreak()
     it
-    v(0.5cm)
+    v(0.7cm)
   }
   
   show heading.where(level: 3): it => {
-    v(0.8cm)
+    v(0.7cm)
     set text(size: 12pt, weight: "bold")
     it
-    v(0.4cm)
+    v(0.7cm)
   }
   set heading(numbering: "1.")
+  
+  // ABNT formatting for figures (illustrations)
+  show figure.where(kind: image): it => {
+    set align(center)
+    v(0.5cm)
+    
+    // Title at the top: bold, centered
+    // Format: "Figura N – Title"
+    set text(size: 10pt)
+    [#it.supplement #it.counter.display(it.numbering) -- #it.caption.body]
+    
+    v(0.3cm)
+    
+    // The image itself
+    it.body
+    
+    v(0.3cm)
+    
+    // Source at the bottom: left-aligned, size 10pt, no bold
+    if it.caption.fields().keys().contains("source") [
+      #set align(left)
+      #set text(size: 10pt, weight: "regular")
+      Fonte: #it.caption.source
+    ]
+    
+    v(0.5cm)
+  }
+  
+  // ABNT formatting for tables
+  show figure.where(kind: table): it => {
+    set align(center)
+    v(0.5cm)
+    
+    // Title at the top: bold, centered
+    // Format: "Tabela N – Title"
+    set text(size: 12pt, weight: "bold")
+    [#it.supplement #it.counter.display(it.numbering) -- #it.caption.body]
+    
+    v(0.3cm)
+    
+    // The table itself with ABNT formatting
+    // Tables should not have left and right vertical borders
+    show table: set table(
+      stroke: (x, y) => (
+        top: if y == 0 { 1pt } else { 0pt },
+        bottom: 1pt,
+        left: 0pt,
+        right: 0pt,
+      )
+    )
+    
+    it.body
+    
+    v(0.3cm)
+    
+    // Source at the bottom: left-aligned, size 10pt, no bold
+    if it.caption.fields().keys().contains("source") [
+      #set align(left)
+      #set text(size: 10pt, weight: "regular")
+      Fonte: #it.caption.source
+    ]
+    
+    v(0.5cm)
+  }
   
   // Cover page
   page(
@@ -91,7 +156,7 @@
         
         #v(3cm)
         
-        #text(size: 14pt, weight: "bold")[
+        #text(size: 12pt, weight: "bold")[
           #for author in authors [
             #author.name
             #if author != authors.last() [ \ ]
@@ -100,7 +165,7 @@
         
         #v(3cm)
         
-        #text(size: 16pt, weight: "bold")[
+        #text(size: 14pt, weight: "bold")[
           #upper(title)
           #if subtitle != none [
             \ 
@@ -144,7 +209,7 @@
         
         #v(2cm)
         
-        #align(right)[
+        #align(center)[
           #box(width: 8cm)[
             #set text(size: 10pt)
             #set par(justify: true, first-line-indent: 0pt)
@@ -191,7 +256,7 @@
         
         #v(2cm)
         
-        #align(right)[
+        #align(center)[
           #box(width: 8cm)[
             #set text(size: 10pt)
             #set par(justify: true, first-line-indent: 0pt)

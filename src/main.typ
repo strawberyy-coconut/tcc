@@ -10,7 +10,7 @@
   course: "Ciência da Computação",
   advisor: "",
   city: "Brasília",
-  year: 2024,
+  year: 2025,
   bibliography: "../refs.yml"
 )
 
@@ -20,9 +20,13 @@
 
 = Introdução
 
-O desenvolvimento de aplicações web modernas que integram conteúdo dinâmico com bancos de dados representa um desafio significativo para desenvolvedores, exigindo domínio de múltiplas tecnologias que abrangem desde a camada de apresentação até a lógica de negócios e persistência de dados. A complexidade aumenta quando consideramos requisitos não-funcionais como performance, responsividade, segurança e controle de acesso granular.
+O desenvolvimento de aplicações web modernas que integram conteúdo dinâmico com bancos de dados representa um desafio significativo para desenvolvedores, exigindo domínio de múltiplas tecnologias que abrangem desde a camada de apresentação até a lógica de negócios e persistência de dados. A complexidade aumenta quando consideramos requisitos não-funcionais como performance, responsividade, segurança e controle de acesso granular, além da necessidade de distribuir conteúdo através de múltiplos canais — sites, aplicativos móveis, assistentes de voz, dispositivos IoT @headless2021decoupled.
 #linebreak()
-Este trabalho apresenta o TechtonicCMS, um sistema de gerenciamento de conteúdo headless (CMS Headless) desenvolvido para simplificar este processo através de uma arquitetura desacoplada que separa completamente a gestão de conteúdo de sua apresentação. Ao adotar esta abordagem moderna, o TechtonicCMS permite que desenvolvedores criem interfaces personalizadas enquanto editores de conteúdo mantêm autonomia para gerenciar informações de forma intuitiva, sem necessidade de conhecimento técnico aprofundado.
+Sistemas de gerenciamento de conteúdo (CMS) consolidaram-se como ferramentas essenciais da infraestrutura digital moderna. O WordPress, exemplo mais emblemático desta categoria, é utilizado por mais de 40% de todos os sites da internet @w3techs2024usage. Entretanto, a arquitetura monolítica de CMS tradicionais, onde backend e frontend estão fortemente acoplados, apresenta limitações evidentes frente às demandas de distribuição _omnichannel_ e personalização em escala @headless2021decoupled; @boiko2005.
+#linebreak()
+A arquitetura _headless_ emerge como resposta a estas limitações, propondo desacoplamento completo entre gestão de conteúdo e apresentação através de APIs @headless2021decoupled. Esta separação oferece flexibilidade tecnológica sem precedentes, enquanto requisitos crescentes de conformidade regulatória — como GDPR e LGPD — demandam controle de acesso granular com políticas baseadas em atributos contextuais @nist2014abac.
+#linebreak()
+Este trabalho apresenta o TechtonicCMS, um sistema de gerenciamento de conteúdo _headless_ que combina arquitetura desacoplada _API-first_ com controle de acesso baseado em atributos (ABAC), oferecendo granularidade até o nível de campos individuais. O sistema demonstra como balancear usabilidade para editores não-técnicos, flexibilidade para desenvolvedores e requisitos rigorosos de segurança.
 
 == Objetivos
 
@@ -204,6 +208,17 @@ O padrão _Entity-Attribute-Value_ (EAV), também conhecido como _object-attribu
 - *_Attribute_*: Nome do atributo (ex: "cor", "tamanho", "peso")
 - *_Value_*: Valor do atributo (geralmente armazenado como texto)
 
+#pagebreak()
+
+#figure(
+  image("diagramas/eav.png", width: 70%),
+  caption: [Modelo básico de classes da estrutura de armazenamento EAV mostrando as três entidades principais e seus relacionamentos]
+) <fig-eav-model>
+
+#align(left)[#text(size: 10pt)[Fonte: Dinu e Nadkarni (2007) via ResearchGate (https://www.researchgate.net/figure/Basic-Class-Model-of-the-EAV-Storage-Structure-The-basic-class-model-of-the-EAV-storage_fig1_257884193).]]
+
+#v(0.8cm)
+
 Esta abordagem oferece flexibilidade máxima, pois novos atributos podem ser adicionados sem alterações na estrutura da tabela @batra2016eav. No entanto, o padrão EAV apresenta limitações significativas @nadkarni2007eav:
 #linebreak()
 *_Performance_ de Consultas*: Cada atributo requer uma linha separada na tabela, resultando em operações de JOIN complexas para reconstruir entidades completas. Consultas que em modelos tradicionais seriam simples tornam-se substancialmente mais lentas.
@@ -313,9 +328,11 @@ Este capítulo explica como o sistema foi pensado e construído, quais tecnologi
 O sistema adota arquitetura em três camadas com separação clara de responsabilidades e comunicação via interfaces bem definidas.
 
 #figure(
-  image("diagramas/Diagrama do sistema.png", width: 100%),
+  image("diagramas/Diagrama do sistema.png", width: 90%),
   caption: [Estrutura do sistema mostrando como as três camadas principais se conectam]
 ) <fig-system-diagram>
+
+#align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
 === Camadas Arquiteturais
 
@@ -366,6 +383,8 @@ A Figura 3.2 apresenta em detalhe como essas entidades se relacionam com as tabe
   image("diagramas/collections_and_entries.png", width: 100%),
   caption: [Estrutura detalhada das tabelas Collections, Fields e Entries com suas tabelas de valores associadas (texto, número, booleano, data, rich text, JSON, assets e relacionamentos)]
 ) <fig-collections-entries>
+
+#align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
 === Estratégia de Armazenamento por Tipo
 
@@ -435,6 +454,8 @@ O banco de dados inclui um conjunto completo de tabelas para implementar o siste
   caption: [Tabelas de segurança (users, roles, policies) e sua relação com as entidades de conteúdo (collections, entries, fields, assets)]
 ) <fig-security-content>
 
+#align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
+
 As tabelas principais de segurança incluem:
 #linebreak()
 *users*: Armazena credenciais de autenticação com hash criptográfico de senha, status do usuário (`ACTIVE`, `INACTIVE`, `BANNED`), e timestamps de criação, último acesso e última modificação.
@@ -461,6 +482,8 @@ A Figura 3.4 apresenta o diagrama completo com todas as tabelas do sistema ABAC 
   image("diagramas/security.png", width: 100%),
   caption: [Diagrama completo do sistema ABAC mostrando todas as tabelas de segurança (policies, rules, cache, audit) e suas relações com usuários e recursos]
 ) <fig-security-complete>
+
+#align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
 == Sistema de Controle de Acesso
 
