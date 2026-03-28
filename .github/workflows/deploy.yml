@@ -25,8 +25,13 @@ jobs:
         run: |
           TYPST_VERSION="0.12.0"
           ARCH=$(dpkg --print-architecture)
-          curl -sL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-linux-${ARCH}.tar.xz" \
-            | tar -xJ --strip-components=1 -C /usr/local/bin "typst-linux-${ARCH}/typst"
+          if [ "$ARCH" = "amd64" ]; then
+            TARGET="x86_64-unknown-linux-musl"
+          elif [ "$ARCH" = "arm64" ]; then
+            TARGET="aarch64-unknown-linux-musl"
+          fi
+          curl -sL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-${TARGET}.tar.xz" \
+            | tar -xJ --strip-components=1 -C /usr/local/bin "typst-${TARGET}/typst"
 
       - name: Install Microsoft Core Fonts
         run: |
