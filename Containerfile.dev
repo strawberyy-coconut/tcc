@@ -3,12 +3,9 @@ RUN apk add --no-cache \
     curl \
     bash \
     git \
-    nodejs \
-    npm \
     typst
 
 
-RUN npm install -g @anthropic-ai/claude-code
 
 RUN apk --no-cache add msttcorefonts-installer fontconfig && \
     update-ms-fonts && \

@@ -1,0 +1,89 @@
+name: Deploy PDF to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install typst
+        run: |
+          TYPST_VERSION="0.12.0"
+          ARCH=$(dpkg --print-architecture)
+          curl -sL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-linux-${ARCH}.tar.xz" \
+            | tar -xJ --strip-components=1 -C /usr/local/bin "typst-linux-${ARCH}/typst"
+
+      - name: Install Microsoft Core Fonts
+        run: |
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+            | sudo debconf-set-selections
+          sudo apt-get update
+          sudo apt-get install -y ttf-mscorefonts-installer fontconfig
+          sudo fc-cache -f
+
+      - name: Compile Typst document
+        run: |
+          mkdir -p build
+          typst compile src/main.typ build/tcc.pdf
+
+      - name: Generate index.html
+        run: |
+          cat > build/index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="pt-BR">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>TCC - TechtonicCMS</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              html, body { width: 100%; height: 100%; overflow: hidden; }
+              iframe { width: 100%; height: 100%; border: none; }
+              .fallback {
+                display: flex; flex-direction: column; align-items: center;
+                justify-content: center; height: 100vh; font-family: sans-serif;
+              }
+              .fallback a { color: #0366d6; font-size: 1.2em; margin-top: 1em; }
+            </style>
+          </head>
+          <body>
+            <iframe src="tcc.pdf" title="TCC Document">
+              <div class="fallback">
+                <p>Your browser does not support embedded PDFs.</p>
+                <a href="tcc.pdf">Download the PDF</a>
+              </div>
+            </iframe>
+          </body>
+          </html>
+          HTMLEOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
