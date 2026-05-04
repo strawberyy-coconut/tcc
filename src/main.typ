@@ -192,6 +192,10 @@ Argon2id, vencedor da _Password Hashing Competition_ de 2015 @biryukov2015argon2
 
 Sistemas de cache em memória, como Redis, são empregados para armazenamento temporário de dados de alta frequência de acesso, oferecendo TTL (_time-to-live_) automático e operações atômicas em batch @redis2024docs. Esta arquitetura permite redução de carga em bancos de dados relacionais e revogação instantânea de sessões sem consultas adicionais ao armazenamento persistente.
 
+=== Headers de Segurança HTTP
+
+A camada de transporte HTTP emprega _headers_ de segurança como mecanismo de defesa em profundidade contra vetores de ataque comuns. O OWASP documenta práticas recomendadas para proteção contra _clickjacking_ (`X-Frame-Options`), _MIME sniffing_ (`X-Content-Type-Options`), vazamento de informações por _referrer_ (`Referrer-Policy`), e ataques de interceptação (`Strict-Transport-Security`) @owasp2026secureheaders. Estes mecanismos constituem uma camada complementar à autenticação e autorização, dificultando a exploração de vulnerabilidades do navegador mesmo quando o acesso ao recurso é legítimo.
+
 === Controle de Acesso Baseado em Atributos (ABAC)
 
 Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
@@ -259,6 +263,8 @@ Para endereçar as limitações do EAV, arquiteturas modernas de CMS adotam estr
 *Tabelas Tipadas para Primitivos*: Tipos de dados simples e frequentemente consultados (texto, números, datas, booleanos) são armazenados em tabelas dedicadas com tipos nativos do banco de dados. Esta abordagem permite indexação eficiente e otimizações específicas por tipo @silberschatz2018database.
 #linebreak()
 *Armazenamento JSON para Complexidade*: Estruturas complexas como listas, objetos aninhados e dados semi-estruturados aproveitam suporte nativo de bancos relacionais modernos (PostgreSQL, MySQL 8+) para tipos JSON @postgresql2024json. Isso mantém flexibilidade estrutural enquanto oferece operadores de consulta especializados.
+#linebreak()
+*Funções de Banco de Dados para Consultas Dinâmicas*: Bancos relacionais modernos permitem registrar funções e stored procedures customizadas que operam sobre tipos complexos como JSON, viabilizando filtragem, extração e ordenação eficiente em schemas dinâmicos sem recorrer a múltiplos JOINs ou materialização em memória @krosing2013server; @postgresql2024jsonfunctions. Esta extensibilidade permite que o banco de dados execute operações especializadas diretamente sobre dados semi-estruturados, mantendo a performance próxima à de colunas tipadas nativas.
 #linebreak()
 *Metadados de Schema*: Informações sobre a estrutura dos dados (definição de campos, tipos, validações) são mantidas em tabelas de metadados. Esta abordagem de "Metadata Mapping" permite processar mapeamentos objeto-relacional de forma genérica através de código que interpreta os metadados, facilitando operações de leitura, inserção e atualização sem código repetitivo @fowler2002patterns.
 #linebreak()
@@ -729,7 +735,7 @@ Este projeto documenta o design conceitual do sistema, mantendo-se agnóstico a 
 
 === Otimizações de Performance
 
-*Banco de Dados*: Índices estratégicos para consultas e filtragem de conteúdo. _Connection pooling_ otimizado. _Prepared statements_ para _queries_ frequentes.
+*Banco de Dados*: Índices estratégicos para consultas e filtragem de conteúdo. _Connection pooling_ reutiliza conexões estabelecidas com o banco de dados, reduzindo o _overhead_ de criar e destruir conexões a cada requisição @microsoft2025sqlserverpooling; @postgresql2014connections. _Prepared statements_ para _queries_ frequentes.
 #linebreak()
 *GraphQL*: _DataLoader_ eliminando problema N+1 em consultas relacionadas. _Query complexity analysis_ prevenindo _queries_ abusivas. _Cache_ de _schemas_.
 

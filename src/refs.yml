@@ -528,6 +528,22 @@ batra2016eav:
 
 # Referências sobre banco de dados e armazenamento
 
+microsoft2025sqlserverpooling:
+  type: web
+  title: "SQL Server connection pooling (ADO.NET)"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling
+  date: 2025
+  note: "Acesso em: 04 mai. 2026"
+
+postgresql2014connections:
+  type: web
+  title: "Number Of Database Connections"
+  author: PostgreSQL Global Development Group
+  url: https://wiki.postgresql.org/wiki/Number_Of_Database_Connections
+  date: 2014
+  note: "Acesso em: 04 mai. 2026"
+
 postgresql2024json:
   type: web
   title: "JSON Types"
@@ -535,6 +551,24 @@ postgresql2024json:
   url: https://www.postgresql.org/docs/current/datatype-json.html
   date: 2024
   note: "Acesso em: 27 out. 2025"
+
+postgresql2024jsonfunctions:
+  type: web
+  title: "JSON Functions and Operators"
+  author: PostgreSQL Global Development Group
+  url: https://www.postgresql.org/docs/current/functions-json.html
+  date: 2024
+  note: "Acesso em: 04 mai. 2026"
+
+krosing2013server:
+  type: book
+  title: "PostgreSQL Server Programming"
+  author:
+    - Krosing, Hannu
+    - Roybal, Kirk
+  publisher: Packt Publishing
+  location: Birmingham
+  date: 2013
 
 prakash2016performance:
   type: conference
@@ -693,6 +727,14 @@ redis2024docs:
   url: https://redis.io/
   date: 2024
   note: "Acesso em: 05 mai. 2026"
+
+owasp2026secureheaders:
+  type: web
+  title: "HTTP Security Response Headers Cheat Sheet"
+  author: OWASP Foundation
+  url: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+  date: 2026
+  note: "Acesso em: 04 mai. 2026"
 
 rfc6585:
   type: report

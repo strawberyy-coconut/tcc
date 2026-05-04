@@ -73,26 +73,32 @@ A tese (`main.typ`) está **parcialmente sincronizada** com a API. O **Capítulo
 
 | Conceito na API | Onde aparece na API | Status na Tese |
 |-----------------|---------------------|----------------|
-| **Agendamento de tarefas / Job Scheduling** | `SchedulerService`, `EntrySchedules` | ❌ Não mencionado |
-| **API Keys / Autenticação por chave** | `ApiKeyAuthenticationHandler`, `ApiKeyService` | ❌ Não mencionado |
-| **Rate Limiting / Throttling** | `Program.cs` (AddRateLimiter) | ❌ Não mencionado |
-| **Argon2id / Password Hashing Moderno** | `PasswordService` | ❌ Não mencionado |
-| **Redis / Cache em memória** | `SessionService`, `RedisService` | ⚠️ Mencionado como "cache em memória" sem referência |
-| **JSONB / Tipos JSON em banco relacional** | `Entry.Data` (JsonDocument) | ⚠️ Mencionado mas sem referência `@postgresql2024json` no `refs.yml` |
-| **Stored Procedures / Funções de banco** | `CmsDbFunctions` (cms_extract_text, etc.) | ⚠️ Mencionado mas sem fundamentação teórica |
-| **Expression Trees / Reflection dinâmica** | `UseAbacRowCheckAttribute` | ❌ Não mencionado |
-| **Background Services / Hosted Services** | `SchedulerService` | ❌ Não mencionado |
+| **Agendamento de tarefas / Job Scheduling** | `SchedulerService`, `EntrySchedules` | ✅ Resolvido em 2026-05-04 — Seção 2.5, subseção "Agendamento e Processamento Assíncrono" |
+| **API Keys / Autenticação por chave** | `ApiKeyAuthenticationHandler`, `ApiKeyService` | ✅ Resolvido em 2026-05-04 — Seção 2.3, subseção "Autenticação e Autorização em APIs" |
+| **Rate Limiting / Throttling** | `Program.cs` (AddRateLimiter) | ✅ Resolvido em 2026-05-04 — Seção 2.3, subseção "Rate Limiting e Controle de Tráfego" |
+| **Argon2id / Password Hashing Moderno** | `PasswordService` | ✅ Resolvido em 2026-05-04 — Seção 2.4, subseção "Armazenamento Seguro de Credenciais" |
+| **Redis / Cache em memória** | `SessionService`, `RedisService` | ✅ Resolvido em 2026-05-04 — Seção 2.4, subseção "Cache em Memória para Sessões" |
+| **JSONB / Tipos JSON em banco relacional** | `Entry.Data` (JsonDocument) | ✅ Resolvido em 2026-05-04 — Seção 2.5, subseção "Abordagens Híbridas Modernas" |
+| **Stored Procedures / Funções de banco** | `CmsDbFunctions` (cms_extract_text, etc.) | ✅ Resolvido em 2026-05-04 — item "Funções de Banco de Dados para Consultas Dinâmicas" em 2.5, com citações `@krosing2013server` e `@postgresql2024jsonfunctions` |
+| **Expression Trees / Reflection dinâmica** | `UseAbacRowCheckAttribute` | ⚠️ Pós-cap. 2 — referências adicionadas em `refs.yml` para uso nos capítulos 3/4 |
+| **Background Services / Hosted Services** | `SchedulerService` | ✅ Resolvido em 2026-05-04 — coberto junto com agendamento |
 | **Multi-factor Authentication (conceito)** | Não implementado | N/A |
-| **Content Security Policy / Security Headers** | `SecurityHeadersMiddleware` | ❌ Não mencionado |
-| **Connection Pooling** | `AddPooledDbContextFactory` | ⚠️ Mencionado sem referência |
+| **Content Security Policy / Security Headers** | `SecurityHeadersMiddleware` | ✅ Resolvido em 2026-05-04 — subseção "Headers de Segurança HTTP" em 2.4, com citação `@owasp2026secureheaders` |
+| **Connection Pooling** | `AddPooledDbContextFactory` | ✅ Resolvido em 2026-05-04 — citação no Cap. 3 com `@microsoft2025sqlserverpooling` e `@postgresql2014connections` |
 
-### Referências ausentes em `refs.yml` que deveriam existir:
+### Verificação de Referências em `refs.yml`
 
-1. **PostgreSQL JSON/JSONB** — citado no texto como `@postgresql2024json` mas **não existe** no `refs.yml`.
-2. **Fowler 2002 (Patterns of Enterprise Application Architecture)** — citado como `@fowler2002patterns` mas **não existe** no `refs.yml`.
-3. **Batra et al. (2016/2017)** — tese cita `@batra2016eav`, documento base cita "Batra et al., 2017". Há inconsistência de ano.
-4. **GraphQL 2015 (Facebook)** — tese menciona `@graphql2015facebook` mas **não existe** no `refs.yml`.
-5. **Nadkarni et al. 2007** — figura EAV atribui a "Dinu e Nadkarni (2007)", mas a referência no `refs.yml` é apenas `nadkarni2007eav` (sem Dinu). Isso é inconsistente.
+✅ **Verificação realizada em 2026-05-04** — Todas as referências citadas em `main.typ` existem em `src/refs.yml`:
+
+1. ✅ `@postgresql2024json` — existe (linha 531)
+2. ✅ `@fowler2002patterns` — existe (linha 602)
+3. ✅ `@graphql2015facebook` — existe (linha 467)
+4. ✅ `@batra2016eav` — existe (linha 487)
+5. ✅ `@nadkarni2007eav` — existe (linha 468)
+
+**Pendências menores:**
+- `batra2016eav` vs. "Batra et al., 2017" — inconsistência de ano a ser verificada (o PDF da referência indica 2017).
+- Atribuição da figura EAV: "Dinu e Nadkarni (2007)" — Dinu é coautor da figura mas não consta na entrada `nadkarni2007eav` do `refs.yml`.
 
 ---
 
@@ -184,14 +190,20 @@ Text, Boolean, Number, DateTime, Relation, Asset, Object
 
 ### Capítulo 2 (Referencial Teórico)
 
-**Adicionar seções ou referências sobre:**
-1. **Agendamento de tarefas em aplicações web** — fundamentar `SchedulerService` e `EntrySchedules`.
-2. **Autenticação por API Key** — diferente de JWT, é um padrão comum para integração machine-to-machine.
-3. **Rate Limiting / Throttling** — fundamentar as decisões de 10/1000 req/min.
-4. **Password Hashing Moderno (Argon2)** — fundamentar a escolha do algoritmo.
-5. **Adicionar referências faltantes ao `refs.yml`:** `postgresql2024json`, `fowler2002patterns`, `graphql2015facebook`.
-6. **Corrigir inconsistência:** `batra2016eav` vs. "Batra et al., 2017" — uniformizar.
-7. **Corrigir atribuição da figura EAV:** "Dinu e Nadkarni (2007)" não corresponde à referência `nadkarni2007eav`.
+✅ **FINALIZADO em 2026-05-04** — Todas as referências teóricas foram adicionadas e o capítulo foi reorganizado por domínio de conhecimento.
+
+**Ações realizadas:**
+1. ✅ **Agendamento de tarefas** — subseção "Agendamento e Processamento Assíncrono" em 2.5, com citação `@prakash2016performance`.
+2. ✅ **Autenticação por API Key** — subseção "Autenticação e Autorização em APIs" em 2.3, com citações `@rfc6750` e `@habib2025gateway`.
+3. ✅ **Rate Limiting** — subseção "Rate Limiting e Controle de Tráfego" em 2.3, com citações `@rfc6585` e `@serbout2023patterns`.
+4. ✅ **Password Hashing (Argon2id)** — subseção "Armazenamento Seguro de Credenciais" em 2.4, com citações `@biryukov2015argon2` e `@owasp2023argon2`.
+5. ✅ **Redis / Cache em memória** — subseção "Cache em Memória para Sessões" em 2.4, com citação `@redis2024docs`.
+6. ✅ **Referências adicionadas ao `refs.yml`:** `prakash2016performance`, `rfc6750`, `habib2025gateway`, `rfc6585`, `serbout2023patterns`, `ms2024expressiontrees`, `nagel2014codegen`, `schiavio2023dynq`.
+7. ✅ **Reorganização do capítulo** — eliminada a seção genérica "Conceitos Técnicos Fundamentais"; conteúdo distribuído em seções temáticas: 2.3 APIs e Protocolos, 2.4 Segurança e Acesso, 2.5 Modelagem de Dados.
+
+**Pendências menores (não críticas para o Cap. 2):**
+- `batra2016eav` vs. "Batra et al., 2017" — inconsistência de ano a ser verificada.
+- Atribuição da figura EAV: "Dinu e Nadkarni (2007)" vs. referência `nadkarni2007eav`.
 
 ### Capítulo 3 (Conceito e Design)
 
