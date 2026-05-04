@@ -23,7 +23,8 @@
 				"tomoki1207.pdf",
 				"myriad-dreamin.tinymist",
 				"ms-vscode.vscode-copilot-vision",
-				"foam.foam-vscode"
+				"foam.foam-vscode",
+				"MermaidChart.vscode-mermaid-chart"
 			]
 		}
 	}

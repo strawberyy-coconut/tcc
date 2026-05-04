@@ -1,0 +1,245 @@
+erDiagram
+    users {
+        uuid id PK
+        varchar(255) name UK
+        varchar(255) password_hash
+        timestamptz creation_time
+        timestamptz last_login_time
+        timestamptz last_edit_time
+        user_status status
+    }
+
+    roles {
+        uuid id PK
+        varchar(255) name UK
+        varchar(1024) description
+        timestamptz creation_time
+        timestamptz last_edit_time
+    }
+
+    user_roles {
+        uuid id PK
+        uuid user_id FK
+        uuid role_id FK
+        timestamptz assigned_at
+        timestamptz expires_at
+    }
+
+    api_keys {
+        uuid id PK
+        uuid user_id FK
+        varchar(255) name
+        varchar(64) key_hash UK
+        varchar(16) key_prefix
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz expires_at
+        boolean is_active
+        timestamptz last_used_at
+    }
+
+    collections {
+        uuid id PK
+        uuid created_by FK
+        varchar(255) name
+        varchar(255) slug UK
+        text description
+        varchar(100) icon
+        varchar(7) color
+        locale default_locale
+        text[] supported_locales
+        boolean is_localized
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    fields {
+        uuid id PK
+        uuid collection_id FK
+        varchar(255) name
+        varchar(255) label
+        text description
+        boolean is_required
+        boolean is_unique
+        text default_value
+        varchar(1024) help_text
+        uuid created_by FK
+        timestamptz created_at
+        timestamptz updated_at
+        field_data_type data_type
+        uuid related_collection_id FK
+    }
+
+    entries {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz published_at
+        uuid created_by FK
+        uuid collection_id FK
+        varchar(255) name
+        varchar(255) slug
+        entry_status status
+        locale locale
+        locale default_locale
+        jsonb data
+    }
+
+    entry_relations {
+        uuid id PK
+        uuid entry_id FK
+        uuid field_id FK
+        uuid target_entry_id FK
+    }
+
+    entry_schedules {
+        uuid id PK
+        uuid entry_id FK
+        timestamptz scheduled_time
+        scheduled_action action
+        boolean already_executed
+    }
+
+    assets {
+        uuid id PK
+        varchar(255) filename
+        varchar(100) mime_type
+        int file_size
+        varchar(1024) path
+        uuid uploaded_by FK
+        timestamptz uploaded_at
+        varchar(500) alt
+        text caption
+        boolean is_public
+    }
+
+    abac_policies {
+        uuid id PK
+        varchar(255) name UK
+        text description
+        permission_effect effect
+        int priority
+        boolean is_active
+        base_resource resource_type
+        permission_action action_type
+        logical_operator rule_connector
+        uuid created_by FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz last_evaluated_at
+    }
+
+    abac_policy_rules {
+        uuid id PK
+        uuid policy_id FK
+        attribute_path attribute_path
+        operator_type operator
+        text expected_string_value
+        double expected_number_value
+        boolean expected_boolean_value
+        uuid expected_uuid_value
+        timestamptz expected_date_time_value
+        text[] expected_array_value
+        attribute_path context_reference_path
+        value_type value_type
+        varchar(512) description
+        boolean is_active
+        int rule_order
+        timestamptz created_at
+    }
+
+    user_policies {
+        uuid id PK
+        uuid user_id FK
+        uuid policy_id FK
+        uuid assigned_by FK
+        timestamptz assigned_at
+        timestamptz expires_at
+        varchar(512) reason
+    }
+
+    role_policies {
+        uuid id PK
+        uuid role_id FK
+        uuid policy_id FK
+        uuid assigned_by FK
+        timestamptz assigned_at
+        timestamptz expires_at
+        varchar(512) reason
+    }
+
+    resource_ownerships {
+        uuid id PK
+        base_resource resource_type
+        uuid resource_id
+        uuid owner_id FK
+        varchar(50) ownership_type
+        uuid assigned_by FK
+        timestamptz assigned_at
+        timestamptz expires_at
+    }
+
+    abac_audit {
+        uuid id PK
+        uuid user_id FK
+        permission_action requested_action
+        base_resource resource_type
+        uuid resource_id
+        permission_effect decision
+        uuid[] evaluated_policy_ids
+        uuid[] matching_policy_ids
+        text decision_reason
+        int evaluation_time_ms
+        text request_context
+        varchar(45) ip_address
+        varchar(512) user_agent
+        varchar(255) session_id
+        timestamptz timestamp
+    }
+
+    abac_evaluation_cache {
+        uuid id PK
+        uuid user_id FK
+        base_resource resource_type
+        uuid resource_id
+        permission_action action_type
+        permission_effect decision
+        uuid[] matching_policy_ids
+        int evaluation_time_ms
+        timestamptz computed_at
+        timestamptz expires_at
+        varchar(64) context_checksum
+        text policy_versions
+    }
+
+    users ||--o{ user_roles : ""
+    roles ||--o{ user_roles : ""
+    users ||--o{ api_keys : ""
+    users ||--o{ collections : "created_by"
+    users ||--o{ fields : "created_by"
+    users ||--o{ entries : "created_by"
+    users ||--o{ assets : "uploaded_by"
+    users ||--o{ abac_policies : "created_by"
+    users ||--o{ user_policies : ""
+    users ||--o{ user_policies : "assigned_by"
+    users ||--o{ role_policies : "assigned_by"
+    users ||--o{ resource_ownerships : "owner_id"
+    users ||--o{ resource_ownerships : "assigned_by"
+    users ||--o{ abac_audit : ""
+    users ||--o{ abac_evaluation_cache : ""
+
+    roles ||--o{ role_policies : ""
+
+    collections ||--o{ fields : ""
+    collections ||--o{ entries : ""
+    collections ||--o{ fields : "related_collection"
+
+    fields ||--o{ entry_relations : ""
+
+    entries ||--o{ entry_relations : "entry_id"
+    entries ||--o{ entry_relations : "target_entry_id"
+    entries ||--o{ entry_schedules : ""
+
+    abac_policies ||--o{ abac_policy_rules : ""
+    abac_policies ||--o{ user_policies : ""
+    abac_policies ||--o{ role_policies : ""

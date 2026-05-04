@@ -15,6 +15,11 @@
   bibliography: "../src/refs.yml"
 )
 
+#let breakpar = () => [
+  #linebreak()
+  #linebreak()
+]
+
 // ===========================================
 // CAPÍTULO 1 - DEFINIÇÃO DO PROBLEMA, OBJETIVOS E METODOLOGIA
 // ===========================================
@@ -22,12 +27,12 @@
 = Introdução
 
 O desenvolvimento de aplicações web modernas que integram conteúdo dinâmico com bancos de dados representa um desafio significativo para desenvolvedores, exigindo domínio de múltiplas tecnologias que abrangem desde a camada de apresentação até a lógica de negócios e persistência de dados. A complexidade aumenta quando consideramos requisitos não-funcionais como performance, responsividade, segurança e controle de acesso granular, além da necessidade de distribuir conteúdo através de múltiplos canais — sites, aplicativos móveis, assistentes de voz, dispositivos IoT @headless2021decoupled.
-#linebreak()
+#breakpar()
 Sistemas de gerenciamento de conteúdo (CMS) consolidaram-se como ferramentas essenciais da infraestrutura digital moderna. O WordPress, exemplo mais emblemático desta categoria, é utilizado por mais de 40% de todos os sites da internet @w3techs2024usage. Entretanto, a arquitetura monolítica de CMS tradicionais, onde backend e frontend estão fortemente acoplados, apresenta limitações evidentes frente às demandas de distribuição _omnichannel_ e personalização em escala @headless2021decoupled; @boiko2005.
-#linebreak()
+#breakpar()
 A arquitetura _headless_ emerge como resposta a estas limitações, propondo desacoplamento completo entre gestão de conteúdo e apresentação através de APIs @headless2021decoupled. Esta separação oferece flexibilidade tecnológica sem precedentes, enquanto requisitos crescentes de conformidade regulatória — como GDPR e LGPD — demandam controle de acesso granular com políticas baseadas em atributos contextuais @nist2014abac.
-#linebreak()
-Este trabalho apresenta o TechtonicCMS, um sistema de gerenciamento de conteúdo _headless_ que combina arquitetura desacoplada _API-first_ com controle de acesso baseado em atributos (ABAC), oferecendo granularidade até o nível de campos individuais. O sistema demonstra como balancear usabilidade para editores não-técnicos, flexibilidade para desenvolvedores e requisitos rigorosos de segurança.
+#breakpar()
+Este trabalho apresenta o TechtonicCMS, um sistema de gerenciamento de conteúdo _headless_ que combina arquitetura desacoplada _API-first_, controle de acesso baseado em atributos (ABAC), e criação dinamica de esquemas GraphQL. O sistema demonstra como balancear usabilidade para editores não-técnicos, flexibilidade para desenvolvedores e requisitos rigorosos de segurança.
 
 == Objetivos
 
@@ -37,7 +42,7 @@ Desenvolver um sistema de gerenciamento de conteúdo headless (CMS Headless) que
 === Objetivos Específicos
 
 1. Desenvolver uma interface administrativa web para facilitar o gerenciamento de conteúdo sem necessidade de ferramentas externas
-2. Desenvolver bibliotecas de acesso para facilitar o uso do sistema.
+
 
 == Metodologia
 
@@ -45,7 +50,7 @@ Este trabalho adota uma abordagem de pesquisa aplicada, combinando fundamentaç�
 
 === Etapa 1: Pesquisa e Fundamentação Teórica
 
-Revisão bibliográfica de fontes acadêmicas e técnicas sobre CMS, sistemas de controle de acesso (RBAC e ABAC), arquiteturas web modernas e APIs. Análise comparativa de sistemas existentes para identificar padrões e oportunidades de inovação. Especificação dos requisitos funcionais e não-funcionais do sistema.
+Revisão bibliográfica de fontes acadêmicas e técnicas sobre CMS, sistemas de controle de acesso (RBAC e ABAC), arquiteturas web modernas e APIs. Análise comparativa de sistemas existentes para identificar padrões e oportunidades de inovação. Analize de metodos de geração de esquemas GraphQL. Especificação dos requisitos funcionais e não-funcionais do sistema.
 
 === Etapa 2: Design e Modelagem
 
@@ -76,26 +81,27 @@ Este capítulo apresenta o referencial teórico fundamental para compreensão do
 == Sistemas de Gerenciamento de Conteúdo (CMS)
 
 Um Sistema de Gerenciamento de Conteúdo (ou CMS, da sigla em inglês _Content Management System_) é como um painel de controle para gerenciar o conteúdo de um site @nath2010content. Ele permite que pessoas sem conhecimento técnico possam criar, editar e publicar textos, imagens e vídeos em um site, sem precisar saber programação.
-
+#breakpar()
 Pense no CMS como um editor de documentos, similar ao Microsoft Word, mas para sites. Em vez de precisar escrever código para adicionar uma nova notícia ou atualizar uma foto, você simplesmente usa uma interface visual, clica em botões e preenche formulários @boiko2005.
 
 === A Evolução dos CMS
 
 Os sistemas de gerenciamento de conteúdo evoluíram significativamente desde o surgimento da web. Inicialmente, a publicação de conteúdo na internet exigia conhecimento técnico: desenvolvedores precisavam editar manualmente arquivos HTML e fazer upload via FTP para cada atualização no site @boiko2005.
-
+#linebreak()
+#linebreak()
 Com o amadurecimento da web nos anos 2000, surgiram plataformas que simplificaram radicalmente este processo. Sistemas como WordPress (lançado em 2003) e Joomla (2005) democratizaram a criação de sites ao oferecer interfaces visuais intuitivas, permitindo que usuários sem conhecimento de programação pudessem gerenciar conteúdo @headless2021decoupled; @boiko2005; @wordpress2024docs; @joomla2024docs. Esta abordagem foi tão bem-sucedida que, atualmente, o WordPress sozinho é utilizado por mais de 40% de todos os sites da internet @w3techs2024usage.
-
+#breakpar()
 Mais recentemente, observa-se o crescimento de uma arquitetura conhecida como CMS headless, onde o backend de gerenciamento de conteúdo é completamente separado do frontend de apresentação através de APIs @headless2021decoupled; @boiko2005. Esta separação oferece maior flexibilidade para distribuir o mesmo conteúdo através de múltiplos canais (web, aplicativos móveis, dispositivos IoT, etc.), respondendo às demandas de uma experiência digital cada vez mais diversificada.
 
 === Funções Fundamentais de um CMS
 
 Um sistema de gerenciamento de conteúdo, independentemente de sua complexidade, realiza três funções fundamentais @boiko2005:
 
-1. *Coleta (Collection)*: Criação ou aquisição de conteúdo de fontes existentes. Dependendo da origem, pode ser necessário converter o conteúdo para um formato padrão. Esta etapa inclui edição, segmentação em componentes menores e adição de metadados apropriados.
+1. *Coleta (_Collection_)*: Criação ou aquisição de conteúdo de fontes existentes. Dependendo da origem, pode ser necessário converter o conteúdo para um formato padrão. Esta etapa inclui edição, segmentação em componentes menores e adição de metadados apropriados.
 
-2. *Gerenciamento (Management)*: Armazenamento estruturado do conteúdo em um repositório, que consiste em registros de banco de dados e/ou arquivos contendo componentes de conteúdo e dados administrativos. Inclui controle de versões, workflow e administração de usuários.
+2. *Gerenciamento (_Management_)*: Armazenamento estruturado do conteúdo em um repositório, que consiste em registros de banco de dados e/ou arquivos contendo componentes de conteúdo e dados administrativos. Inclui controle de versões, workflow e administração de usuários.
 
-3. *Publicação (Publishing)*: Disponibilização do conteúdo através da extração de componentes do repositório e construção de publicações direcionadas, como sites, documentos imprimíveis e newsletters. As publicações consistem em componentes organizados adequadamente, funcionalidades, informações padrão e navegação.
+3. *Publicação (_Publishing_)*: Disponibilização do conteúdo através da extração de componentes do repositório e construção de publicações direcionadas, como sites, documentos imprimíveis e newsletters. As publicações consistem em componentes organizados adequadamente, funcionalidades, informações padrão e navegação.
 
 === Três Tipos de CMS
 
@@ -111,14 +117,17 @@ Hoje existem três categorias principais de CMS @headless2021decoupled:
 
 Antes de entender a arquitetura headless, é importante conhecer dois conceitos fundamentais da arquitetura cliente-servidor @sommerville2010. Em sistemas distribuídos que são acessados pela internet, o usuário interage com um programa executando em seu computador local (como um navegador web ou aplicativo móvel), que se comunica com outro programa executando em um computador remoto (como um servidor web). Essa arquitetura cliente-servidor pode ser modelada em camadas lógicas, cada uma com responsabilidades distintas:
 #linebreak()
+#linebreak()
+#linebreak()
 *_Backend_ (Retaguarda)*: Corresponde às camadas de aplicação, manipulação de dados e banco de dados no servidor. Inclui o armazenamento de dados, a lógica de negócios que processa as informações, e o sistema de segurança que controla o acesso. É a parte "invisível" do sistema que executa no servidor, como os bastidores de um teatro onde todo o trabalho acontece.
 #linebreak()
 *_Frontend_ (Interface)*: Corresponde à camada de apresentação que executa no cliente. É responsável por apresentar informações ao usuário e gerenciar toda a interação - a interface gráfica, botões, formulários e menus. Executa no navegador do usuário (Chrome, Firefox, Safari) ou em aplicativos nativos, comunicando-se com o backend para buscar ou enviar dados. É como o palco do teatro onde a apresentação acontece.
 
 === O Que É um CMS _Headless_
-
+#parbreak()
 Em um CMS tradicional, a camada de apresentação (frontend) está fortemente acoplada à camada de gerenciamento de conteúdo (backend), formando uma aplicação monolítica. Isso significa que alterações na interface requerem modificações no sistema como um todo.
 
+#linebreak()
 Um CMS _Headless_ implementa uma arquitetura desacoplada: a "cabeça" (_frontend_ - a camada de apresentação) está completamente separada do "corpo" (_backend_ - as camadas de dados e lógica de negócios) @headless2021decoupled. A comunicação entre essas camadas acontece exclusivamente através de uma API (_Application Programming Interface_ - Interface de Programação de Aplicações). Essa separação permite que cada camada seja desenvolvida, mantida e escalada de forma independente.
 
 === _API-First_: Construindo Pela Ponte de Comunicação
@@ -145,7 +154,11 @@ A arquitetura _headless_ apresenta complexidades que devem ser consideradas @hea
 #linebreak()
 *Coordenação Entre Equipes*: A separação entre frontend e backend requer coordenação cuidadosa entre equipes que trabalham em cada camada, garantindo que as interfaces de comunicação permaneçam consistentes e que mudanças sejam sincronizadas adequadamente. Em sistemas distribuídos, a coordenação adequada é essencial para manter a integridade e consistência dos dados @kleppmann2017designing.
 
-== GraphQL: Uma Forma Mais Inteligente de Buscar Dados
+== APIs e Protocolos de Comunicação
+
+A comunicação entre as camadas de um sistema _headless_ ocorre exclusivamente através de interfaces bem definidas. Esta seção apresenta os principais padrões e protocolos empregados na construção de APIs modernas.
+
+=== GraphQL: Uma Forma Mais Inteligente de Buscar Dados
 
 Imagine que você vai a um restaurante e pede um prato específico. Com APIs REST tradicionais, é como se o garçom trouxesse a refeição completa mesmo que você só quisesse a salada. Ou então você precisasse fazer três pedidos diferentes para conseguir montar sua refeição completa - um pedido para o prato principal, outro para a bebida, outro para a sobremesa.
 #linebreak()
@@ -153,49 +166,59 @@ Isso causa dois problemas principais @banks2018learning:
 1. *_Over-fetching_*: Receber mais dados do que você precisa (desperdício de internet e processamento)
 2. *_Under-fetching_*: Precisar fazer várias requisições separadas para conseguir todos os dados necessários (lentidão)
 
-=== Como o GraphQL Resolve Isso
+O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning. O GraphQL trabalha com duas operações principais: _queries_ (consultas de leitura) e _mutations_ (operações de escrita) @banks2018learning. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
+#breakpar()
+Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens específicas: suporte a _Union Types_ que permitem campos com diferentes tipos de dados, e argumentos de filtragem que viabilizam buscas precisas em campos de texto, numéricos e de data @banks2018learning.
 
-O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. Você diz exatamente o que quer, na quantidade que quer, e recebe apenas isso - tudo de uma vez só.
+=== Autenticação e Autorização em APIs
+
+A autenticação em APIs modernas emprega diferentes mecanismos conforme o cenário de uso. Tokens de sessão baseados em JWT (_JSON Web Token_) constituem fichas de autenticação compactas e assinadas digitalmente, permitindo que o cliente prove sua identidade sem reenviar credenciais a cada requisição @jones2015jwt.
+#breakpar()
+Para integração _machine-to-machine_, APIs frequentemente empregam chaves de acesso (API keys) transmitidas via _header_ de autorização, seguindo o padrão _Bearer_ definido pelo OAuth 2.0 @rfc6750. Este modelo diferencia-se de tokens de sessão por ser _stateless_ do ponto de vista do cliente, embora o servidor mantenha metadados de controle para rastreamento e revogação @habib2025gateway.
+
+=== Rate Limiting e Controle de Tráfego
+
+_Rate limiting_ constitui uma camada de defesa contra abuso de APIs e negação de serviço. O código HTTP 429 (_Too Many Requests_), padronizado na RFC 6585 @rfc6585, sinaliza que o cliente excedeu sua cota. Padrões arquiteturais documentados por @serbout2023patterns descrevem estratégias como janela fixa, _token bucket_ e _sliding window_, cada uma com _trade-offs_ entre precisão e _overhead_ computacional.
+
+== Segurança e Controle de Acesso
+
+A segurança em sistemas de gerenciamento de conteúdo abrange desde o armazenamento seguro de credenciais até o controle granular sobre quem pode acessar quais recursos em quais condições.
+
+=== Armazenamento Seguro de Credenciais
+
+Argon2id, vencedor da _Password Hashing Competition_ de 2015 @biryukov2015argon2, é atualmente o algoritmo recomendado pelo OWASP para armazenamento de senhas, configurado como função _memory-hard_ que resiste a ataques paralelizados em GPU @owasp2023argon2. A migração transparente de hashes legados ao autenticar o usuário é uma prática defensiva reconhecida para elevar a segurança sem forçar _reset_ de senhas em massa.
+
+=== Cache em Memória para Sessões
+
+Sistemas de cache em memória, como Redis, são empregados para armazenamento temporário de dados de alta frequência de acesso, oferecendo TTL (_time-to-live_) automático e operações atômicas em batch @redis2024docs. Esta arquitetura permite redução de carga em bancos de dados relacionais e revogação instantânea de sessões sem consultas adicionais ao armazenamento persistente.
+
+=== Controle de Acesso Baseado em Atributos (ABAC)
+
+Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
+#breakpar()
+O ABAC (_Attribute-Based Access Control_) representa evolução dos modelos de controle de acesso ao basear decisões de autorização em atributos de múltiplas dimensões @nist2014abac. Diferentemente do RBAC, que avalia apenas o papel do usuário, o ABAC considera atributos do sujeito (usuário), do recurso (objeto sendo acessado), da ação (operação requisitada) e do ambiente (contexto situacional como horário e localização) @servos2017abac.
+
+==== Arquitetura e Componentes
+
+A arquitetura ABAC, conforme especificada por @nist2014abac, compreende quatro componentes principais:
 #linebreak()
-Com GraphQL, você faz uma única pergunta detalhada e recebe exatamente o que pediu. É como dizer ao garçom: "Quero o frango grelhado, mas só a carne e o molho, sem os legumes. E também quero suco de laranja sem gelo." E receber exatamente isso.
-
-=== Características Principais do GraphQL
-
-*Sistema de Tipos*: O GraphQL funciona como um contrato bem definido. Ele especifica exatamente que tipos de dados existem e o que você pode pedir. É como ter um cardápio detalhado que mostra todos os ingredientes disponíveis e como eles podem ser combinados.
+*Policy Decision Point (PDP)*: Motor de decisão que avalia políticas e atributos para produzir veredictos de autorização.
 #linebreak()
-*Ponto Único de Entrada*: Em vez de ter múltiplos endereços (URLs) diferentes para buscar dados, o GraphQL usa um único ponto de entrada. É como ter um balconista único que te ajuda com qualquer pedido, em vez de precisar ir a vários guichês diferentes.
+*Policy Enforcement Point (PEP)*: Ponto de interceptação que requisita decisões ao PDP e aplica os veredictos.
 #linebreak()
-*Consultas Flexíveis*: Você monta sua consulta pedindo exatamente os campos que precisa. Quer apenas o título e a data de um artigo? Peça só isso. Quer o artigo completo com autor e comentários? Também pode pedir tudo de uma vez.
-
-=== Operações do GraphQL
-
-O GraphQL trabalha com dois tipos principais de operações @banks2018learning:
+*Policy Information Point (PIP)*: Repositório de atributos que fornece informações contextuais ao PDP.
 #linebreak()
-*_Queries_ (Consultas)*: São operações de leitura de dados. Quando você quer buscar informações do sistema sem modificar nada, usa uma query. É como fazer uma pergunta ao banco de dados: "Me mostre todos os artigos publicados hoje" ou "Qual o nome do autor deste post?". As queries são somente leitura e nunca alteram dados.
+*Policy Administration Point (PAP)*: Interface para criação e gerenciamento de políticas.
 #linebreak()
-*_Mutations_ (Mutações)*: São operações que modificam dados. Quando você precisa criar, atualizar ou deletar informações, usa uma mutation. É como dar um comando de ação: "Crie um novo artigo", "Atualize o título deste post" ou "Delete este comentário". As mutations sempre retornam os dados modificados para você confirmar a mudança.
+Esta arquitetura permite expressar regras como "usuários do departamento X podem editar recursos confidenciais apenas durante horário comercial", combinando múltiplos atributos em uma única política @nist2014abac.
 
-=== Resolvers: Conectando GraphQL aos Dados
+==== Padrões e Implementações
 
-Para que as operações do GraphQL funcionem, cada campo na API precisa de um _resolver_ correspondente. Um _resolver_ é uma função que retorna dados para um campo específico @banks2018learning. Quando você faz uma query ou mutation, o resolver é quem vai no banco de dados, busca as informações necessárias e retorna o resultado. É como o cozinheiro que prepara seu pedido na cozinha - você não o vê trabalhando, mas ele é essencial para atender sua requisição. Os resolvers devem seguir as regras definidas no schema, retornando os dados no tipo e formato especificados.
-
-=== GraphQL em Sistemas de Conteúdo
-
-Para sistemas de gerenciamento de conteúdo, o GraphQL é especialmente útil porque:
-#linebreak()
-*Adaptação a Diferentes Tipos*: O GraphQL suporta "_Union Types_" (tipos unidos) que permitem que um campo possa conter diferentes tipos de dados @banks2018learning. Um mesmo campo pode retornar texto, número, data ou imagem, e o GraphQL sabe lidar com cada tipo adequadamente através de fragmentos específicos para cada variação.
-#linebreak()
-*Filtros por Argumentos*: GraphQL permite passar argumentos nas consultas para filtrar resultados @banks2018learning. Você pode fazer buscas específicas em campos de texto (contém, começa com, termina com), campos numéricos (maior que, menor que, igual a), e campos de data (antes de, depois de), tornando as consultas mais precisas e eficientes.
-
-== Conceitos Técnicos Fundamentais
-
-Antes de prosseguir com conceitos mais avançados, é importante definir alguns termos técnicos que serão utilizados ao longo deste trabalho:
-#linebreak()
-*_Schema_ (Esquema)*: É como um "projeto" ou "planta" que define a estrutura dos dados. Assim como uma planta arquitetônica mostra onde ficam os quartos e banheiros de uma casa, um schema define quais campos existem em um tipo de conteúdo, que tipo de informação cada campo aceita (texto, número, data), e quais campos são obrigatórios. Em sistemas de banco de dados, o _schema_ garante que os dados sejam armazenados de forma organizada e consistente @silberschatz2018database.
-#linebreak()
-*_Cache_ (Memória Temporária)*: É um sistema de armazenamento temporário de alta velocidade. Funciona como ter os itens mais usados sempre à mão, em vez de buscar no armário toda vez. Quando uma informação é solicitada frequentemente, o sistema a guarda no _cache_ para acessá-la muito mais rapidamente nas próximas vezes. Isso melhora drasticicamente a velocidade do sistema, pois evita consultas repetidas ao banco de dados principal @kleppmann2017designing.
-#linebreak()
-*JWT (JSON Web Token)*: É um padrão aberto para criar fichas de autenticação compactas e seguras que podem ser transmitidas entre sistemas. Um JWT é como um crachá digital assinado que contém informações sobre o usuário (como seu ID e permissões) codificadas em formato JSON. Quando você faz login em um sistema, ele gera um JWT que você apresenta nas próximas requisições para provar sua identidade, sem precisar enviar usuário e senha novamente. O JWT é assinado digitalmente, o que garante que não pode ser falsificado ou alterado @jones2015jwt.
+XACML (_eXtensible Access Control Markup Language_) constitui o padrão OASIS para especificação de políticas ABAC @oasis2013xacml. XACML define estrutura hierárquica de _rules_, _policies_ e _policy sets_, além de algoritmos de combinação (`deny-overrides`, `permit-overrides`) para resolução determinística de conflitos entre políticas @combiningpolicies2009.
+#breakpar()
+_Open Policy Agent_ (OPA) emergiu como implementação moderna de ABAC, oferecendo linguagem declarativa Rego para especificação de políticas e arquitetura desacoplada _policy-as-code_ @openpolicyagentcontributors2024opa. Outras implementações incluem Casbin (biblioteca multi-linguagem) @casbin2024docs, AWS IAM com atributos baseados em tags @aws2024abac, e Apache Ranger para segurança de dados @ranger2024docs.
+#breakpar()
+Para sistemas de gerenciamento de conteúdo, o ABAC oferece controle granular essencial: diferentes campos podem ter diferentes níveis de sensibilidade, e o acesso pode variar baseado em propriedade do conteúdo, status de publicação e contexto do usuário. Esta flexibilidade permite implementar requisitos complexos de segurança mantendo políticas centralizadas e auditáveis @nist2014abac.
 
 == Modelagem de Dados Dinâmica e Flexível
 
@@ -218,8 +241,7 @@ O padrão _Entity-Attribute-Value_ (EAV), também conhecido como _object-attribu
 
 #align(left)[#text(size: 10pt)[Fonte: Dinu e Nadkarni (2007) via ResearchGate (https://www.researchgate.net/figure/Basic-Class-Model-of-the-EAV-Storage-Structure-The-basic-class-model-of-the-EAV-storage_fig1_257884193).]]
 
-#v(0.8cm)
-
+#breakpar()
 Esta abordagem oferece flexibilidade máxima, pois novos atributos podem ser adicionados sem alterações na estrutura da tabela @batra2016eav. No entanto, o padrão EAV apresenta limitações significativas @nadkarni2007eav:
 #linebreak()
 *_Performance_ de Consultas*: Cada atributo requer uma linha separada na tabela, resultando em operações de JOIN complexas para reconstruir entidades completas. Consultas que em modelos tradicionais seriam simples tornam-se substancialmente mais lentas.
@@ -244,33 +266,9 @@ Para endereçar as limitações do EAV, arquiteturas modernas de CMS adotam estr
 #linebreak()
 Estas abordagens híbridas permitem que sistemas modernos de gerenciamento de conteúdo ofereçam a flexibilidade de schemas dinâmicos sem comprometer significativamente a performance das operações mais comuns.
 
-== Controle de Acesso Baseado em Atributos (ABAC)
+=== Agendamento e Processamento Assíncrono
 
-Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
-#linebreak()
-O ABAC (_Attribute-Based Access Control_) representa evolução dos modelos de controle de acesso ao basear decisões de autorização em atributos de múltiplas dimensões @nist2014abac. Diferentemente do RBAC, que avalia apenas o papel do usuário, o ABAC considera atributos do sujeito (usuário), do recurso (objeto sendo acessado), da ação (operação requisitada) e do ambiente (contexto situacional como horário e localização) @servos2017abac.
-
-=== Arquitetura e Componentes
-
-A arquitetura ABAC, conforme especificada por @nist2014abac, compreende quatro componentes principais:
-#linebreak()
-*Policy Decision Point (PDP)*: Motor de decisão que avalia políticas e atributos para produzir veredictos de autorização.
-#linebreak()
-*Policy Enforcement Point (PEP)*: Ponto de interceptação que requisita decisões ao PDP e aplica os veredictos.
-#linebreak()
-*Policy Information Point (PIP)*: Repositório de atributos que fornece informações contextuais ao PDP.
-#linebreak()
-*Policy Administration Point (PAP)*: Interface para criação e gerenciamento de políticas.
-#linebreak()
-Esta arquitetura permite expressar regras como "usuários do departamento X podem editar recursos confidenciais apenas durante horário comercial", combinando múltiplos atributos em uma única política @nist2014abac.
-
-=== Padrões e Implementações
-
-XACML (_eXtensible Access Control Markup Language_) constitui o padrão OASIS para especificação de políticas ABAC @oasis2013xacml. XACML define estrutura hierárquica de _rules_, _policies_ e _policy sets_, além de algoritmos de combinação (`deny-overrides`, `permit-overrides`) para resolução determinística de conflitos entre políticas @combiningpolicies2009.
-#linebreak()
-_Open Policy Agent_ (OPA) emergiu como implementação moderna de ABAC, oferecendo linguagem declarativa Rego para especificação de políticas e arquitetura desacoplada _policy-as-code_ @openpolicyagentcontributors2024opa. Outras implementações incluem Casbin (biblioteca multi-linguagem) @casbin2024docs, AWS IAM com atributos baseados em tags @aws2024abac, e Apache Ranger para segurança de dados @ranger2024docs.
-#linebreak()
-Para sistemas de gerenciamento de conteúdo, o ABAC oferece controle granular essencial: diferentes campos podem ter diferentes níveis de sensibilidade, e o acesso pode variar baseado em propriedade do conteúdo, status de publicação e contexto do usuário. Esta flexibilidade permite implementar requisitos complexos de segurança mantendo políticas centralizadas e auditáveis @nist2014abac.
+Sistemas modernos de gerenciamento de conteúdo empregam filas de tarefas assíncronas e serviços de agendamento em _background_ para executar operações pesadas — como publicação programada, arquivamento automático e processamento de mídia — sem bloquear a _thread_ principal da aplicação @prakash2016performance. Este padrão arquitetural viabiliza _workflows_ de conteúdo com transições temporais automáticas, onde o estado de uma entrada pode evoluir de acordo com regras de negócio e horários pré-determinados.
 
 == Tecnologias de Interface Moderna
 
@@ -327,11 +325,10 @@ Este capítulo explica como o sistema foi pensado e construído, quais tecnologi
 == Arquitetura do Sistema
 
 O sistema adota arquitetura em três camadas com separação clara de responsabilidades e comunicação via interfaces bem definidas.
-
+#pagebreak()
 #figure(
-  mermaid("graph TB\n    subgraph Client Layer\n        A[SvelteKit Admin UI]\n        B[Astro Blog]\n        C[External Consumers]\n    end\n\n    subgraph API Layer .NET 10 + Hot Chocolate\n        D[GraphQL Endpoint /graphql]\n        E[Asset Endpoints /assets]\n        F[Health Check]\n        G[LLM Docs /llms.md]\n\n        subgraph Middleware Pipeline\n            M1[SecurityHeaders]\n            M2[RateLimiter]\n            M3[Authentication JWT + API Key]\n            M4[Authorization]\n        end\n\n        subgraph GraphQL Execution\n            H[Schema Builder]\n            I[Query Engine]\n            J[Mutation Engine]\n            K[Error Filter]\n        end\n\n        subgraph Service Layer\n            S1[AbacService]\n            S2[AuthService]\n            S3[SessionService]\n            S4[PasswordService]\n            S5[ApiKeyService]\n            S6[S3Service]\n        end\n    end\n\n    subgraph Data Layer\n        DB[(PostgreSQL Relational + JSONB)]\n        RD[(Redis Sessions + Cache)]\n        S3[(S3-Compatible MinIO)]\n    end\n\n    A -->|GraphQL + JWT| D\n    B -->|GraphQL + API Key| D\n    C -->|GraphQL + API Key| D\n    A -->|Multipart Upload| E\n    B -->|Asset Download| E\n    D --> M1 --> M2 --> M3 --> M4\n    M4 --> H\n    H --> I\n    H --> J\n    I --> S1\n    J --> S1\n    I --> S2\n    J --> S2\n    S2 --> S3\n    S1 --> DB\n    S2 --> RD\n    S3 --> RD\n    S5 --> DB\n    S6 --> S3\n"),
-  caption: [Diagrama de componentes do TechtonicCMS — camadas Cliente, API e Dados]
-) <fig-system-diagram>
+  image("diagramas/system-diagram.png"),  caption: [Diagrama de componentes do TechtonicCMS — camadas Cliente, API e Dados]
+) <fig-system-diagram> 
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
@@ -381,7 +378,7 @@ O sistema organiza dados em três níveis hierárquicos:
 A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaque para a coluna JSONB unificada de entradas e a tabela de relacionamentos:
 
 #figure(
-  mermaid("erDiagram\n    users ||--o{ user_roles : has\n    users ||--o{ entries : creates\n    users ||--o{ assets : uploads\n    users ||--o{ api_keys : owns\n    users ||--o{ abac_policies : created\n    users ||--o{ abac_audit : audited\n\n    roles ||--o{ user_roles : assigned\n    roles ||--o{ role_policies : has\n\n    abac_policies ||--o{ abac_policy_rules : contains\n    abac_policies ||--o{ role_policies : linked\n    abac_policies ||--o{ user_policies : linked\n\n    collections ||--o{ fields : defines\n    collections ||--o{ entries : contains\n\n    fields ||--o{ entry_relations : defines\n\n    entries ||--o{ entry_relations : from\n    entries ||--o{ entry_relations : to\n    entries ||--o{ entry_schedules : scheduled\n\n    users {\n        uuid Id PK\n        varchar Name UK\n        varchar PasswordHash\n        timestamptz CreationTime\n        user_status Status\n    }\n\n    roles {\n        uuid Id PK\n        varchar Name UK\n        varchar Description\n    }\n\n    user_roles {\n        uuid Id PK\n        uuid UserId FK\n        uuid RoleId FK\n        timestamptz AssignedAt\n    }\n\n    abac_policies {\n        uuid Id PK\n        varchar Name UK\n        permission_effect Effect\n        int Priority\n        base_resource ResourceType\n        permission_action ActionType\n        logical_operator RuleConnector\n    }\n\n    abac_policy_rules {\n        uuid Id PK\n        uuid PolicyId FK\n        attribute_path AttributePath\n        operator_type Operator\n        value_type ValueType\n    }\n\n    role_policies {\n        uuid Id PK\n        uuid RoleId FK\n        uuid PolicyId FK\n    }\n\n    user_policies {\n        uuid Id PK\n        uuid UserId FK\n        uuid PolicyId FK\n    }\n\n    collections {\n        uuid Id PK\n        uuid CreatedBy FK\n        varchar Name\n        varchar Slug UK\n        locale DefaultLocale\n    }\n\n    fields {\n        uuid Id PK\n        uuid CollectionId FK\n        varchar Name\n        bool IsRequired\n        field_data_type DataType\n        uuid RelatedCollectionId FK\n    }\n\n    entries {\n        uuid Id PK\n        uuid CreatedBy FK\n        uuid CollectionId FK\n        varchar Name\n        varchar Slug\n        entry_status Status\n        locale Locale\n        jsonb Data\n    }\n\n    entry_relations {\n        uuid Id PK\n        uuid EntryId FK\n        uuid FieldId FK\n        uuid TargetEntryId FK\n    }\n\n    entry_schedules {\n        uuid Id PK\n        uuid EntryId FK\n        timestamptz ScheduledTime\n        scheduled_action Action\n    }\n\n    assets {\n        uuid Id PK\n        varchar Filename\n        varchar MimeType\n        uuid UploadedBy FK\n        timestamptz UploadedAt\n    }\n\n    api_keys {\n        uuid Id PK\n        uuid UserId FK\n        varchar Name\n        varchar KeyHash UK\n        timestamptz ExpiresAt\n        bool IsActive\n    }\n\n    abac_audit {\n        uuid Id PK\n        uuid UserId FK\n        permission_action RequestedAction\n        base_resource ResourceType\n        permission_effect Decision\n        timestamptz Timestamp\n    }\n"),
+  image("diagramas/database-diagram.svg"),
   caption: [Diagrama ER do TechtonicCMS — esquema PostgreSQL com JSONB unificado e relacionamentos ABAC]
 ) <fig-collections-entries>
 
@@ -390,11 +387,11 @@ A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaq
 === Estratégia de Armazenamento
 
 Diferentemente do padrão EAV discutido no referencial teórico, o sistema utiliza uma abordagem de *armazenamento JSONB unificado* para todos os valores dinâmicos de entrada. Cada entrada possui uma coluna `Data` do tipo `jsonb` que armazena todos os valores de campos — texto, números, booleanos, datas, objetos, listas — em uma única estrutura JSON. Os metadados sobre quais campos existem e seus tipos permanecem na tabela `fields`, mas os valores concretos habitam em `Entry.Data`.
-
+#breakpar()
 Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados (EAV), simplificando o schema e reduzindo a complexidade de joins. Para viabilizar filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL — `cms_extract_text`, `cms_extract_number`, `cms_extract_boolean`, `cms_extract_datetime` — que operam diretamente sobre a coluna JSONB. Isso permite que queries como "título igual a 'Hello'" sejam traduzidas para SQL nativo com possível otimização via índices GIN.
-
+#breakpar()
 *Relacionamentos entre Entradas*: Relacionamentos tipados entre entradas (ex: "Autor" referenciando "Usuários") utilizam uma tabela de junção `entry_relations` com restrição de unicidade por `(EntryId, FieldId)`, garantindo que cada campo de relacionamento em uma entrada aponte para no máximo um alvo. A integridade referencial é preservada via foreign keys em cascata.
-
+#breakpar()
 *Exemplo Prático de Armazenamento*: Para uma coleção "Artigos de Blog" com campos heterogêneos, a entrada armazena todos os valores em `Data`:
 
 #table(
@@ -412,14 +409,14 @@ O banco executa consultas dentro da estrutura JSON usando operadores nativos e s
 === Tabelas de Segurança e Controle de Acesso
 
 O banco de dados inclui um conjunto completo de tabelas para implementar o sistema ABAC, conforme ilustrado na Figura 3.3:
-
+#pagebreak()
 #figure(
   image("diagramas/simplified_security_related_to_content.png", width: 100%),
   caption: [Tabelas de segurança (users, roles, policies) e sua relação com as entidades de conteúdo (collections, entries, fields, assets)]
 ) <fig-security-content>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
-
+#breakpar()
 As tabelas principais de segurança incluem:
 #linebreak()
 *users*: Armazena credenciais de autenticação com hash criptográfico de senha, status do usuário (`ACTIVE`, `INACTIVE`, `BANNED`), e timestamps de criação, último acesso e última modificação.

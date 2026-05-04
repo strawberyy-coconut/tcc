@@ -1,0 +1,60 @@
+
+flowchart TB
+    subgraph Clientes
+        SK[SvelteKit Admin]
+        AB[Astro Blog]
+        EC[External Clients]
+    end
+
+    subgraph API
+        GQL[GraphQL Endpoint]
+        AST[Asset Endpoints]
+        HC[Health Check]
+        LLM[LLM Docs]
+
+        SH[SecurityHeaders]
+        RL[RateLimiter]
+        AU[Authentication]
+        AZ[Authorization]
+
+        SB[Schema Builder]
+        QE[Query Engine]
+        ME[Mutation Engine]
+
+        ABAC[AbacService]
+        AUTH[AuthService]
+        SESS[SessionService]
+        PWD[PasswordService]
+        KEY[ApiKeyService]
+        OBJ[S3Service]
+    end
+
+    subgraph Dados
+        PG[(PostgreSQL)]
+        RD[(Redis)]
+        S3[(MinIO)]
+    end
+
+    SK --> GQL
+    AB --> GQL
+    EC --> GQL
+    SK --> AST
+    AB --> AST
+
+    GQL --> SH
+    SH --> RL
+    RL --> AU
+    AU --> AZ
+    AZ --> SB
+    SB --> QE
+    SB --> ME
+    QE --> ABAC
+    ME --> ABAC
+    QE --> AUTH
+    ME --> AUTH
+    AUTH --> SESS
+    ABAC --> PG
+    AUTH --> RD
+    SESS --> RD
+    KEY --> PG
+    OBJ --> S3

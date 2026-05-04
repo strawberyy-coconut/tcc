@@ -120,6 +120,15 @@ hartig2018semantics:
   date: 2018
   doi: 10.1145/3178876.3186014
 
+habib2025gateway:
+  type: article
+  title: "API Gateway Patterns in Spring Boot Microservices: Routing, Load Balancing, and Rate Limiting"
+  author:
+    - Habib, Osaid
+  date: 2025
+  url: https://www.researchgate.net/publication/400829975
+  note: "Acesso em: 04 mai. 2026"
+
 kleppmann2017designing:
   type: book
   title: "Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems"
@@ -127,6 +136,14 @@ kleppmann2017designing:
   publisher: O'Reilly Media
   location: Sebastopol
   date: 2017
+
+ms2024expressiontrees:
+  type: web
+  title: "Expression Trees (C# Programming Guide)"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/
+  date: 2024
+  note: "Acesso em: 04 mai. 2026"
 
 oh2007administration:
   type: conference
@@ -156,6 +173,23 @@ sandhu1996role:
   page-range: 38-47
   date: 1996-02
   doi: 10.1109/2.485845
+
+schiavio2023dynq:
+  type: article
+  title: "DynQ: a dynamic query engine with query-reuse capabilities embedded in a polyglot runtime"
+  author:
+    - Schiavio, Fabio
+    - Bonetta, Daniele
+    - Binder, Walter
+  parent:
+    type: periodical
+    title: The VLDB Journal
+    volume: 32
+    issue: 6
+  page-range: 1-25
+  date: 2023
+  doi: 10.1007/s00778-023-00784-2
+  note: "Acesso em: 04 mai. 2026"
 
 silberschatz2018database:
   type: book
@@ -224,6 +258,21 @@ nath2010content:
   url: https://ieeexplore.ieee.org/document/5552271
   note: "Acesso em: 05 out. 2025"
 
+nagel2014codegen:
+  type: conference
+  title: "Code generation for efficient query processing in managed runtimes"
+  author:
+    - Nagel, Fabian
+    - Bierman, Gavin M.
+    - Viglas, Stratis D.
+  parent:
+    type: proceedings
+    title: Proceedings of the VLDB Endowment
+    publisher: VLDB
+  date: 2014
+  doi: 10.14778/2735461.2735463
+  note: "Acesso em: 04 mai. 2026"
+
 # Referências específicas sobre ABAC
 
 nist2014abac:
@@ -243,6 +292,22 @@ nist2014abac:
   url: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
   note: "Acesso em: 12 out. 2025"
 
+
+serbout2023patterns:
+  type: conference
+  title: "API Rate Limit Adoption--A pattern collection"
+  author:
+    - Serbout, Souhaila
+    - El Malki, Achraf
+    - Pautasso, Cesare
+    - Zdun, Uwe
+  parent:
+    type: proceedings
+    title: Proceedings of the 28th European Conference on Pattern Languages of Programs
+    publisher: ACM
+  date: 2023
+  doi: 10.1145/3628034.3628039
+  note: "Acesso em: 04 mai. 2026"
 
 servos2017abac:
   type: article
@@ -471,6 +536,20 @@ postgresql2024json:
   date: 2024
   note: "Acesso em: 27 out. 2025"
 
+prakash2016performance:
+  type: conference
+  title: "Performance optimisation of web applications using in-memory caching and asynchronous job queues"
+  author:
+    - Prakash, Sidharth S.
+    - Kovoor, B. C.
+  parent:
+    type: proceedings
+    title: IEEE International Conference on Advances in Computer Engineering and Applications
+    publisher: IEEE
+  date: 2016
+  doi: 10.1109/ICACEA.2016.7830234
+  note: "Acesso em: 04 mai. 2026"
+
 mongodb2024bson:
   type: web
   title: "JSON and BSON"
@@ -614,6 +693,30 @@ redis2024docs:
   url: https://redis.io/
   date: 2024
   note: "Acesso em: 05 mai. 2026"
+
+rfc6585:
+  type: report
+  title: "Additional HTTP Status Codes"
+  author:
+    - Nottingham, Mark
+    - Fielding, Roy T.
+  organization: Internet Engineering Task Force
+  number: "RFC 6585"
+  date: 2012-04
+  url: https://www.rfc-editor.org/info/rfc6585
+  note: "Acesso em: 04 mai. 2026"
+
+rfc6750:
+  type: report
+  title: "The OAuth 2.0 Authorization Framework: Bearer Token Usage"
+  author:
+    - Jones, Michael B.
+    - Hardt, Dick
+  organization: Internet Engineering Task Force
+  number: "RFC 6750"
+  date: 2012-10
+  url: https://www.rfc-editor.org/info/rfc6750
+  note: "Acesso em: 04 mai. 2026"
 
 minio2024docs:
   type: web

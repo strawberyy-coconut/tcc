@@ -1,0 +1,9 @@
+[submodule "techtoniccms-api"]
+	path = techtoniccms-api
+	url = https://github.com/techtonic-plates-cms/techtoniccms-api.git
+[submodule "techtoniccms-app"]
+	path = techtoniccms-app
+	url = https://github.com/techtonic-plates-cms/techtoniccms-app.git
+[submodule "techtoniccms-blog"]
+	path = techtoniccms-blog
+	url = https://github.com/techtonic-plates-cms/techtoniccms-blog.git
