@@ -1,4 +1,5 @@
-#import "./udf-tcc-template/template.typ": *
+#import "../udf-tcc-template/template.typ": *
+#import "@preview/mmdr:0.2.2": mermaid
 
 // Document content
 #show: udf-paper.with(
@@ -11,7 +12,7 @@
   advisor: "",
   city: "Brasília",
   year: 2025,
-  bibliography: "../refs.yml"
+  bibliography: "../src/refs.yml"
 )
 
 // ===========================================
@@ -328,8 +329,8 @@ Este capítulo explica como o sistema foi pensado e construído, quais tecnologi
 O sistema adota arquitetura em três camadas com separação clara de responsabilidades e comunicação via interfaces bem definidas.
 
 #figure(
-  image("diagramas/Diagrama do sistema.png", width: 90%),
-  caption: [Estrutura do sistema mostrando como as três camadas principais se conectam]
+  mermaid("graph TB\n    subgraph Client Layer\n        A[SvelteKit Admin UI]\n        B[Astro Blog]\n        C[External Consumers]\n    end\n\n    subgraph API Layer .NET 10 + Hot Chocolate\n        D[GraphQL Endpoint /graphql]\n        E[Asset Endpoints /assets]\n        F[Health Check]\n        G[LLM Docs /llms.md]\n\n        subgraph Middleware Pipeline\n            M1[SecurityHeaders]\n            M2[RateLimiter]\n            M3[Authentication JWT + API Key]\n            M4[Authorization]\n        end\n\n        subgraph GraphQL Execution\n            H[Schema Builder]\n            I[Query Engine]\n            J[Mutation Engine]\n            K[Error Filter]\n        end\n\n        subgraph Service Layer\n            S1[AbacService]\n            S2[AuthService]\n            S3[SessionService]\n            S4[PasswordService]\n            S5[ApiKeyService]\n            S6[S3Service]\n        end\n    end\n\n    subgraph Data Layer\n        DB[(PostgreSQL Relational + JSONB)]\n        RD[(Redis Sessions + Cache)]\n        S3[(S3-Compatible MinIO)]\n    end\n\n    A -->|GraphQL + JWT| D\n    B -->|GraphQL + API Key| D\n    C -->|GraphQL + API Key| D\n    A -->|Multipart Upload| E\n    B -->|Asset Download| E\n    D --> M1 --> M2 --> M3 --> M4\n    M4 --> H\n    H --> I\n    H --> J\n    I --> S1\n    J --> S1\n    I --> S2\n    J --> S2\n    S2 --> S3\n    S1 --> DB\n    S2 --> RD\n    S3 --> RD\n    S5 --> DB\n    S6 --> S3\n"),
+  caption: [Diagrama de componentes do TechtonicCMS — camadas Cliente, API e Dados]
 ) <fig-system-diagram>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
@@ -363,7 +364,7 @@ A arquitetura foi projetada priorizando:
 
 == Modelagem do Banco de Dados
 
-A modelagem de dados implementa estratégia híbrida combinando tabelas tipadas para primitivos com armazenamento JSON para estruturas complexas, conforme discutido no referencial teórico.
+A modelagem de dados utiliza abordagem unificada baseada em PostgreSQL JSONB para armazenamento de conteúdo dinâmico, eliminando a fragmentação do padrão EAV. Metadados estruturais (coleções, campos) permanecem em tabelas tipadas, enquanto valores concretos de entrada são persistidos em uma única coluna `jsonb`, acessível via stored procedures customizadas para filtragem e ordenação a nível de banco.
 
 === Entidades Principais
 
@@ -373,77 +374,40 @@ O sistema organiza dados em três níveis hierárquicos:
 #linebreak()
 *_Fields_ (Campos)*: Especifica os atributos de cada coleção incluindo tipo de dado (`text`, `number`, `boolean`, `date_time`, `rich_text`, `json`, `asset`, `relation`), regras de validação customizadas, e classificação de segurança em quatro níveis: `PUBLIC`, `INTERNAL`, `CONFIDENTIAL`, `RESTRICTED`. Campos podem ser marcados como PII (Personally Identifiable Information) e configurados para criptografia em repouso.
 #linebreak()
-*_Entries_ (Entradas)*: Representa as instâncias concretas de conteúdo com estados bem definidos: `DRAFT` (rascunho em edição), `PUBLISHED` (publicado e visível), `ARCHIVED` (arquivado sem exibição), `DELETED` (deletado logicamente). Cada entrada possui locale específico, com suporte multilíngue através de entradas vinculadas.
+*_Entries_ (Entradas)*: Representa as instâncias concretas de conteúdo com estados bem definidos: `DRAFT` (rascunho em edição), `PUBLISHED` (publicado e visível), `ARCHIVED` (arquivado sem exibição), `DELETED` (deletado logicamente). Cada entrada possui locale específico e uma coluna `Data` do tipo `jsonb` que armazena todos os valores de campos dinâmicos. O suporte multilíngue é realizado através de entradas vinculadas por `defaultLocale`.
 #linebreak()
 *_Assets_ (Arquivos)*: Gerencia recursos binários (imagens, vídeos, documentos) armazenando metadados essenciais: `filename`, `mimeType`, `fileSize`, `path`, além de campos para acessibilidade (`alt` para leitores de tela, `caption` descritivo) e rastreamento de propriedade (`uploadedBy`, `uploadedAt`).
 #linebreak()
-A Figura 3.2 apresenta em detalhe como essas entidades se relacionam com as tabelas de valores tipados:
+A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaque para a coluna JSONB unificada de entradas e a tabela de relacionamentos:
 
 #figure(
-  image("diagramas/collections_and_entries.png", width: 100%),
-  caption: [Estrutura detalhada das tabelas Collections, Fields e Entries com suas tabelas de valores associadas (texto, número, booleano, data, rich text, JSON, assets e relacionamentos)]
+  mermaid("erDiagram\n    users ||--o{ user_roles : has\n    users ||--o{ entries : creates\n    users ||--o{ assets : uploads\n    users ||--o{ api_keys : owns\n    users ||--o{ abac_policies : created\n    users ||--o{ abac_audit : audited\n\n    roles ||--o{ user_roles : assigned\n    roles ||--o{ role_policies : has\n\n    abac_policies ||--o{ abac_policy_rules : contains\n    abac_policies ||--o{ role_policies : linked\n    abac_policies ||--o{ user_policies : linked\n\n    collections ||--o{ fields : defines\n    collections ||--o{ entries : contains\n\n    fields ||--o{ entry_relations : defines\n\n    entries ||--o{ entry_relations : from\n    entries ||--o{ entry_relations : to\n    entries ||--o{ entry_schedules : scheduled\n\n    users {\n        uuid Id PK\n        varchar Name UK\n        varchar PasswordHash\n        timestamptz CreationTime\n        user_status Status\n    }\n\n    roles {\n        uuid Id PK\n        varchar Name UK\n        varchar Description\n    }\n\n    user_roles {\n        uuid Id PK\n        uuid UserId FK\n        uuid RoleId FK\n        timestamptz AssignedAt\n    }\n\n    abac_policies {\n        uuid Id PK\n        varchar Name UK\n        permission_effect Effect\n        int Priority\n        base_resource ResourceType\n        permission_action ActionType\n        logical_operator RuleConnector\n    }\n\n    abac_policy_rules {\n        uuid Id PK\n        uuid PolicyId FK\n        attribute_path AttributePath\n        operator_type Operator\n        value_type ValueType\n    }\n\n    role_policies {\n        uuid Id PK\n        uuid RoleId FK\n        uuid PolicyId FK\n    }\n\n    user_policies {\n        uuid Id PK\n        uuid UserId FK\n        uuid PolicyId FK\n    }\n\n    collections {\n        uuid Id PK\n        uuid CreatedBy FK\n        varchar Name\n        varchar Slug UK\n        locale DefaultLocale\n    }\n\n    fields {\n        uuid Id PK\n        uuid CollectionId FK\n        varchar Name\n        bool IsRequired\n        field_data_type DataType\n        uuid RelatedCollectionId FK\n    }\n\n    entries {\n        uuid Id PK\n        uuid CreatedBy FK\n        uuid CollectionId FK\n        varchar Name\n        varchar Slug\n        entry_status Status\n        locale Locale\n        jsonb Data\n    }\n\n    entry_relations {\n        uuid Id PK\n        uuid EntryId FK\n        uuid FieldId FK\n        uuid TargetEntryId FK\n    }\n\n    entry_schedules {\n        uuid Id PK\n        uuid EntryId FK\n        timestamptz ScheduledTime\n        scheduled_action Action\n    }\n\n    assets {\n        uuid Id PK\n        varchar Filename\n        varchar MimeType\n        uuid UploadedBy FK\n        timestamptz UploadedAt\n    }\n\n    api_keys {\n        uuid Id PK\n        uuid UserId FK\n        varchar Name\n        varchar KeyHash UK\n        timestamptz ExpiresAt\n        bool IsActive\n    }\n\n    abac_audit {\n        uuid Id PK\n        uuid UserId FK\n        permission_action RequestedAction\n        base_resource ResourceType\n        permission_effect Decision\n        timestamptz Timestamp\n    }\n"),
+  caption: [Diagrama ER do TechtonicCMS — esquema PostgreSQL com JSONB unificado e relacionamentos ABAC]
 ) <fig-collections-entries>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
-=== Estratégia de Armazenamento por Tipo
+=== Estratégia de Armazenamento
 
-O sistema implementa abordagem híbrida que otimiza armazenamento conforme a natureza dos dados:
-#linebreak()
-*Tipos Primitivos*: Valores simples são armazenados em tabelas dedicadas e indexadas: `entry_texts` (texto), `entry_numbers` (numérico), `entry_booleans` (booleano), `entry_datetimes` (temporal). Esta separação permite otimizações específicas por tipo, incluindo índices de busca textual, comparações numéricas eficientes e ordenação temporal. Todas incluem campo `searchHash` para busca em dados criptografados sem descriptografia prévia.
-#linebreak()
-*Tipos Complexos*: Estruturas hierárquicas (listas, objetos) são armazenadas em `entry_json_data` com campo `valueType` diferenciando entre `text_list`, `number_list` e `json` genérico. Esta abordagem aproveita capacidade nativa do banco de dados relacional para consultas e indexação de dados semi-estruturados.
-#linebreak()
-*Tipos Especiais*: 
-- `entry_rich_texts`: Armazena versão `raw` (Markdown/HTML original) e `rendered` (HTML processado), com campo `format` indicando parser utilizado
-- `entry_assets`: Referências a arquivos através de `assetId` com `sortOrder` para suporte a múltiplos assets por campo
-- `entry_relations`: Relacionamentos tipados entre entradas via `fromEntryId` e `toEntryId` com integridade referencial
-- `entry_typst_texts`: Conteúdo Typst com versões editável e renderizada para documentação técnica
-#linebreak()
-Esta estratégia balanceia performance de consulta (tipos primitivos indexados) com flexibilidade estrutural (tipos complexos em JSON).
+Diferentemente do padrão EAV discutido no referencial teórico, o sistema utiliza uma abordagem de *armazenamento JSONB unificado* para todos os valores dinâmicos de entrada. Cada entrada possui uma coluna `Data` do tipo `jsonb` que armazena todos os valores de campos — texto, números, booleanos, datas, objetos, listas — em uma única estrutura JSON. Os metadados sobre quais campos existem e seus tipos permanecem na tabela `fields`, mas os valores concretos habitam em `Entry.Data`.
 
-==== Exemplo Prático de Armazenamento
+Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados (EAV), simplificando o schema e reduzindo a complexidade de joins. Para viabilizar filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL — `cms_extract_text`, `cms_extract_number`, `cms_extract_boolean`, `cms_extract_datetime` — que operam diretamente sobre a coluna JSONB. Isso permite que queries como "título igual a 'Hello'" sejam traduzidas para SQL nativo com possível otimização via índices GIN.
 
-Para ilustrar a estratégia híbrida, considere uma coleção "Artigos de Blog" com campos heterogêneos:
-#linebreak()
-*Campo Título (Texto com Internacionalização)*: O sistema cria entradas distintas por locale, vinculadas através de `defaultLocale`:
+*Relacionamentos entre Entradas*: Relacionamentos tipados entre entradas (ex: "Autor" referenciando "Usuários") utilizam uma tabela de junção `entry_relations` com restrição de unicidade por `(EntryId, FieldId)`, garantindo que cada campo de relacionamento em uma entrada aponte para no máximo um alvo. A integridade referencial é preservada via foreign keys em cascata.
+
+*Exemplo Prático de Armazenamento*: Para uma coleção "Artigos de Blog" com campos heterogêneos, a entrada armazena todos os valores em `Data`:
 
 #table(
-  columns: 3,
-  [*entry_id*], [*field_id*], [*value*],
-  [uuid-123], [uuid-45], ["Introdução ao GraphQL"],
-  [uuid-456], [uuid-45], ["Introduction to GraphQL"]
+  columns: 2,
+  [*Campo*], [*Valor em JSONB*],
+  [Título (pt)], [`{"title": "Introdução ao GraphQL", "locale": "pt"}`],
+  [Título (en)], [`{"title": "Introduction to GraphQL", "locale": "en"}`],
+  [Configurações], [`{"layout": "grid", "theme": "dark"}`],
+  [Tags], [`{"tags": ["GraphQL", "API", "Tutorial"]}`],
+  [Autor], [Referência via `entry_relations`]
 )
 
-Onde entrada uuid-123 possui `locale='pt'` e uuid-456 possui `locale='en'`, ambas compartilhando mesmo `defaultLocale`. Esta estrutura permite índices de busca textual eficientes e filtros por idioma através da tabela `entries`.
-#linebreak()
-*Campo Configurações (Estrutura JSON)*: Armazenado em `entry_json_data` com `valueType='json'`:
-
-#table(
-  columns: 4,
-  [*entry_id*], [*field_id*], [*value_type*], [*value*],
-  [uuid-123], [uuid-67], [json], [`{"layout":"grid","theme":"dark"}`]
-)
-
-O banco de dados pode executar consultas dentro da estrutura JSON usando operadores nativos, como filtrar artigos por `theme='dark'`.
-#linebreak()
-*Campo Tags (Lista de Strings)*: Utiliza `entry_json_data` com `valueType='text_list'`:
-
-#table(
-  columns: 4,
-  [*entry_id*], [*field_id*], [*value_type*], [*value*],
-  [uuid-123], [uuid-78], [text_list], [`["GraphQL","API","Tutorial"]`]
-)
-#linebreak()
-*Campo Autor (Relacionamento Tipado)*: Armazenado em `entry_relations` com integridade referencial:
-
-#table(
-  columns: 3,
-  [*from_entry_id*], [*field_id*], [*to_entry_id*],
-  [uuid-123], [uuid-89], [uuid-user-456]
-)
-
-Relacionamentos preservam integridade através de foreign keys em cascata e permitem consultas que atravessam múltiplas coleções via SQL joins ou resolvers GraphQL aninhados.
+O banco executa consultas dentro da estrutura JSON usando operadores nativos e stored procedures customizadas, como filtrar artigos por `theme='dark'` ou `title eq 'Hello'`.
 
 === Tabelas de Segurança e Controle de Acesso
 
@@ -600,7 +564,7 @@ O processo de autorização segue uma sequência bem definida que balanceia segu
 - Produz veredicto final: ALLOW, DENY ou NOT_APPLICABLE
 #linebreak()
 *5. Armazenamento*: A decisão é armazenada em duas localizações:
-- Cache em memória para otimizar requisições futuras idênticas
+- Cache em banco de dados PostgreSQL (tabela `abac_evaluation_cache`) para otimizar requisições futuras idênticas, com invalidação automática baseada em mudanças de políticas
 - Tabela de auditoria permanente com timestamp, contexto completo e justificativa
 #linebreak()
 *6. Aplicação (PEP)*: O _Policy Enforcement Point_ aplica o veredicto:
@@ -612,66 +576,46 @@ Métricas típicas de performance: avaliação com cache em menos de 5ms, avalia
 
 == APIs e Protocolos de Comunicação
 
-O sistema oferece duas interfaces de comunicação complementares, cada uma otimizada para casos de uso específicos.
+O sistema é *exclusivamente GraphQL* para todas as operações de conteúdo, autenticação, autorização e administração. Não existe API REST para CRUD de conteúdo, gerenciamento de sessões, ou administração de políticas.
 
-=== API REST
+=== Endpoints Não-GraphQL
 
-Implementada para operações onde simplicidade e compatibilidade são prioritárias:
+Quatro rotas auxiliares mapeadas via `app.MapPost`/`app.MapGet` complementam o endpoint GraphQL:
 #linebreak()
-*Autenticação* (`/auth`): _Login_, _logout_, _refresh_ de _tokens_ e recuperação de senha.
+*_Assets_* (`POST /assets/upload`, `GET /assets/{id}`): Envio e download de arquivos binários. A natureza multipart e necessidade de transmissão em tempo real justificam endpoints HTTP diretos sobre GraphQL.
 #linebreak()
-*_Assets_* (`/assets`): Envio, _download_ e transmissão de arquivos multimídia. A natureza binária e necessidades de transmissão em tempo real justificam REST sobre GraphQL.
+*Documentação de Schema* (`GET /llms.md`): Geração automática de documentação Markdown do schema GraphQL para consumo por LLMs e desenvolvedores.
 #linebreak()
-*Convenções*:
-- Métodos HTTP semânticos (GET, POST, PUT/PATCH, DELETE)
-- Status codes consistentes (2xx sucesso, 4xx erro cliente, 5xx erro servidor)
-- Content-Type apropriado (multipart/form-data para uploads, application/json para metadados)
+*Health Check* (`GET /healthcheck`): Verificação rápida de disponibilidade do serviço, retornando `healthy`.
 
-=== API GraphQL
+=== API GraphQL — Interface Principal e Única
 
-Interface principal do sistema, oferecendo flexibilidade superior conforme discutido no referencial teórico.
+Todas as operações do sistema transitam pelo endpoint `/graphql` via Hot Chocolate 14+.
 #linebreak()
-*_Design_ do Esquema*: _Queries_ e _mutations_ estruturadas para eliminar necessidade de _joins_ manuais pelo cliente.
+*Autenticação*: Login, logout, refresh de tokens e gerenciamento de sessões são implementados como mutations GraphQL (`auth.login`, `auth.refresh`, `auth.logout`, `auth.logoutAll`), não como endpoints REST. Tokens de acesso JWT (RS256, TTL 15 minutos) e refresh tokens (TTL 30 dias, single-use) são gerenciados integralmente via GraphQL.
 #linebreak()
-*_Union Types_ para Flexibilidade*: Utilização de _Union Types_ para representar diferentes tipos de campos (`FieldValue`), mantendo _type safety_ para diferentes estruturas de dados:
+*CRUD de Conteúdo*: Criação, leitura, atualização, deleção, publicação e arquivamento de entradas são mutations GraphQL dinâmicas, geradas em tempo de execução pelo `CollectionTypeModule` baseado nos metadados das coleções.
 #linebreak()
-```graphql
-union FieldValue = Text | TypstText | Asset | BooleanValue | 
-                   NumberValue | DateTime | RichText | Json | Relation
-```
+*Administração ABAC*: Criação, modificação e atribuição de políticas e regras são mutations GraphQL sob a namespace `policies`.
 #linebreak()
-*Sistema de filtragem*: Filtros específicos por tipo implementando os operadores discutidos no referencial teórico:
-- Texto: `contains`, `startsWith`, `endsWith`, `equals`
-- Numérico: `gt`, `gte`, `lt`, `lte`, `equals`
-- Data: `before`, `after`, `equals`
-- Booleano: `equals`
+*_Design_ do Esquema*: _Queries_ e _mutations_ estruturadas para eliminar necessidade de _joins_ manuais pelo cliente. O schema é gerado dinamicamente em tempo de execução: para cada coleção definida no banco de dados, o sistema cria tipos de dados (`BlogPostEntryData`), tipos de entrada (`BlogPostEntry`), inputs de filtro (`BlogPostEntryFilterInput`), inputs de ordenação (`BlogPostEntrySortInput`) e mutations (`blogPosts.create`, `blogPosts.update`, etc.).
+#linebreak()
+*Sistema de Filtragem*: Filtros específicos por tipo implementando operadores que se traduzem diretamente para SQL via funções de banco (`cms_extract_text`, `cms_extract_number`, `cms_extract_boolean`, `cms_extract_datetime`):
+- Texto: `contains`, `startsWith`, `endsWith`, `eq`
+- Numérico: `gt`, `gte`, `lt`, `lte`, `eq`
+- Data: `before`, `after`, `eq`
+- Booleano: `eq`
 - Relacionamentos: `exists`, `in`, `notIn`
 #linebreak()
 *Otimizações*:
-- _Resolvers_ aplicam filtros diretamente no banco via SQL otimizado
+- _Resolvers_ aplicam filtros diretamente no banco via SQL otimizado, traduzindo LINQ composta em query única
 - _Cursor-based pagination_ para conjuntos de dados grandes
 - Ordenação multi-campo
-
-Exemplo de query combinando metadados de coleção com filtragem de conteúdo:
-
-```graphql
-query ($name: String!, $fieldName: String!) {
-  collection(name: $name) {
-    name
-    fields { name dataType }
-    entries {
-      name
-      field(name: $fieldName, filter: { text: { eq: "value" } }) {
-        ... on Text { text }
-      }
-    }
-  }
-}
-```
+- Análise de complexidade de query com limites de profundidade (máx. 15) e custo de campo (máx. 20.000)
 
 *Integração com ABAC*:
 - _Higher-order functions_ protegendo _resolvers_ automaticamente
-- Filtragem de resultados baseada em permissões do usuário
+- Filtragem de resultados baseada em permissões do usuário (row-level filtering via `[UseAbacRowCheck]`)
 - Controle _field-level_ impedindo acesso a campos restritos
 - _Error handling_ padronizado para autenticação e autorização
 
@@ -791,4 +735,347 @@ Este projeto documenta o design conceitual do sistema, mantendo-se agnóstico a 
 *Banco de Dados*: Índices estratégicos para consultas e filtragem de conteúdo. _Connection pooling_ otimizado. _Prepared statements_ para _queries_ frequentes.
 #linebreak()
 *GraphQL*: _DataLoader_ eliminando problema N+1 em consultas relacionadas. _Query complexity analysis_ prevenindo _queries_ abusivas. _Cache_ de _schemas_.
+
+
+// ================================
+// CAPÍTULO 4 - IMPLEMENTAÇÃO
+// ================================
+
+#pagebreak()
+
+= Implementação
+
+Este capítulo apresenta a realização concreta do sistema TechtonicCMS, articulando as decisões de design do Capítulo 3 com o código-fonte de produção. Todas as referências são aos arquivos do repositório API (`/tmp/techtoniccms-api/`, commit `935083f`) e App (`techtoniccms-app/`, commit `505bdc9`). O foco recai sobre a camada API — a interface GraphQL que constitui o contrato externo primário do sistema — pois é onde as contribuições deste trabalho (geração dinâmica de schemas e autorização ABAC) se manifestam em código de produção.
+
+Uma decisão arquitetural fundamental que permeia toda a implementação é a ausência de API REST para operações de conteúdo, autenticação e autorização. O sistema é *exclusivamente GraphQL*: todas as operações de CRUD, autenticação, gerenciamento de sessões e administração de políticas transitam pelo endpoint `/graphql`. Os únicos endpoints não-GraphQL são quatro rotas auxiliares mapeadas via `app.MapPost`/`app.MapGet`: upload de assets (`POST /assets/upload`), download de assets (`GET /assets/{id}`), documentação de schema (`GET /llms.md`) e health check (`GET /healthcheck`).
+
+== Stack Tecnológico
+
+A #linebreak() escolha das tecnologias seguiu o princípio de adequação às restrições do problema: tipagem estática para correção em schemas dinâmicos, banco relacional com suporte nativo a JSON para armazenamento híbrido, e cache em memória para sessões e decisões ABAC.
+
+#table(
+  columns: 4,
+  [*Domínio*], [*Tecnologia*], [*Versão*], [*Função*],
+  [Runtime], [.NET], [10], [Plataforma de hospedagem],
+  [GraphQL], [Hot Chocolate], [14+], [Motor de schema, sistema de tipos, resolvers],
+  [ORM], [Entity Framework Core], [9+], [Acesso a dados, migrations, mapeamento JSONB],
+  [Banco de Dados], [PostgreSQL], [15+], [Store relacional, JSONB, enums nativos],
+  [Cache / Sessões], [Redis], [7+], [Armazenamento de sessões, tokens de refresh],
+  [Armazenamento Binário], [S3-compatível (MinIO)], [—], [Persistência de assets],
+  [Autenticação], [JWT RSA (RS256)], [—], [Tokens de acesso + refresh],
+  [Hash de Senha], [Argon2id + SHA256 fallback], [—], [Migração transparente de hashes legados],
+  [Benchmarks], [BenchmarkDotNet], [0.14+], [Micro-benchmarks],
+  [Teste de Carga], [K6], [—], [Testes HTTP de throughput]
+)
+
+A interface administrativa é implementada em SvelteKit com TypeScript, Tailwind CSS v4 e shadcn-svelte. O GraphQL Code Generator produz documentos tipados a partir do schema dinâmico. O caso de uso consumidor (blog) utiliza Astro com server-side rendering e um content loader customizado.
+
+== Bootstrap da Aplicação e Pipeline de Middleware
+
+=== Registro de Serviços
+
+O ponto de entrada `Program.cs` configura o contêiner de DI do ASP.NET Core e o pipeline de middleware:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Fábrica de DbContext (pooled)
+builder.Services.AddPooledDbContextFactory<TechtonicCmsDbContext>(
+    options => options.UseNpgsql(connectionString));
+
+// Redis e serviços singleton
+builder.Services.AddSingleton<RedisService>();
+builder.Services.AddSingleton<CollectionTypeModule>();
+builder.Services.AddScoped<SessionService>();
+
+// Serviços de autenticação (scoped)
+builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AbacService>();
+builder.Services.AddScoped<S3Service>();
+builder.Services.AddScoped<ApiKeyService>();
+
+// Servidor GraphQL
+builder.AddGraphQL()
+    .DisableIntrospection(false)
+    .ModifyCostOptions(options => {
+        options.MaxFieldCost = 20000;
+        options.MaxTypeCost = 1000;
+    })
+    .AddMaxExecutionDepthRule(15)
+    .AddAuthorization()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting()
+    .AddPagingArguments()
+    .ModifyOptions(o => { o.EnableOneOf = true; })
+    .ModifyRequestOptions(options => {
+        options.IncludeExceptionDetails = builder.Environment.IsDevelopment();
+    })
+    .AddTypeModule<CollectionTypeModule>()
+    .TryAddTypeInterceptor<CollectionConnectionTypeInterceptor>()
+    .AddTypes();
+
+// Handler de autorização ABAC
+builder.Services.AddScoped<
+    Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
+    AbacAuthorizationHandler>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHostedService<SchedulerService>();
+```
+
+Decisões arquiteturais notáveis: `AddPooledDbContextFactory` fornece instâncias pooled de `DbContext`; `CollectionTypeModule` é registrado via `AddTypeModule`, ponto de extensão do Hot Chocolate para registro dinâmico de tipos; `AbacService` é scoped pois recebe `TechtonicCmsDbContext` diretamente; `MaxExecutionDepthRule(15)` previne negação de serviço por queries profundamente aninhadas; `ModifyCostOptions` estabelece limites de complexidade de query (custo máximo de campo 20.000, custo máximo de tipo 1.000).
+
+=== Pipeline de Middleware e Fluxo de Requisição
+
+```csharp
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope()) {
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<TechtonicCmsDbContext>();
+    dbContext.Database.Migrate();
+    // ... bootstrap seeding
+}
+
+app.UseSecurityHeaders();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapAssetEndpoints();
+app.MapLlmsEndpoints();
+app.MapGraphQL().RequireRateLimiting("GeneralApi");
+app.MapGet("/healthcheck", () => Results.Ok("healthy"));
+
+app.RunWithGraphQLCommands(args);
+```
+
+O fluxo de requisição GraphQL segue oito estágios: (1) recepção HTTP pelo ASP.NET Core; (2) adição de headers de segurança; (3) rate limiting (`GeneralApi`: 1.000 req/min, `Login`: 10 req/min); (4) autenticação via scheme `MultiAuth` que encaminha para `JwtBearer` ou `ApiKey`; (5) validação de sessão JWT contra Redis; (6) autorização via `[Authorize]` e políticas ASP.NET Core; (7) execução GraphQL por Hot Chocolate; (8) avaliação ABAC dentro dos resolvers.
+
+== Camada de Banco de Dados
+
+=== DbContext e Modelo de Entidades
+
+O `TechtonicCmsDbContext` (`Contexts/TechtonicCmsDbContext.cs`) configura o EF Core com enums nativos do PostgreSQL, funções de banco para extração JSONB, e comportamentos de soft-delete.
+
+O sistema utiliza 17 tabelas com 12 enums nativos do PostgreSQL. O schema completo encontra-se no diagrama ER (Apêndice A), gerado a partir das anotações `[Table]`, `[Column]`, `[Index]` e `[ForeignKey]` das classes de entidade. O mapeamento é direto: C\# enums são traduzidos para `CREATE TYPE` do PostgreSQL via `modelBuilder.HasPostgresEnum<T>()`, conferindo type safety a nível de banco.
+
+=== Armazenamento JSONB e Tradução de Queries
+
+A entidade `Entry` armazena conteúdo dinâmico em uma única coluna `jsonb`:
+
+```csharp
+public class Entry {
+    [Key] public required Guid Id { get; set; }
+    public required Guid CollectionId { get; set; }
+    public required string Name { get; set; } = null!;
+    public string? Slug { get; set; }
+    public required EntryStatus Status { get; set; }
+    public required Locale Locale { get; set; }
+    public required Locale DefaultLocale { get; set; }
+    public required Guid CreatedBy { get; set; }
+    public required DateTime CreatedAt { get; set; }
+    public required DateTime UpdatedAt { get; set; }
+    public DateTime? PublishedAt { get; set; }
+    public required JsonDocument Data { get; set; }  // JSONB
+    public ICollection<EntryRelation> FromRelations { get; set; } = [];
+    public ICollection<EntryRelation> ToRelations { get; set; } = [];
+}
+```
+
+A propriedade `Data` é `JsonDocument`, serializando para PostgreSQL `jsonb`. Todos os valores de campos dinâmicos — texto, números, booleanos, datas, objetos — residem nesta coluna. A tabela `Field` define quais campos existem para cada coleção e seus tipos, mas os valores concretos habitam `Entry.Data`.
+
+Para permitir filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL:
+
+```csharp
+public static class CmsDbFunctions {
+    public static string? CmsExtractText(JsonDocument data, string fieldName)
+        => throw new NotSupportedException();
+    public static bool? CmsExtractBoolean(JsonDocument data, string fieldName)
+        => throw new NotSupportedException();
+    public static double? CmsExtractNumber(JsonDocument data, string fieldName)
+        => throw new NotSupportedException();
+    public static DateTime? CmsExtractDateTime(JsonDocument data, string fieldName)
+        => throw new NotSupportedException();
+}
+```
+
+Quando a query LINQ `CmsDbFunctions.CmsExtractText(e.Data, "title") == "Hello"` é traduzida para SQL, torna-se `WHERE cms_extract_text(e."Data", 'title') = 'Hello'`. Isso permite filtragem em campos dinâmicos no banco, sem carregar todas as entradas em memória. O caminho de tradução é: árvore de expressões LINQ → pipeline EF Core → tradução PostgreSQL → execução com possível índice GIN.
+
+=== Relacionamentos entre Entradas
+
+Relacionamentos entre entradas utilizam tabela de junção com restrição de unicidade por campo:
+
+```csharp
+modelBuilder.Entity<EntryRelation>(e => {
+    e.HasIndex(r => new { r.EntryId, r.FieldId }).IsUnique();
+    e.HasOne(r => r.Entry)
+        .WithMany(en => en.FromRelations)
+        .HasForeignKey(r => r.EntryId)
+        .OnDelete(DeleteBehavior.Cascade);
+    e.HasOne(r => r.TargetEntry)
+        .WithMany(en => en.ToRelations)
+        .HasForeignKey(r => r.TargetEntryId)
+        .OnDelete(DeleteBehavior.Cascade);
+});
+```
+
+O índice único em `(EntryId, FieldId)` impõe que cada campo em uma entrada tenha no máximo um alvo de relacionamento. Essa decisão simplifica o sistema de tipos GraphQL: um campo de relacionamento retorna uma única entrada relacionada, não uma lista.
+
+== API GraphQL
+
+A API GraphQL é a interface exclusiva de conteúdo e autenticação. Todas as operações — CRUD de conteúdo, autenticação, gerenciamento de autorização, metadados de assets — transitam pelo endpoint `/graphql`.
+
+=== Arquitetura do Sistema de Tipos Hot Chocolate
+
+O Hot Chocolate 14+ implementa um pipeline de três fases: (1) *Discovery* — módulos `ITypeModule` (como `CollectionTypeModule`) são invocados via `RegisterTypesAsync()`, retornando instâncias `TypeSystemObjectBase`; (2) *Completion* — tipos descobertos são completados, campos resolvidos, referências ligadas; (3) *Merge* — tipos completados são fundidos em `ISchema`, cacheada por `IRequestExecutorResolver`.
+
+O `CollectionTypeModule` implementa `TypeModule`, ponto de extensão para registro dinâmico de tipos em tempo de execução. Diferentemente de definições estáticas (classes C\# com `[ObjectType]`), o módulo constrói tipos dinamicamente a partir de metadados do banco de dados.
+
+=== Pipeline de Geração de Schema
+
+A geração de schema em tempo de execução é implementada em `CollectionTypeModule.cs`. O módulo utiliza `ObjectType.CreateUnsafe` e objetos `ObjectTypeDefinition` brutos, pois os tipos não são conhecidos em tempo de compilação.
+
+Para cada coleção no banco de dados, o módulo executa um algoritmo de geração com complexidade $O(n dot m)$, onde $n$ é o número de coleções e $m$ é o número médio de campos por coleção. O processo constrói: (1) mapa de tipos `ToPascalCase(slug)` → nome de tipo; (2) definição de tipo de dados com campos escalares (resolvers de dicionário) e relacionamentos (resolvers de banco); (3) definição de tipo de entrada com campos estáticos (`id`, `name`, `slug`, `status`, `data`); (4) campos de query com resolvers `IQueryable<Entry>`; (5) definições de input para filtros e ordenação; (6) mutations para create, update, delete, publish, unpublish, archive, restore.
+
+O tipo de dados usa `Dictionary<string, object>` como tipo runtime. Quando o resolver do campo `data` executa, desserializa o JSONB em dicionário e o injeta como objeto pai. Campos escalares resolvem via lookup no dicionário; campos de relacionamento executam query na tabela `EntryRelations`. A injeção de `__entryId` é uma decisão crítica: torna o ID da entrada disponível a resolvers aninhados de relacionamento, que precisam dele para consultar `EntryRelations`.
+
+#figure(
+  mermaid("classDiagram\n    class AbacService {\n        +CheckPermissionAsync(userId, resource, action, resourceData) bool\n        +RequirePermissionAsync(userId, resource, action, resourceData) void\n        +IsRestrictedToOwnResourcesAsync(userId, resource, action) bool\n        -GetApplicablePoliciesAsync(userId, resource, action) List~AbacPolicy~\n        -EvaluatePolicyRulesAsync(policy, context) bool\n        -LookupCacheAsync(userId, resource, resourceId, action) bool?\n        -WriteCacheAsync(...) void\n        -WriteAuditAsync(...) void\n    }\n\n    class AuthService {\n        +GenerateAccessTokenAsync(userId, name, status) (string, string)\n        +GenerateRefreshTokenAsync(userId, sessionId) string\n        +ValidateAccessToken(token) ClaimsPrincipal\n        +ValidateRefreshToken(token) ClaimsPrincipal\n    }\n\n    class SessionService {\n        +CreateSessionAsync(sessionId, userId, name, status) SessionData\n        +GetSessionAsync(sessionId) SessionData?\n        +DeleteSessionAsync(sessionId, userId) void\n        +DeleteAllUserSessionsAsync(userId) void\n    }\n\n    class PasswordService {\n        +HashPassword(password) string\n        +VerifyPassword(password, existingHash) (bool, string?)\n        +ValidatePasswordStrength(password) void\n    }\n\n    class CollectionTypeModule {\n        +RegisterTypesAsync(context, cancellationToken) IEnumerable~TypeSystemObjectBase~\n        -BuildCollectionTypeMap(collections) Dictionary\n        -BuildQueryTypesAsync(...) void\n        -BuildMutationTypes(collections, types) void\n    }\n\n    class CollectionConnectionTypeInterceptor {\n        +OnAfterCompleteType(context, definition) void\n        -BuildConnectionTypes(...) (ObjectTypeDefinition, ObjectTypeDefinition)\n    }\n\n    AbacService --> AuthService : uses for identity\n    AuthService --> SessionService : manages sessions\n    CollectionTypeModule --> CollectionConnectionTypeInterceptor : coordinates\n"),
+  caption: [Diagrama de classes — serviços core do TechtonicCMS]
+) <fig-class-diagram>
+
+#align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
+
+=== Autenticação via GraphQL
+
+Todas as operações de autenticação são mutations e queries GraphQL. Não existem endpoints REST de autenticação.
+
+As mutations de autenticação (`Types/Auth/AuthMutations.cs`) expõem: `login(name, password)`, `refresh(refreshToken)`, `logout`, `logoutAll`. O fluxo de login realiza: busca do usuário por nome; verificação de senha via Argon2id (ou SHA256 para hashes legados, com migração transparente); validação de status (`Inactive` ou `Banned` causam revogação de todas as sessões e erro); geração de token de acesso JWT (RS256, TTL 15 minutos) com `sub` = sessionId; geração de token de refresh (TTL 30 dias); criação de sessão no Redis.
+
+Tokens de acesso usam RS256 (RSA + SHA256). A estrutura JWT segue a RFC 7519, com claims: `sub` (session ID, não user ID — permitindo revogação per-session), `userId`, `name`, `status`, `iss`, `aud`, `iat`, `exp`, `jti`. O `ClockSkew = TimeSpan.Zero` na validação assegura que tokens expiram exatamente no tempo `exp`, sem tolerância.
+
+Tokens de refresh possuem a mesma estrutura com claim adicional `type: "refresh"`. São armazenados no Redis com TTL de 30 dias e são *single-use*: ao serem utilizados, são imediatamente deletados e substituídos por um novo, prevenindo ataques de replay.
+
+Sessões são armazenadas no Redis com dois padrões de chave: `session:{sessionId}` (string serializada com TTL 15 min) e `user:sessions:{userId}` (set Redis com todos os IDs de sessão ativos). As operações `CreateSessionAsync` e `DeleteSessionAsync` usam `IDatabase.CreateBatch()` para atomicidade de multi-key.
+
+=== Integração ABAC nos Resolvers
+
+A autorização ABAC opera em três níveis: (1) *Checks inline* — resolvers chamam `AbacService.RequirePermissionAsync` com contexto de recurso; (2) *Atributos declarativos* — `[AbacRequirePermission]` realiza verificação coarse-grained antes da execução do resolver; (3) *Filtragem row-level* — `[UseAbacRowCheck]` intercepta o resultado do resolver e injeta cláusula `Where` via árvore de expressões.
+
+A construção AST para row-level filtering usa reflection e expression trees: `Expression.Parameter(entityType, "x")` cria parâmetro; `Expression.Property(param, "CreatedBy")` acessa propriedade; `Expression.Constant(userId)` cria constante; `Expression.Equal` compara; `Expression.Lambda` fecha; `Queryable.Where<T>(queryable, lambda)` aplica. O EF Core traduz para SQL `WHERE "CreatedBy" = 'user-id'`.
+
+=== Execução de Query e Tradução LINQ-to-SQL
+
+Uma query GraphQL completa flui por múltiplas camadas de transformação antes de tornar-se SQL. Considerando:
+
+```graphql
+query {
+  collections {
+    entries {
+      blogPosts(where: { data: { title: { eq: "Hello" } } }, first: 10) {
+        edges { node { id name data { title } } }
+      }
+    }
+  }
+}
+```
+
+O pipeline: (1) documento GraphQL → AST Hot Chocolate; (2) validação de schema; (3) execução do resolver `blogPosts` retornando `IQueryable<Entry>`; (4) filtro row-level via `[UseAbacRowCheck]` se restrito; (5) filtro de coleção `Where(e => e.CollectionId == id)`; (6) `UseFiltering` parseia `where` e compõe `CmsDbFunctions.CmsExtractText(e.Data, "title") == "Hello"`; (7) `UseSorting` compõe `OrderBy`; (8) `UsePaging` compõe `Skip`/`Take`; (9) EF Core traduz a query composta para SQL único; (10) Hot Chocolate monta a conexão com `edges`, `nodes` e `pageInfo`.
+
+A propriedade fundamental é que todo o pipeline (autorização, filtragem, ordenação, paginação) é expresso como query LINQ única composta, traduzida para SQL único. Nenhum dado é materializado em memória até a projeção final.
+
+== Motor ABAC
+
+O motor ABAC (`Services/AbacService.cs`, ~700 linhas) implementa a arquitetura NIST SP 800-162 com quatro componentes: PAP, PDP, PIP e PEP.
+
+=== Modelo Formal
+
+O sistema implementa controle de acesso baseado em atributos como função de decisão:
+
+$D = text{"Decide"}(u, r, a, text{"ctx"})$
+
+Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $text{"ctx"}$ é o contexto de avaliação, e $D in {text{"Allow"}, text{"Deny"}}$. A função implementa combinação *deny-overrides*:
+
+$D = cases(
+  text{"Deny"} & "se" exists p in P_text{"deny"} : text{"Eval"}(p, text{"ctx"}) = text{"true"},
+  text{"Allow"} & "se" exists p in P_text{"allow"} : text{"Eval"}(p, text{"ctx"}) = text{"true"},
+  text{"Deny"} & "caso contrário (negar por padrão)"
+)$
+
+=== Policy Information Point (PIP)
+
+O método `BuildContextAsync` coleta atributos de múltiplas fontes: claims do token (ID, nome, status); roles do usuário via join `user_roles` + `roles` com expiração; contexto HTTP (IP, user-agent); e atributos do recurso passados pelo resolver. O contexto resultante é um dicionário flat de pares atributo-valor.
+
+=== Policy Decision Point (PDP)
+
+O algoritmo `CheckPermissionAsync` executa em seis fases: (1) resolve ID do recurso; (2) consulta cache (query indexada em `(UserId, ResourceType, ResourceId, ActionType)`); (3) se cache miss, busca políticas aplicáveis (via roles do usuário e políticas diretas); (4) ordena deny policies por prioridade descendente e avalia — match em deny policy causa negação imediata; (5) se não houver deny, ordena allow policies e avalia — match causa permissão; (6) se nenhuma allow policy corresponder, nega por padrão. Cada decisão é auditada com timestamp, contexto, políticas avaliadas, justificativa e métrica de tempo.
+
+A complexidade temporal sem cache é $O(p dot q)$, onde $p$ é o número de políticas aplicáveis e $q$ é o número médio de regras por política. Com cache hit: $O(1)$.
+
+=== Cache de Avaliação em Banco de Dados
+
+O cache é persistido em PostgreSQL (tabela `abac_evaluation_cache`), não em memória, possibilitando persistência across restarts e compartilhamento entre réplicas da API. A chave de cache é hash SHA256 determinístico do contexto: $text{"cacheKey"} = text{"SHA256"}(text{"userId"} : text{"resourceType"} : text{"resourceId"} : text{"action"})$.
+
+A invalidação de cache utiliza a estratégia *lazy* via campo `PolicyVersions`: string concatenando pares `(PolicyId:UpdatedAt)` de todas as políticas contribuintes. Quando uma política é modificada, seu `UpdatedAt` muda, a string `currentVersions` deixa de corresponder a `cached.PolicyVersions`, e a entrada é descartada na próxima leitura. TTL diferenciado: 5 minutos para decisões Allow, 2 minutos para Deny.
+
+=== Auditoria
+
+Toda decisão de autorização é persistida em `abac_audit`. O schema de auditoria inclui: usuário, recurso, ação, decisão, políticas avaliadas, políticas correspondentes, justificativa, tempo de avaliação em ms, contexto completo serializado como JSON, IP, user-agent e timestamp. A operação de escrita de auditoria está envolta em `try/catch`: falhas de auditoria nunca bloqueiam a decisão de autorização.
+
+=== Probe de Filtragem Row-Level
+
+`IsRestrictedToOwnResourcesAsync` determina se filtragem é necessária criando um recurso sintético com owner ID aleatório e avaliando `CheckPermissionAsync`. Se o veredicto for `false`, o usuário está restrito a recursos próprios; se `true`, tem acesso irrestrito.
+
+== Segurança
+
+=== Headers de Segurança
+
+`SecurityHeadersMiddleware` adiciona: `X-Content-Type-Options: nosniff` (prevenção de MIME sniffing); `X-Frame-Options: DENY` (prevenção de clickjacking); `Referrer-Policy: strict-origin-when-cross-origin` (limitação de vazamento de referrer); `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` (forçamento de HTTPS).
+
+=== Armazenamento e Hash de Senha
+
+`PasswordService` utiliza Argon2id com parâmetros OWASP 2023: tipo `DataIndependentAddressing` (Argon2id), versão 0x13, `TimeCost = 3`, `MemoryCost = 65536` (64 MB), `Lanes = 4`, `Threads = 4`, `HashLength = 32`, salt de 16 bytes via `RandomNumberGenerator.GetBytes(16)`. A verificação retorna `(isValid, newHash)`: se o hash armazenado for SHA256 legado (64 hex chars), `newHash` conterá o hash Argon2id para migração transparente.
+
+Validação de força de senha exige mínimo 12 caracteres, excedendo recomendações NIST SP 800-63B (8 caracteres) e alinhando-se a práticas modernas.
+
+=== Rate Limiting
+
+Três tiers: Login (janela fixa, 10 req/min, fila 0), Upload (token bucket, 10 tokens, 5/min refill, fila 0), General API (janela fixa, 1000 req/min, fila 0). `QueueLimit = 0` garante rejeição imediata com 429, prevenindo exaustão de recursos por requests enfileirados.
+
+=== Modelo de Ameaças
+
+#table(
+  columns: 3,
+  [*Ameaça*], [*Mitigação*], [*Implementação*],
+  [Credential stuffing], [Rate limiting + Argon2id], [10 tentativas/min; 64MB memory cost],
+  [Sequestro de sessão], [TTL curto + revogação per-session], [Tokens 15min; sessões em Redis com revogação instantânea],
+  [Replay de token], [Refresh tokens single-use], [Deletado após primeiro uso],
+  [Injeção SQL], [Queries parametrizadas], [Todas as queries via EF Core],
+  [ReDoS], [Timeout em regex], [1 segundo em todas as avaliações regex],
+  [DoS por complexidade de query], [Limite de profundidade + análise de custo], [Max depth 15; max field cost 20.000],
+  [Clickjacking], [X-Frame-Options], [DENY em todas as respostas],
+  [MIME sniffing], [X-Content-Type-Options], [nosniff em todas as respostas],
+  [Man-in-the-middle], [HSTS], [max-age 1 ano com preload],
+  [Ameaça interna], [Auditoria ABAC completa], [Toda decisão logada com contexto],
+  [Exposição de API key], [Armazenamento hash-only], [Apenas SHA256 armazenado; prefixo para identificação]
+)
+
+== Frontend
+
+A interface administrativa (`techtoniccms-app/`) é SvelteKit com TypeScript. Funções `load` server-side utilizam wrapper `query()` com GraphQL Client. O módulo `permissions.ts` espelha a lógica ABAC do servidor para gating de UI: `canManagePolicies` verifica roles e políticas do usuário. O componente `entry-editor.svelte` renderiza formulários dinamicamente a partir das definições de campos da coleção: `Text` → `Input`, `Boolean` → `Switch`, `Number` → `Input type="number"`, `DateTime` → `DatePicker`, `Relation` → `RelationPicker`, `Asset` → `AssetUploader`.
+
+== Caso de Uso: Blog
+
+O blog (`techtoniccms-blog/`) é Astro SSR. O `techtonicPostsLoader` implementa `LiveLoader` do Astro, consumindo a API GraphQL com autenticação via API Key (`X-Api-Key`). O proxy de assets (`/assets/{id}`) adiciona headers `Cache-Control: public, max-age=3600, immutable`.
+
+== Benchmarks
+
+O arquivo `Benchmarks.cs` implementa cinco benchmarks BenchmarkDotNet: (1) cache hit vs. miss; (2) escalabilidade por contagem de políticas (1, 5, 10, 25, 50); (3) overhead de filtro row-level (baseline vs. unrestricted vs. restricted); (4) tempo de decisão deny vs. allow; (5) custo de auditoria. O script K6 `schema-generation-benchmark.js` mede performance HTTP com estágios de carga (10→50 usuários concorrentes) e thresholds `p(95)<500ms`.
+
+== DevOps e Deployment
+
+O Dockerfile usa multi-stage build com usuário non-root (UID 10001, conforme CIS Docker Benchmark v1.6.0). O bootstrap de startup executa `Database.Migrate()` e seeding via `AdminBootstrapService`, `PolicyBootstrapService` e `RoleBootstrapService`.
 

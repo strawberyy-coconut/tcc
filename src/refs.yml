@@ -537,3 +537,125 @@ joomla2024docs:
   url: https://docs.joomla.org/
   date: 2024
   note: "Acesso em: 10 nov. 2025"
+# Referências sobre tecnologias de implementação
+
+efcore2024docs:
+  type: web
+  title: "Entity Framework Core: Modern Object-Relational Mapper for .NET"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/ef/core/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+hotchocolate2024docs:
+  type: web
+  title: "Hot Chocolate: GraphQL Server for .NET"
+  author: ChilliCream
+  url: https://chillicream.com/docs/hotchocolate/v14
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+biryukov2015argon2:
+  type: report
+  title: "Argon2: The memory-hard function for password hashing and proof-of-work applications"
+  author:
+    - Biryukov, Alex
+    - Dinu, Daniel
+    - Khovratovich, Dmitry
+  organization: Password Hashing Competition
+  date: 2015
+  url: https://password-hashing.net/
+  note: "Acesso em: 05 mai. 2026"
+
+sveltekit2024docs:
+  type: web
+  title: "SvelteKit: Web development, streamlined"
+  author: Svelte Team
+  url: https://kit.svelte.dev/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+astro2024docs:
+  type: web
+  title: "Astro: The web framework for content-driven websites"
+  author: Astro Team
+  url: https://astro.build/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+benchmarkdotnet2024docs:
+  type: web
+  title: "BenchmarkDotNet: Powerful .NET library for benchmarking"
+  author: .NET Foundation
+  url: https://benchmarkdotnet.org/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+k62024docs:
+  type: web
+  title: "k6: Performance testing for developers"
+  author: Grafana Labs
+  url: https://k6.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+dotnet2024docs:
+  type: web
+  title: ".NET Documentation: Build apps with C#, F#, or Visual Basic"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+redis2024docs:
+  type: web
+  title: "Redis: The open source, in-memory data store"
+  author: Redis Ltd.
+  url: https://redis.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+minio2024docs:
+  type: web
+  title: "MinIO: High Performance Object Storage"
+  author: MinIO Inc.
+  url: https://min.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+tailwindcss2024docs:
+  type: web
+  title: "Tailwind CSS: Rapidly build modern websites"
+  author: Tailwind Labs
+  url: https://tailwindcss.com/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+shadcn2024docs:
+  type: web
+  title: "shadcn/ui: Beautifully designed components"
+  author: shadcn
+  url: https://ui.shadcn.com/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+owasp2023argon2:
+  type: web
+  title: "Password Storage Cheat Sheet: Argon2id"
+  author: OWASP Foundation
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+  date: 2023
+  note: "Acesso em: 05 mai. 2026"
+
+nist2018password:
+  type: report
+  title: "Digital Identity Guidelines: Authentication and Lifecycle Management"
+  author:
+    - Grassi, Paul A.
+    - et al.
+  institution: National Institute of Standards and Technology
+  number: "NIST Special Publication 800-63B"
+  date: 2018-06
+  url: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf
+  note: "Acesso em: 05 mai. 2026"
+
