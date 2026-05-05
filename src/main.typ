@@ -37,8 +37,13 @@ Desenvolver um sistema de gerenciamento de conteúdo headless (CMS Headless) que
 
 === Objetivos Específicos
 
-1. Desenvolver uma interface administrativa web para facilitar o gerenciamento de conteúdo sem necessidade de ferramentas externas
-
++ Especificar e implementar uma arquitetura _headless_ nativa, desacoplada completamente entre _backend_ e _frontend_, utilizando GraphQL como interface exclusiva de comunicação para todas as operações de conteúdo, autenticação e autorização.
++ Projetar e desenvolver um motor de controle de acesso baseado em atributos (ABAC) com suporte a políticas contextuais que avaliem atributos do sujeito, do recurso, da ação e do ambiente, incluindo resolução determinística de conflitos por prioridade, _cache_ persistente de avaliações e auditoria completa das decisões de autorização.
++ Criar um mecanismo de geração dinâmica de _schemas_ GraphQL que reconstrua o contrato da API em tempo de execução a partir das definições de coleções e campos armazenadas em metadados, eliminando a necessidade de recompilação ou reinicialização do serviço.
++ Modelar uma estratégia de armazenamento semi-estruturado unificado utilizando JSONB em banco de dados relacional, eliminando a fragmentação do padrão EAV e viabilizando filtragem, ordenação e paginação a nível de banco através de funções de extração customizadas.
++ Implementar um sistema de autenticação duplo que combine sessões JWT com _refresh tokens_ de uso único para usuários humanos e chaves de API com hash criptográfico para integrações _machine-to-machine_, com armazenamento de sessões em cache em memória para revogação instantânea.
++ Construir uma interface administrativa reativa e adaptativa em SvelteKit que consuma a API GraphQL, gerando formulários e componentes dinamicamente conforme o _schema_ de cada coleção e respeitando as permissões ABAC do usuário autenticado.
++ Validar a arquitetura proposta através de um caso de uso real (blog institucional) que demonstre o consumo multi-canal do conteúdo, comprovando a viabilidade prática da abordagem _API-first_ combinada com controle de acesso granular.
 
 == Metodologia
 
