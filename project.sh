@@ -19,12 +19,14 @@ print_help() {
     echo "Commands:"
     echo "  build       Compile the TCC document once"
     echo "  dev         Watch for changes and auto-compile (development mode)"
+    echo "  diagrams    Compile all Mermaid (.mmd) diagrams to PNG"
     echo "  clean       Remove build artifacts"
     echo "  help        Show this help message"
     echo ""
     echo "Examples:"
     echo "  ./project.sh build    # Compile once"
     echo "  ./project.sh dev      # Start watch mode"
+    echo "  ./project.sh diagrams # Compile Mermaid diagrams"
 }
 
 check_typst() {
@@ -73,6 +75,35 @@ dev() {
     typst watch "$SOURCE_FILE" "$OUTPUT_FILE" --root .
 }
 
+diagrams() {
+    echo "Compiling Mermaid diagrams..."
+
+    local diagram_dir="src/diagramas"
+    local found=0
+
+    for mmd_file in "$diagram_dir"/*.mmd; do
+        if [ -f "$mmd_file" ]; then
+            found=1
+            local basename=$(basename "$mmd_file" .mmd)
+            local output_file="$diagram_dir/$basename.png"
+
+            echo "  -> $mmd_file"
+            if mmdc -i "$mmd_file" -o "$output_file" -p puppeteer-config.json -s 10 -b transparent; then
+                echo "     [SUCCESS] $output_file"
+            else
+                echo "     [ERROR] Failed to compile $mmd_file"
+                exit 1
+            fi
+        fi
+    done
+
+    if [ "$found" -eq 0 ]; then
+        echo "No .mmd files found in $diagram_dir"
+    else
+        echo "[SUCCESS] All diagrams compiled"
+    fi
+}
+
 clean() {
     echo "Cleaning build artifacts..."
 
@@ -93,6 +124,9 @@ case "${1:-}" in
         ;;
     dev|watch)
         dev
+        ;;
+    diagrams)
+        diagrams
         ;;
     clean)
         clean

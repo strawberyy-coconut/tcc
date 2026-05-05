@@ -5,6 +5,21 @@ RUN apk add --no-cache \
     git \
     typst
 
+RUN apk add --no-cache \
+    nodejs \
+    npm \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Install Mermaid CLI globally
+RUN npm install -g @mermaid-js/mermaid-cli
+
 
 
 RUN apk --no-cache add msttcorefonts-installer fontconfig && \

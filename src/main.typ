@@ -404,7 +404,7 @@ O sistema organiza dados em cinco entidades principais de conteúdo:
 A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaque para a coluna de dados semi-estruturados unificada de entradas e a tabela de relacionamentos:
 
 #figure(
-  image("diagramas/database-diagram.svg"),
+  image("diagramas/database-diagram.png"),
   caption: [Diagrama ER do TechtonicCMS — esquema relacional com armazenamento semi-estruturado unificado e relacionamentos ABAC]
 ) <fig-collections-entries>
 
