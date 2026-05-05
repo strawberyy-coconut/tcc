@@ -748,6 +748,71 @@ rfc6585:
   url: https://www.rfc-editor.org/info/rfc6585
   note: "Acesso em: 04 mai. 2026"
 
+levy1994predicate:
+  type: article
+  title: "Query Optimization by Predicate Move-Around"
+  author:
+    - Levy, Alon Y.
+    - Mumick, Inderpal Singh
+    - Sagiv, Yehoshua
+  parent:
+    type: proceedings
+    title: "Proceedings of the 20th International Conference on Very Large Data Bases"
+    publisher: Morgan Kaufmann
+    location: Santiago
+  page-range: 119-130
+  date: 1994
+  url: https://15721.courses.cs.cmu.edu/spring2019/papers/23-optimizer2/hellerstein-sigmod1993.pdf
+  note: "Acesso em: 05 mai. 2026"
+
+zhang2026optimal:
+  type: article
+  title: "Optimal Predicate Pushdown Synthesis"
+  author:
+    - Zhang, Robert
+    - Campbell, Eric Hayden
+    - Tang, Dixin
+    - Dillig, Isil
+  parent:
+    type: periodical
+    title: arXiv preprint
+    volume: "2604.13351"
+  date: 2026
+  url: https://arxiv.org/abs/2604.13351
+  note: "Acesso em: 05 mai. 2026"
+
+edwards2024schema:
+  type: article
+  title: "Schema Evolution in Interactive Programming Systems"
+  author:
+    - Edwards, Jonathan
+    - Petricek, Tomas
+    - van der Storm, Tijs
+    - Litt, Geoffrey
+  parent:
+    type: periodical
+    title: arXiv preprint
+    volume: "2412.06269"
+  date: 2024
+  url: https://arxiv.org/abs/2412.06269
+  note: "Acesso em: 05 mai. 2026"
+
+amareen2026graphqlify:
+  type: article
+  title: "GraphQLify: Automated and Type Safety-Preserving GraphQL API Adoption"
+  author:
+    - Amareen, Saleh
+    - Rahman, Arif
+    - Rahaman, Sazzadur
+    - Bosu, Amiangshu
+  parent:
+    type: periodical
+    title: arXiv preprint
+    volume: "2604.15465"
+  date: 2026
+  url: https://arxiv.org/abs/2604.15465
+  note: "Acesso em: 05 mai. 2026"
+
 rfc6750:
   type: report
   title: "The OAuth 2.0 Authorization Framework: Bearer Token Usage"

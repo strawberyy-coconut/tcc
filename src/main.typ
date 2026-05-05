@@ -276,6 +276,22 @@ Estas abordagens híbridas permitem que sistemas modernos de gerenciamento de co
 
 Sistemas modernos de gerenciamento de conteúdo empregam filas de tarefas assíncronas e serviços de agendamento em _background_ para executar operações pesadas — como publicação programada, arquivamento automático e processamento de mídia — sem bloquear a _thread_ principal da aplicação @prakash2016performance. Este padrão arquitetural viabiliza _workflows_ de conteúdo com transições temporais automáticas, onde o estado de uma entrada pode evoluir de acordo com regras de negócio e horários pré-determinados.
 
+=== Otimização de Consultas por Push-Down de Predicados
+
+A eficiência de consultas em sistemas com schemas dinâmicos depende da capacidade de empurrar condições de filtragem o mais próximo possível da fonte de dados — técnica conhecida como _predicate pushdown_ (empurrar predicado para baixo). Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema traduz os predicados da consulta diretamente para cláusulas nativas do banco de dados, como `WHERE` e `ORDER BY` @levy1994predicate.
+#linebreak()
+A otimização por _predicate move-around_ estende o conceito de _pushdown_ ao permitir que predicados sejam movidos entre blocos de consulta (views e subqueries), ampliando as oportunidades de aplicação de filtros em diferentes partes do grafo de consulta @levy1994predicate. Esta técnica é particularmente relevante em sistemas que gerenciam grandes volumes de dados semi-estruturados, onde a materialização prematura de resultados intermediários comprometeria a performance.
+#linebreak()
+Abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de síntese de programas para gerar planos de execução ótimos, determinando automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta @zhang2026optimal. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
+
+=== Geração Dinâmica de Schemas em APIs
+
+A geração dinâmica de schemas em APIs GraphQL permite que o contrato da interface evolua em tempo real, refletindo as definições de tipos de conteúdo armazenadas em metadados. Diferentemente de APIs estáticas, onde os tipos são definidos em tempo de compilação, sistemas com geração dinâmica consultam o repositório de metadados para construir o schema executável @amareen2026graphqlify.
+#linebreak()
+A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução @amareen2026graphqlify. Técnicas de evolução de schema em sistemas interativos exploram modelos onde as mudanças estruturais são propagadas incrementalmente, minimizando o impacto sobre clientes já conectados @edwards2024schema.
+#linebreak()
+Estas abordagens fundamentam o design de sistemas que permitem aos usuários finais definir novos tipos de conteúdo sem intervenção de desenvolvedores, mantendo a integridade do contrato da API e a performance das consultas.
+
 == Tecnologias de Interface Moderna
 
 As tecnologias de interface modernas representam uma evolução significativa no desenvolvimento de aplicações web, oferecendo diferentes abordagens para gerenciamento de estado e atualização de interfaces de usuário. _Frameworks_ modernos como React @react2024docs, Vue @vue2024docs, Svelte @svelte2024docs e SolidJS @solidjs2024docs utilizam programação reativa e _virtual DOM_ (ou compilação direta) para otimizar atualizações de interface.
@@ -635,7 +651,7 @@ Para cada coleção definida no banco de dados, o sistema constrói automaticame
 
 O processo de geração ocorre em duas fases: descoberta e materialização. Na fase de descoberta, o sistema consulta as tabelas de metadados (`collections` e `fields`) para identificar todas as coleções e seus atributos. Na fase de materialização, os tipos são construídos e integrados ao schema executável da API. Quando uma nova coleção é criada ou um campo é modificado, o schema é reconstruído automaticamente, tornando as novas operações disponíveis imediatamente.
 
-Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface.
+Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface. A abordagem de evolução de schema em sistemas interativos, onde mudanças estruturais são propagadas incrementalmente, fundamenta esta capacidade de adaptação dinâmica sem interromper clientes conectados @edwards2024schema.
 
 === Tradução de Filtros e Ordenação para Consultas de Banco
 
@@ -647,7 +663,7 @@ Um diferencial do sistema de filtragem e ordenação é a tradução direta dos 
 #linebreak()
 *Paginação*: Consultas que retornam coleções de entradas utilizam paginação baseada em cursor, onde o sistema traduz os parâmetros de paginação para cláusulas `LIMIT` e `OFFSET` (ou equivalentes) no SQL gerado. Isso evita o carregamento de grandes conjuntos de dados em memória e garante tempos de resposta consistentes mesmo com volumes elevados de conteúdo.
 #linebreak()
-A propriedade fundamental deste pipeline é que toda a filtragem, ordenação e paginação é expressa como uma única consulta composta, traduzida para um único comando SQL. Nenhum dado é materializado em memória até a projeção final dos campos solicitados pelo cliente GraphQL.
+A propriedade fundamental deste pipeline é que toda a filtragem, ordenação e paginação é expressa como uma única consulta composta, traduzida para um único comando SQL. Nenhum dado é materializado em memória até a projeção final dos campos solicitados pelo cliente GraphQL. Esta técnica de _predicate pushdown_ — empurrar os predicados de filtragem para a camada de persistência — é reconhecida como estratégia central de otimização de consultas em sistemas com grandes volumes de dados, pois minimiza a transferência de registros desnecessários entre o banco de dados e a aplicação @levy1994predicate; @zhang2026optimal.
 
 === Exemplo de Query Dinâmica
 
@@ -1035,12 +1051,12 @@ O sistema implementa controle de acesso baseado em atributos como função de de
 
 $D = "Decide"(u, r, a, "ctx")$
 
-Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $"ctx"$ é o contexto de avaliação, e $D in {"Allow"}, {"Deny"}$. A função implementa combinação *deny-overrides*:
+Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $"ctx"$ é o contexto de avaliação, e $D in "Allow", "Deny"$. A função implementa combinação *deny-overrides*:
 
 $D = cases(
-  "Deny" & "se" exists p in P_"deny" : "Eval"(p, text{"ctx"}) = text{"true"},
-  text{"Allow"} & "se" exists p in P_text{"allow"} : text{"Eval"}(p, text{"ctx"}) = text{"true"},
-  text{"Deny"} & "caso contrário (negar por padrão)"
+  "Deny" & "se" exists p in P_"deny" : "Eval"(p, "ctx") = "true",
+  "Allow" & "se" exists p in P_"allow" : "Eval"(p, "ctx") = "true",
+  "Deny" & "caso contrário (negar por padrão)"
 )$
 
 === Policy Information Point (PIP)
