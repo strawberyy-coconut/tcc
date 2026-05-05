@@ -1,0 +1,132 @@
+erDiagram
+    users {
+        uuid id PK
+        varchar name UK
+        user_status status
+    }
+
+    roles {
+        uuid id PK
+        varchar name UK
+    }
+
+    user_roles {
+        uuid id PK
+        uuid user_id FK
+        uuid role_id FK
+    }
+
+    api_keys {
+        uuid id PK
+        uuid user_id FK
+        varchar key_hash UK
+        boolean is_active
+    }
+
+    abac_policies {
+        uuid id PK
+        varchar name UK
+        permission_effect effect
+        base_resource resource_type
+        permission_action action_type
+    }
+
+    abac_policy_rules {
+        uuid id PK
+        uuid policy_id FK
+        attribute_path attribute_path
+        operator_type operator
+    }
+
+    role_policies {
+        uuid id PK
+        uuid role_id FK
+        uuid policy_id FK
+    }
+
+    user_policies {
+        uuid id PK
+        uuid user_id FK
+        uuid policy_id FK
+    }
+
+    resource_ownerships {
+        uuid id PK
+        base_resource resource_type
+        uuid owner_id FK
+    }
+
+    abac_evaluation_cache {
+        uuid id PK
+        uuid user_id FK
+        varchar context_checksum
+    }
+
+    abac_audit {
+        uuid id PK
+        uuid user_id FK
+        permission_effect decision
+    }
+
+    collections {
+        uuid id PK
+        uuid created_by FK
+        varchar slug UK
+    }
+
+    fields {
+        uuid id PK
+        uuid collection_id FK
+        field_data_type data_type
+    }
+
+    entries {
+        uuid id PK
+        uuid collection_id FK
+        uuid created_by FK
+        entry_status status
+        jsonb data
+    }
+
+    entry_relations {
+        uuid id PK
+        uuid entry_id FK
+        uuid field_id FK
+        uuid target_entry_id FK
+    }
+
+    entry_schedules {
+        uuid id PK
+        uuid entry_id FK
+        scheduled_action action
+    }
+
+    assets {
+        uuid id PK
+        uuid uploaded_by FK
+        varchar mime_type
+    }
+
+    users ||--o{ user_roles : ""
+    roles ||--o{ user_roles : ""
+    users ||--o{ api_keys : ""
+    users ||--o{ collections : "created_by"
+    users ||--o{ entries : "created_by"
+    users ||--o{ assets : "uploaded_by"
+    users ||--o{ abac_policies : "created_by"
+    users ||--o{ user_policies : ""
+    users ||--o{ resource_ownerships : "owner_id"
+    users ||--o{ abac_audit : ""
+    users ||--o{ abac_evaluation_cache : ""
+
+    roles ||--o{ role_policies : ""
+    abac_policies ||--o{ abac_policy_rules : ""
+    abac_policies ||--o{ role_policies : ""
+    abac_policies ||--o{ user_policies : ""
+
+    collections ||--o{ fields : ""
+    collections ||--o{ entries : ""
+    fields ||--o{ entry_relations : ""
+    entries ||--o{ entry_relations : "entry_id"
+    entries ||--o{ entry_relations : "target_entry_id"
+    entries ||--o{ entry_schedules : ""

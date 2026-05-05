@@ -1,0 +1,102 @@
+erDiagram
+    users {
+        uuid id PK
+        varchar name UK
+        user_status status
+    }
+
+    roles {
+        uuid id PK
+        varchar name UK
+    }
+
+    user_roles {
+        uuid id PK
+        uuid user_id FK
+        uuid role_id FK
+    }
+
+    api_keys {
+        uuid id PK
+        uuid user_id FK
+        varchar key_hash UK
+        boolean is_active
+    }
+
+    abac_policies {
+        uuid id PK
+        varchar name UK
+        permission_effect effect
+        int priority
+        base_resource resource_type
+        permission_action action_type
+        logical_operator rule_connector
+    }
+
+    abac_policy_rules {
+        uuid id PK
+        uuid policy_id FK
+        attribute_path attribute_path
+        operator_type operator
+        value_type value_type
+    }
+
+    role_policies {
+        uuid id PK
+        uuid role_id FK
+        uuid policy_id FK
+        uuid assigned_by FK
+    }
+
+    user_policies {
+        uuid id PK
+        uuid user_id FK
+        uuid policy_id FK
+        uuid assigned_by FK
+    }
+
+    resource_ownerships {
+        uuid id PK
+        base_resource resource_type
+        uuid resource_id
+        uuid owner_id FK
+        varchar ownership_type
+    }
+
+    abac_evaluation_cache {
+        uuid id PK
+        uuid user_id FK
+        base_resource resource_type
+        permission_action action_type
+        permission_effect decision
+        varchar context_checksum
+        text policy_versions
+    }
+
+    abac_audit {
+        uuid id PK
+        uuid user_id FK
+        permission_action requested_action
+        base_resource resource_type
+        permission_effect decision
+        int evaluation_time_ms
+        varchar ip_address
+        timestamptz timestamp
+    }
+
+    users ||--o{ user_roles : ""
+    roles ||--o{ user_roles : ""
+    users ||--o{ api_keys : ""
+    users ||--o{ abac_policies : "created_by"
+    users ||--o{ user_policies : "user"
+    users ||--o{ user_policies : "assigned_by"
+    users ||--o{ role_policies : "assigned_by"
+    users ||--o{ resource_ownerships : "owner"
+    users ||--o{ resource_ownerships : "assigned_by"
+    users ||--o{ abac_audit : ""
+    users ||--o{ abac_evaluation_cache : ""
+
+    roles ||--o{ role_policies : ""
+    abac_policies ||--o{ abac_policy_rules : ""
+    abac_policies ||--o{ role_policies : ""
+    abac_policies ||--o{ user_policies : ""

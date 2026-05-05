@@ -326,7 +326,7 @@ O Strapi é o CMS _headless open-source_ (código aberto) mais conhecido atualme
 
 = Conceito e Design do Sistema
 
-Este capítulo explica como o sistema foi pensado e construído, quais tecnologias foram escolhidas e por que, e como todas as partes trabalham juntas para criar uma solução completa de gerenciamento de conteúdo.
+Este capítulo apresenta o design conceitual do sistema, descrevendo a arquitetura, o modelo de dados, os subsistemas de autenticação e controle de acesso, e os principais fluxos de operação. O foco está em _o que_ o sistema faz e _por que_, sem considerar detalhes de implementação ou tecnologias específicas, que são abordados no Capítulo 4.
 
 == Arquitetura do Sistema
 
@@ -334,23 +334,23 @@ O sistema adota arquitetura em três camadas com separação clara de responsabi
 #pagebreak()
 #figure(
   image("diagramas/system-diagram.png"),  caption: [Diagrama de componentes do TechtonicCMS — camadas Cliente, API e Dados]
-) <fig-system-diagram> 
+) <fig-system-diagram>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
 === Camadas Arquiteturais
 
 *Camada de Persistência*:
-- Banco de dados relacional para dados estruturados e relacionais
-- Sistema de cache em memória para sessões e resultados de avaliações ABAC
+- Banco de dados relacional para dados estruturados, relacionais e cache de avaliações ABAC
+- Sistema de cache em memória para sessões de usuário
 
 *Camada de Aplicação*:
-- API GraphQL como interface principal de consulta
-- Endpoints REST para autenticação e gerenciamento de assets
+- API GraphQL como interface exclusiva de consulta e mutação
+- Endpoints auxiliares para operações binárias (upload e download de assets)
 - Motor ABAC integrado para controle de acesso
 
 *Camada de Apresentação*:
-- Painel administrativo implementado com tecnologia de interface moderna
+- Painel administrativo para gerenciamento de conteúdo
 - Frontend consumidor pode ser implementado em qualquer tecnologia
 
 === Decisões Arquiteturais
@@ -367,42 +367,46 @@ A arquitetura foi projetada priorizando:
 
 == Modelagem do Banco de Dados
 
-A modelagem de dados utiliza abordagem unificada baseada em PostgreSQL JSONB para armazenamento de conteúdo dinâmico, eliminando a fragmentação do padrão EAV. Metadados estruturais (coleções, campos) permanecem em tabelas tipadas, enquanto valores concretos de entrada são persistidos em uma única coluna `jsonb`, acessível via stored procedures customizadas para filtragem e ordenação a nível de banco.
+A modelagem de dados utiliza abordagem unificada baseada em armazenamento JSON para conteúdo dinâmico, eliminando a fragmentação do padrão EAV. Metadados estruturais (coleções, campos) permanecem em tabelas tipadas, enquanto valores concretos de entrada são persistidos em uma única coluna de dados semi-estruturados, acessível via funções de banco para filtragem e ordenação a nível de banco.
 
 === Entidades Principais
 
-O sistema organiza dados em três níveis hierárquicos:
+O sistema organiza dados em cinco entidades principais de conteúdo:
 #linebreak()
 *_Collections_ (Coleções)*: Define os tipos de conteúdo gerenciáveis (ex: "Artigos", "Produtos"). Cada coleção especifica seus campos através de metadados estruturados, suporte à internacionalização via múltiplos locales, e identificadores visuais (ícone, cor) para interface administrativa.
 #linebreak()
-*_Fields_ (Campos)*: Especifica os atributos de cada coleção incluindo tipo de dado (`text`, `number`, `boolean`, `date_time`, `rich_text`, `json`, `asset`, `relation`), regras de validação customizadas, e classificação de segurança em quatro níveis: `PUBLIC`, `INTERNAL`, `CONFIDENTIAL`, `RESTRICTED`. Campos podem ser marcados como PII (Personally Identifiable Information) e configurados para criptografia em repouso.
+*_Fields_ (Campos)*: Especifica os atributos de cada coleção incluindo tipo de dado (`Text`, `Boolean`, `Number`, `DateTime`, `Relation`, `Asset`, `Object`), regras de obrigatoriedade, unicidade e valores padrão. Campos de relacionamento definem referências entre coleções via `relatedCollectionId`.
 #linebreak()
-*_Entries_ (Entradas)*: Representa as instâncias concretas de conteúdo com estados bem definidos: `DRAFT` (rascunho em edição), `PUBLISHED` (publicado e visível), `ARCHIVED` (arquivado sem exibição), `DELETED` (deletado logicamente). Cada entrada possui locale específico e uma coluna `Data` do tipo `jsonb` que armazena todos os valores de campos dinâmicos. O suporte multilíngue é realizado através de entradas vinculadas por `defaultLocale`.
+*_Entries_ (Entradas)*: Representa as instâncias concretas de conteúdo com estados bem definidos: `DRAFT` (rascunho em edição), `PUBLISHED` (publicado e visível), `ARCHIVED` (arquivado sem exibição), `DELETED` (deletado logicamente). Cada entrada possui locale específico e uma coluna `Data` que armazena todos os valores de campos dinâmicos em formato semi-estruturado. O suporte multilíngue é realizado através de entradas vinculadas por `defaultLocale`.
 #linebreak()
 *_Assets_ (Arquivos)*: Gerencia recursos binários (imagens, vídeos, documentos) armazenando metadados essenciais: `filename`, `mimeType`, `fileSize`, `path`, além de campos para acessibilidade (`alt` para leitores de tela, `caption` descritivo) e rastreamento de propriedade (`uploadedBy`, `uploadedAt`).
 #linebreak()
-A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaque para a coluna JSONB unificada de entradas e a tabela de relacionamentos:
+*_EntrySchedules_ (Agendamentos)*: Controla transições de estado programadas para entradas. Cada agendamento especifica uma entrada alvo, um horário de execução (`scheduledTime`), uma ação a ser realizada (`Publish`, `Unpublish`, `Archive`, `Restore`, `Delete`) e um indicador de execução (`alreadyExecuted`). Um serviço de processamento assíncrono verifica agendamentos pendentes periodicamente e aplica as transições de estado correspondentes.
+#linebreak()
+*_ApiKeys_ (Chaves de API)*: Gerencia chaves de acesso para integração _machine-to-machine_. Cada chave é vinculada a um usuário, possui nome descritivo, hash criptográfico do valor, prefixo para identificação visual, data de expiração opcional, indicador de ativação e registro de último uso. Este mecanismo complementa a autenticação por sessão, oferecendo um canal _stateless_ para consumo programático da API.
+#linebreak()
+A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaque para a coluna de dados semi-estruturados unificada de entradas e a tabela de relacionamentos:
 
 #figure(
   image("diagramas/database-diagram.svg"),
-  caption: [Diagrama ER do TechtonicCMS — esquema PostgreSQL com JSONB unificado e relacionamentos ABAC]
+  caption: [Diagrama ER do TechtonicCMS — esquema relacional com armazenamento semi-estruturado unificado e relacionamentos ABAC]
 ) <fig-collections-entries>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
 
 === Estratégia de Armazenamento
 
-Diferentemente do padrão EAV discutido no referencial teórico, o sistema utiliza uma abordagem de *armazenamento JSONB unificado* para todos os valores dinâmicos de entrada. Cada entrada possui uma coluna `Data` do tipo `jsonb` que armazena todos os valores de campos — texto, números, booleanos, datas, objetos, listas — em uma única estrutura JSON. Os metadados sobre quais campos existem e seus tipos permanecem na tabela `fields`, mas os valores concretos habitam em `Entry.Data`.
+Diferentemente do padrão EAV discutido no referencial teórico, o sistema utiliza uma abordagem de *armazenamento semi-estruturado unificado* para todos os valores dinâmicos de entrada. Cada entrada possui uma coluna `Data` que armazena todos os valores de campos — texto, números, booleanos, datas, objetos, listas — em uma única estrutura de dados semi-estruturada. Os metadados sobre quais campos existem e seus tipos permanecem na tabela `fields`, mas os valores concretos habitam em `Entry.Data`.
 #breakpar()
-Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados (EAV), simplificando o schema e reduzindo a complexidade de joins. Para viabilizar filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL — `cms_extract_text`, `cms_extract_number`, `cms_extract_boolean`, `cms_extract_datetime` — que operam diretamente sobre a coluna JSONB. Isso permite que queries como "título igual a 'Hello'" sejam traduzidas para SQL nativo com possível otimização via índices GIN.
+Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados (EAV), simplificando o schema e reduzindo a complexidade de joins. Para viabilizar filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções customizadas de extração de dados que operam diretamente sobre a coluna semi-estruturada, permitindo que queries como "título igual a 'Hello'" sejam executadas no banco sem carregar todas as entidades em memória.
 #breakpar()
-*Relacionamentos entre Entradas*: Relacionamentos tipados entre entradas (ex: "Autor" referenciando "Usuários") utilizam uma tabela de junção `entry_relations` com restrição de unicidade por `(EntryId, FieldId)`, garantindo que cada campo de relacionamento em uma entrada aponte para no máximo um alvo. A integridade referencial é preservada via foreign keys em cascata.
+*Relacionamentos entre Entradas*: Relacionamentos tipados entre entradas (ex: "Autor" referenciando "Usuários") utilizam uma tabela de junção `entry_relations` com restrição de unicidade por `(EntryId, FieldId)`, garantindo que cada campo de relacionamento em uma entrada aponte para no máximo um alvo. A integridade referencial é preservada via chaves estrangeiras em cascata.
 #breakpar()
 *Exemplo Prático de Armazenamento*: Para uma coleção "Artigos de Blog" com campos heterogêneos, a entrada armazena todos os valores em `Data`:
 
 #table(
   columns: 2,
-  [*Campo*], [*Valor em JSONB*],
+  [*Campo*], [*Valor em Data*],
   [Título (pt)], [`{"title": "Introdução ao GraphQL", "locale": "pt"}`],
   [Título (en)], [`{"title": "Introduction to GraphQL", "locale": "en"}`],
   [Configurações], [`{"layout": "grid", "theme": "dark"}`],
@@ -410,15 +414,15 @@ Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados 
   [Autor], [Referência via `entry_relations`]
 )
 
-O banco executa consultas dentro da estrutura JSON usando operadores nativos e stored procedures customizadas, como filtrar artigos por `theme='dark'` ou `title eq 'Hello'`.
+O banco executa consultas dentro da estrutura semi-estruturada usando operadores nativos e funções de extração customizadas, como filtrar artigos por `theme='dark'` ou `title eq 'Hello'`.
 
 === Tabelas de Segurança e Controle de Acesso
 
 O banco de dados inclui um conjunto completo de tabelas para implementar o sistema ABAC, conforme ilustrado na Figura 3.3:
 #pagebreak()
 #figure(
-  image("diagramas/simplified_security_related_to_content.png", width: 100%),
-  caption: [Tabelas de segurança (users, roles, policies) e sua relação com as entidades de conteúdo (collections, entries, fields, assets)]
+  image("diagramas/security-simplified.png", width: 100%),
+  caption: [Tabelas de segurança (users, roles, policies, api_keys) e sua relação com as entidades de conteúdo (collections, entries, fields, assets, entry_schedules)]
 ) <fig-security-content>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
@@ -431,23 +435,25 @@ As tabelas principais de segurança incluem:
 #linebreak()
 *user_roles*: Tabela associativa entre usuários e papéis com suporte a expiração temporal configurável, permitindo concessões temporárias de privilégios.
 #linebreak()
-*abac_policies*: Define políticas de controle de acesso com efeito (`ALLOW`/`DENY`), prioridade numérica para resolução de conflitos, escopo do recurso (`users`, `collections`, `entries`, `assets`, `fields`), tipo de ação controlada (operações granulares como `create`, `read`, `update`, `delete`, `publish`, `configure_fields`), e conector lógico (`AND`/`OR`) para composição de regras.
+*abac_policies*: Define políticas de controle de acesso com efeito (`ALLOW`/`DENY`), prioridade numérica para resolução de conflitos, escopo do recurso (`users`, `collections`, `entries`, `assets`, `fields`), tipo de ação controlada (operações granulares como `Create`, `Read`, `Update`, `Delete`, `Publish`, `Unpublish`, `Schedule`, `Archive`, `Restore`, `Activate`, `Deactivate`, `Upload`, `Download`, `ManageSchema`, `Wildcard`), e conector lógico (`AND`/`OR`) para composição de regras.
 #linebreak()
-*abac_policy_rules*: Regras atômicas de cada política especificando atributo a avaliar (ex: `subject.role`, `resource.field.sensitivityLevel`), operador de comparação (`eq`, `in`, `gt`, `contains`, `regex`), valor esperado serializado em JSON, e tipo do valor para parsing adequado.
+*abac_policy_rules*: Regras atômicas de cada política especificando atributo a avaliar (ex: `subject.role`, `resource.entry.status`), operador de comparação (`eq`, `in`, `gt`, `contains`, `regex`), valor esperado serializado em JSON, e tipo do valor para parsing adequado.
 #linebreak()
 *role_policies* e *user_policies*: Atribuição de políticas a papéis (herança organizacional) e usuários (exceções individuais), com metadados de auditoria (`assignedBy`, `reason`, `expiresAt`).
 #linebreak()
 *resource_ownerships*: Rastreamento de propriedade de recursos com três categorias: `CREATOR` (criador original), `ASSIGNED` (designação manual), `INHERITED` (herança hierárquica). Suporta expiração temporal e auditoria de atribuições.
 #linebreak()
-*abac_evaluation_cache*: Cache de avaliação para otimização de performance através de armazenamento temporário de decisões recentes com TTL configurável e invalidação automática baseada em mudanças de políticas.
+*abac_evaluation_cache*: Cache persistente de avaliação armazenado no banco de dados relacional, utilizado para otimização de performance através de armazenamento de decisões recentes com TTL configurável e invalidação automática baseada em mudanças de políticas.
 #linebreak()
 *abac_audit*: Registro de auditoria completo de decisões de autorização para conformidade regulatória e análise forense, incluindo contexto da requisição e métricas de performance.
+#linebreak()
+*api_keys*: Armazena chaves de API vinculadas a usuários, com hash criptográfico do valor, prefixo para identificação, data de expiração, indicador de ativação e registro de último uso.
 #linebreak()
 A Figura 3.4 apresenta o diagrama completo com todas as tabelas do sistema ABAC e seus relacionamentos detalhados:
 
 #figure(
-  image("diagramas/security.png", width: 100%),
-  caption: [Diagrama completo do sistema ABAC mostrando todas as tabelas de segurança (policies, rules, cache, audit) e suas relações com usuários e recursos]
+  image("diagramas/security-complete.png", width: 100%),
+  caption: [Diagrama completo do sistema ABAC mostrando todas as tabelas de segurança (policies, rules, cache, audit, api_keys) e suas relações com usuários e recursos]
 ) <fig-security-complete>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
@@ -462,11 +468,11 @@ O sistema utiliza quatro componentes principais:
 #linebreak()
 *Políticas e Regras*: Políticas declarativas com efeito (permitir/negar), prioridade e conectores lógicos. Cada política contém regras que avaliam atributos do sujeito (usuário), recurso, ação e ambiente (horário, IP).
 #linebreak()
-*_Cache_ de Avaliação*: Sistema de _cache_ de alta _performance_ que armazena decisões recentes, reduzindo drasticamente o tempo de autorização em operações frequentes.
+*_Cache_ de Avaliação*: Sistema de _cache_ persistente no banco de dados que armazena decisões recentes, reduzindo drasticamente o tempo de autorização em operações frequentes.
 #linebreak()
 *Sistema de Auditoria*: _Log_ completo de todas as decisões incluindo contexto, políticas avaliadas e justificativa, essencial para _compliance_ e _debugging_.
 #linebreak()
-*Classificação de Dados*: Campos podem ser marcados com níveis de sensibilidade (público, interno, confidencial, restrito) e identificados como dados pessoais (PII), permitindo políticas automáticas baseadas na classificação.
+*Propriedade de Recursos*: Rastreamento de propriedade de recursos com três categorias (`CREATOR`, `ASSIGNED`, `INHERITED`), permitindo políticas baseadas em ownership de conteúdo.
 
 === Tipos de Atributos
 
@@ -492,8 +498,6 @@ Para entradas:
 
 Para campos:
 - `resource.field.id`, `resource.field.name`, `resource.field.dataType`: Identificação e tipo
-- `resource.field.sensitivityLevel`: Nível de segurança (`PUBLIC`, `INTERNAL`, `CONFIDENTIAL`, `RESTRICTED`)
-- `resource.field.isPii`, `resource.field.isPublic`: Classificações de privacidade
 - `resource.field.collectionId`: Coleção proprietária
 
 Para assets:
@@ -501,14 +505,14 @@ Para assets:
 - `resource.asset.mimeType`, `resource.asset.fileSize`: Metadados do arquivo
 #linebreak()
 *Atributos da Ação*:
-- `action.type`: Tipo de operação sendo requisitada, usando valores do enum `permission_actions` (ex: `create`, `read`, `update`, `delete`, `publish`, `configure_fields`, `upload`)
+- `action.type`: Tipo de operação sendo requisitada, usando valores do enum `permission_actions` (ex: `Create`, `Read`, `Update`, `Delete`, `Publish`, `Unpublish`, `Schedule`, `Archive`, `Restore`, `Activate`, `Deactivate`, `Upload`, `Download`, `ManageSchema`, `Wildcard`)
 #linebreak()
 *Atributos Ambientais (Contexto)*:
 - `environment.currentTime`: Timestamp UTC da requisição
 - `environment.ipAddress`: Endereço IP de origem
 - `environment.userAgent`: Identificação do cliente
 #linebreak()
-Esta combinação permite criar regras contextuais precisas como "editores (`subject.role = 'editor'`) podem publicar (`action.type = 'publish'`) artigos do seu departamento (`resource.entry.createdBy = subject.id`) com campos não-confidenciais (`resource.field.sensitivityLevel IN ['PUBLIC', 'INTERNAL']`) durante horário comercial (`environment.currentTime BETWEEN 09:00-18:00`)".
+Esta combinação permite criar regras contextuais precisas como "editores (`subject.role = 'editor'`) podem publicar (`action.type = 'Publish'`) artigos do seu departamento (`resource.entry.createdBy = subject.id`) durante horário comercial (`environment.currentTime BETWEEN 09:00-18:00`)"
 
 === Resolução de Conflitos
 
@@ -520,18 +524,18 @@ O sistema implementa resolução determinística de conflitos através de:
 Exemplo de política implementável usando a estrutura do sistema:
 
 ```
-Policy: "Allow Internal Field Access During Business Hours"
+Policy: "Allow Entry Publication During Business Hours"
 Effect: ALLOW
-Resource Type: fields
-Action: read
+Resource Type: entries
+Action: Publish
 Rule Connector: AND
 
 Rules:
-  1. attribute: resource.field.sensitivityLevel
-     operator: in
-     value: ["PUBLIC", "INTERNAL"]
+  1. attribute: resource.entry.status
+     operator: eq
+     value: "DRAFT"
      
-  2. attribute: subject.role  
+  2. attribute: subject.role
      operator: in
      value: ["editor", "admin"]
      
@@ -544,7 +548,7 @@ Rules:
      value: "18:00:00"
 ```
 
-Esta política permite leitura de campos públicos e internos apenas para editores e administradores durante horário comercial.
+Esta política permite publicação de entradas em rascunho apenas para editores e administradores durante horário comercial.
 
 === Fluxo de Avaliação de Requisições
 
@@ -552,11 +556,11 @@ O processo de autorização segue uma sequência bem definida que balanceia segu
 #linebreak()
 *1. Interceptação (PEP)*: O _Policy Enforcement Point_ intercepta a requisição antes de qualquer processamento. Em uma API GraphQL, isso ocorre através de _middlewares_ ou _higher-order functions_ que envolvem os resolvers.
 #linebreak()
-*2. Consulta ao Cache*: O sistema verifica se existe uma decisão em cache para a combinação de usuário, recurso e ação. Decisões são cacheadas com tempo de expiração configurável (tipicamente 5 minutos) para otimizar operações frequentes.
+*2. Consulta ao Cache*: O sistema verifica se existe uma decisão em cache persistente no banco de dados para a combinação de usuário, recurso e ação. Decisões são cacheadas com tempo de expiração configurável para otimizar operações frequentes.
 #linebreak()
 *3. Coleta de Atributos (PIP)*: Se não houver cache válido, o _Policy Information Point_ coleta atributos de múltiplas fontes:
 - Atributos do usuário: extraídos do token de autenticação (papel, departamento, status)
-- Atributos do recurso: consultados no banco de dados (tipo, proprietário, sensibilidade, status de publicação)
+- Atributos do recurso: consultados no banco de dados (tipo, proprietário, status de publicação)
 - Atributos ambientais: derivados da requisição (horário UTC, endereço IP, tipo de dispositivo)
 #linebreak()
 *4. Avaliação (PDP)*: O _Policy Decision Point_ executa o motor de decisão:
@@ -567,72 +571,59 @@ O processo de autorização segue uma sequência bem definida que balanceia segu
 - Produz veredicto final: ALLOW, DENY ou NOT_APPLICABLE
 #linebreak()
 *5. Armazenamento*: A decisão é armazenada em duas localizações:
-- Cache em banco de dados PostgreSQL (tabela `abac_evaluation_cache`) para otimizar requisições futuras idênticas, com invalidação automática baseada em mudanças de políticas
+- Cache persistente no banco de dados relacional (tabela `abac_evaluation_cache`) para otimizar requisições futuras idênticas, com invalidação automática baseada em mudanças de políticas
 - Tabela de auditoria permanente com timestamp, contexto completo e justificativa
 #linebreak()
 *6. Aplicação (PEP)*: O _Policy Enforcement Point_ aplica o veredicto:
 - ALLOW: Requisição prossegue para execução normal
-- DENY: Retorna erro de autorização ao cliente (HTTP 403)
+- DENY: Retorna erro de autorização ao cliente
 - NOT_APPLICABLE: Aplicado princípio _deny-by-default_, retorna negação
 #linebreak()
-Métricas típicas de performance: avaliação com cache em menos de 5ms, avaliação sem cache aproximadamente 50ms incluindo consultas ao banco de dados.
+Métricas típicas de performance: avaliação com cache em tempo constante, avaliação sem cache com latência proporcional à complexidade das políticas avaliadas.
+
+== Sistema de Autenticação
+
+O sistema prevê dois mecanismos de autenticação complementares: autenticação baseada em sessão para usuários humanos e autenticação por chave de API para integrações _machine-to-machine_.
+
+=== Autenticação por Sessão
+
+Usuários humanos autenticam-se através de um fluxo de login que valida credenciais e estabelece uma sessão ativa. O sistema emite um par de tokens: um token de acesso de curta duração para requisições subsequentes e um token de renovação (_refresh_) de longa duração. O token de acesso transporta identidade, papéis e status do usuário, permitindo validação _stateless_ por qualquer instância do serviço. O token de renovação é _single-use_: ao ser consumido, é imediatamente invalidado e substituído por um novo par, prevenindo ataques de _replay_. Sessões são armazenadas em cache em memória com expiração automática, permitindo revogação instantânea sem consultas ao banco de dados persistente.
+
+=== Autenticação por API Key
+
+Integrações _machine-to-machine_ utilizam chaves de API transmitidas via _header_ de requisição. Cada chave é vinculada a um usuário do sistema, possui data de expiração configurável e pode ser revogada individualmente. O servidor armazena apenas o hash criptográfico da chave, juntamente com um prefixo para identificação visual. Um mecanismo de multi-autenticação determina, para cada requisição, se a credencial apresentada é um token de sessão ou uma chave de API, encaminhando para o validador apropriado.
+
+== Agendamento de Conteúdo
+
+O sistema prevê um mecanismo de agendamento que permite programar transições automáticas de estado para entradas de conteúdo. Este recurso viabiliza _workflows_ editoriais onde publicações, arquivamentos e outras operações podem ser executadas em horários futuros sem intervenção manual.
+
+=== Estados e Transições
+
+As entradas transitam entre quatro estados principais: `DRAFT` (rascunho em edição), `PUBLISHED` (publicado e visível), `ARCHIVED` (arquivado sem exibição) e `DELETED` (deletado logicamente). Além das transições manuais, o sistema permite agendar as seguintes ações: `Publish` (publicar), `Unpublish` (despublicar), `Archive` (arquivar), `Restore` (restaurar de arquivado) e `Delete` (remover).
+
+=== Modelo de Agendamento
+
+Cada agendamento vincula uma entrada a uma ação futura, especificando o horário de execução desejado. Um serviço de processamento assíncrono verifica periodicamente agendamentos pendentes cuja data de execução já foi atingida, aplica a transição de estado correspondente e marca o agendamento como executado. Este modelo garante que transições programadas ocorram mesmo que o sistema tenha sido indisponível no horário exato, desde que a verificação subsequente alcance o agendamento.
 
 == APIs e Protocolos de Comunicação
 
-O sistema é *exclusivamente GraphQL* para todas as operações de conteúdo, autenticação, autorização e administração. Não existe API REST para CRUD de conteúdo, gerenciamento de sessões, ou administração de políticas.
+O design da interface de comunicação prioriza uma API GraphQL como canal exclusivo para todas as operações de conteúdo, autenticação, autorização e administração. Não há API REST para CRUD de conteúdo, gerenciamento de sessões ou administração de políticas.
 
-=== Endpoints Não-GraphQL
+A escolha do GraphQL como protocolo principal justifica-se pela necessidade de consultas flexíveis em um sistema com schemas dinâmicos: clientes podem solicitar exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_. O schema é gerado dinamicamente a partir das definições de coleções no banco de dados, criando tipos de dados, filtros, ordenações e mutações específicos por coleção.
 
-Quatro rotas auxiliares mapeadas via `app.MapPost`/`app.MapGet` complementam o endpoint GraphQL:
-#linebreak()
-*_Assets_* (`POST /assets/upload`, `GET /assets/{id}`): Envio e download de arquivos binários. A natureza multipart e necessidade de transmissão em tempo real justificam endpoints HTTP diretos sobre GraphQL.
-#linebreak()
-*Documentação de Schema* (`GET /llms.md`): Geração automática de documentação Markdown do schema GraphQL para consumo por LLMs e desenvolvedores.
-#linebreak()
-*Health Check* (`GET /healthcheck`): Verificação rápida de disponibilidade do serviço, retornando `healthy`.
-
-=== API GraphQL — Interface Principal e Única
-
-Todas as operações do sistema transitam pelo endpoint `/graphql` via Hot Chocolate 14+.
-#linebreak()
-*Autenticação*: Login, logout, refresh de tokens e gerenciamento de sessões são implementados como mutations GraphQL (`auth.login`, `auth.refresh`, `auth.logout`, `auth.logoutAll`), não como endpoints REST. Tokens de acesso JWT (RS256, TTL 15 minutos) e refresh tokens (TTL 30 dias, single-use) são gerenciados integralmente via GraphQL.
-#linebreak()
-*CRUD de Conteúdo*: Criação, leitura, atualização, deleção, publicação e arquivamento de entradas são mutations GraphQL dinâmicas, geradas em tempo de execução pelo `CollectionTypeModule` baseado nos metadados das coleções.
-#linebreak()
-*Administração ABAC*: Criação, modificação e atribuição de políticas e regras são mutations GraphQL sob a namespace `policies`.
-#linebreak()
-*_Design_ do Esquema*: _Queries_ e _mutations_ estruturadas para eliminar necessidade de _joins_ manuais pelo cliente. O schema é gerado dinamicamente em tempo de execução: para cada coleção definida no banco de dados, o sistema cria tipos de dados (`BlogPostEntryData`), tipos de entrada (`BlogPostEntry`), inputs de filtro (`BlogPostEntryFilterInput`), inputs de ordenação (`BlogPostEntrySortInput`) e mutations (`blogPosts.create`, `blogPosts.update`, etc.).
-#linebreak()
-*Sistema de Filtragem*: Filtros específicos por tipo implementando operadores que se traduzem diretamente para SQL via funções de banco (`cms_extract_text`, `cms_extract_number`, `cms_extract_boolean`, `cms_extract_datetime`):
-- Texto: `contains`, `startsWith`, `endsWith`, `eq`
-- Numérico: `gt`, `gte`, `lt`, `lte`, `eq`
-- Data: `before`, `after`, `eq`
-- Booleano: `eq`
-- Relacionamentos: `exists`, `in`, `notIn`
-#linebreak()
-*Otimizações*:
-- _Resolvers_ aplicam filtros diretamente no banco via SQL otimizado, traduzindo LINQ composta em query única
-- _Cursor-based pagination_ para conjuntos de dados grandes
-- Ordenação multi-campo
-- Análise de complexidade de query com limites de profundidade (máx. 15) e custo de campo (máx. 20.000)
-
-*Integração com ABAC*:
-- _Higher-order functions_ protegendo _resolvers_ automaticamente
-- Filtragem de resultados baseada em permissões do usuário (row-level filtering via `[UseAbacRowCheck]`)
-- Controle _field-level_ impedindo acesso a campos restritos
-- _Error handling_ padronizado para autenticação e autorização
+Quatro rotas auxiliares não-GraphQL complementam a API principal: upload de assets (operação multipart), download de assets, documentação automática do schema e _health check_ de disponibilidade.
 
 == Interface Administrativa
 
-Implementação utilizando tecnologia de interface moderna aproveitando as características discutidas no referencial teórico.
+O painel administrativo consome a API GraphQL para todas as operações, apresentando uma interface adaptativa que se ajusta automaticamente aos schemas definidos.
 
-=== Características Técnicas
+=== Características do Design
 
 *Arquitetura Reativa*: Atualizações eficientes de interface baseadas em mudanças de estado.
 #linebreak()
-*Segurança de Tipos*: Integração com tipagem estática end-to-end entre frontend e backend.
+*Segurança de Tipos*: Integração com tipagem estática entre frontend e backend.
 #linebreak()
-*Interface Adaptativa*: UI se adapta automaticamente aos schemas definidos, gerando formulários e componentes específicos por tipo de campo.
+*Interface Adaptativa*: Geração dinâmica de formulários e componentes específicos por tipo de campo.
 
 === Módulos Principais
 
@@ -642,9 +633,9 @@ Implementação utilizando tecnologia de interface moderna aproveitando as carac
 #linebreak()
 *Editor de Entradas*: Formulários gerados dinamicamente baseados no _schema_ da coleção.
 #linebreak()
-*Gerenciador de _Assets_*: Envio e organização de mídias com metadados de acessibilidade.
+*Gerenciador de Assets*: Envio e organização de mídias com metadados de acessibilidade.
 #linebreak()
-*Configuração de Permissões*: _Interface_ para criação e gerenciamento de políticas ABAC.
+*Configuração de Permissões*: Interface para criação e gerenciamento de políticas ABAC.
 
 === Exemplo de Uso: Criando uma Coleção
 
@@ -660,37 +651,32 @@ Para ilustrar o funcionamento da interface administrativa, considere o processo 
 *Etapa 2 - Modelagem de Campos*: O sistema apresenta interface para adição dinâmica de campos. Para cada campo, o usuário especifica:
 
 *Campo "Título"*:
-- Tipo: Texto
+- Tipo: `Text`
 - Obrigatoriedade: Sim
 - Multilíngue: Sim
-- Classificação de segurança: Público
 - Validações: Comprimento mínimo 10, máximo 200 caracteres
 
 *Campo "Conteúdo"*:
-- Tipo: Rich Text (editor WYSIWYG)
+- Tipo: `Text`
 - Obrigatoriedade: Sim
 - Multilíngue: Sim
-- Classificação de segurança: Interno
-- Recursos habilitados: Negrito, itálico, listas, links, imagens
 
 *Campo "Autor"*:
-- Tipo: Relacionamento → Coleção "Usuários"
+- Tipo: `Relation` → Coleção "Usuários"
 - Cardinalidade: Um para um
 - Obrigatoriedade: Sim (preenchido automaticamente com criador)
-- Classificação de segurança: Público
 
 *Campo "Tags"*:
-- Tipo: Lista de Texto
+- Tipo: `Object`
 - Obrigatoriedade: Não
 - Multilíngue: Não
-- Classificação de segurança: Público
 - Validações: Máximo 10 tags, cada tag máximo 30 caracteres
 #linebreak()
 *Etapa 3 - Configuração de Permissões*: O usuário define políticas ABAC específicas para esta coleção:
 - Editores: podem criar e editar rascunhos próprios
 - Editores-chefe: podem publicar qualquer artigo
 - Público: pode ler artigos com status "publicado"
-- Restrição temporal: Publicação apenas em horário comercial (09:00-18:00 UTC-3)
+- Restrição temporal: Publicação apenas em horário comercial
 #linebreak()
 *Etapa 4 - Validação e Pré-visualização*: O sistema executa validação em tempo real:
 - Verifica se há campos obrigatórios sem valor padrão
@@ -699,45 +685,10 @@ Para ilustrar o funcionamento da interface administrativa, considere o processo 
 - Estima tamanho de armazenamento baseado nos tipos de campos
 #linebreak()
 *Etapa 5 - Criação e Propagação*: Ao confirmar, o sistema executa automaticamente:
-- Insere registros nas tabelas `collections` e `fields`
-- Gera tipos GraphQL dinâmicos (`BlogPost`, `BlogPostInput`, `BlogPostFilter`)
-- Adiciona resolvers específicos para consulta e mutação
+- Insere registros nas tabelas de metadados (`collections` e `fields`)
+- Atualiza o schema da API com tipos dinâmicos correspondentes
 - Cria formulário de edição no painel administrativo
 - Registra operação na auditoria com timestamp e usuário responsável
-#linebreak()
-
-
-== Tecnologias, Segurança e Performance
-
-Esta seção apresenta as tecnologias selecionadas e as estratégias implementadas para garantir segurança e performance do sistema.
-
-=== Requisitos Tecnológicos
-
-Este projeto documenta o design conceitual do sistema, mantendo-se agnóstico a implementações específicas para garantir atemporalidade. As escolhas tecnológicas devem atender aos seguintes requisitos:
-#linebreak()
-*Camada de Persistência*: Banco de dados relacional com conformidade ACID, suporte nativo a tipos JSON, e capacidade de indexação avançada. Sistema de cache em memória com suporte a expiração automática (TTL) para otimização de consultas frequentes e decisões ABAC.
-#linebreak()
-*Camada de Aplicação*: Linguagem com sistema de tipos robusto (tipagem estática ou gradual), modelo de execução adequado para operações I/O intensivas (assíncrono ou concorrente), bibliotecas maduras para implementação de servidores GraphQL, e suporte a validação de schemas em tempo de execução.
-#linebreak()
-*Camada de Apresentação*: _Framework_ de interface com arquitetura reativa ou declarativa, capacidade de geração dinâmica de formulários baseados em schemas, sistema de componentes reutilizáveis, e integração de tipos _end-to-end_ com as APIs do backend quando possível.
-#linebreak()
-*Protocolos de Comunicação*: Implementação GraphQL conforme especificação oficial para consultas flexíveis, e endpoints REST para operações binárias e autenticação. Suporte obrigatório a TLS/HTTPS para todas as comunicações.
-
-=== Segurança
-
-*Autenticação e Sessões*: Sistema baseado em JWT com criptografia assimétrica, permitindo validação distribuída. Sessões gerenciadas com TTL automático e renovação baseada em atividade.
-#linebreak()
-*Controle de Acesso*: Sistema ABAC integrado em todos os _resolvers_ GraphQL e _endpoints_ REST, com auditoria completa de decisões.
-#linebreak()
-*Proteção de Dados*: Validação de _inputs_ via _schemas_ tipados. _Queries_ parametrizadas prevenindo _SQL injection_. Suporte a criptografia em repouso para campos sensíveis.
-#linebreak()
-*Transporte*: TLS/HTTPS garantindo confidencialidade e integridade de todas as comunicações.
-
-=== Otimizações de Performance
-
-*Banco de Dados*: Índices estratégicos para consultas e filtragem de conteúdo. _Connection pooling_ reutiliza conexões estabelecidas com o banco de dados, reduzindo o _overhead_ de criar e destruir conexões a cada requisição @microsoft2025sqlserverpooling; @postgresql2014connections. _Prepared statements_ para _queries_ frequentes.
-#linebreak()
-*GraphQL*: _DataLoader_ eliminando problema N+1 em consultas relacionadas. _Query complexity analysis_ prevenindo _queries_ abusivas. _Cache_ de _schemas_.
 
 
 // ================================
