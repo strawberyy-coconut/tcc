@@ -46,7 +46,7 @@ build() {
     echo "Building TCC document..."
     setup_output_dir
 
-    if typst compile "$SOURCE_FILE" "$OUTPUT_FILE"; then
+    if typst compile "$SOURCE_FILE" "$OUTPUT_FILE" --root .; then
         echo "[SUCCESS] Build successful!"
         echo "Output: $OUTPUT_FILE"
 
@@ -70,7 +70,7 @@ dev() {
     setup_output_dir
 
     # Use typst watch command for auto-compilation
-    typst watch "$SOURCE_FILE" "$OUTPUT_FILE"
+    typst watch "$SOURCE_FILE" "$OUTPUT_FILE" --root .
 }
 
 clean() {

@@ -613,15 +613,62 @@ O sistema implementa controle de acesso baseado em atributos como função de de
 
 $D = "Decide"(u, r, a, "ctx")$
 
-A combinação de políticas segue o algoritmo *deny-overrides*, onde qualquer negação explícita prevalece sobre permissões:
+O conjunto de políticas é unificado, não pré-particionado:
 
-$D = cases(
-  "Deny" & "se" exists p in P_"deny" : "Eval"(p, "ctx") = "true",
-  "Allow" & "se" exists p in P_"allow" : "Eval"(p, "ctx") = "true",
-  "Deny" & "caso contrário (negar por padrão)"
+$P(u, r, a) = P_"role"(u, r, a) union P_"direct"(u, r, a)$
+
+onde $P_"role"$ são políticas herdadas via _roles_ do usuário e $P_"direct"$ são políticas atribuídas diretamente ao usuário.
+
+==== Função de Avaliação de uma Política
+
+Cada política $p$ tem um conector lógico $lambda_p in {"AND", "OR"}$ e um conjunto de regras $R_p$:
+
+$"Eval"(p, "ctx") = cases(
+  and.big_(r in R_p) "EvalRule"(r, "ctx") & "se" lambda_p = "AND",
+  or.big_(r in R_p) "EvalRule"(r, "ctx") & "se" lambda_p = "OR"
 )$
 
-Onde $P_"deny"$ é o conjunto de políticas com efeito de negação e $P_"allow"$ é o conjunto de políticas com efeito de permissão. A função $"Eval"(p, "ctx")$ avalia se todas as regras da política $p$ são satisfeitas pelo contexto $"ctx"$, considerando o conector lógico (`AND` ou `OR`) definido na política. Este modelo formal assegura decisões determinísticas e auditáveis, fundamentais para conformidade regulatória.
+onde cada regra atômica avalia um atributo contra um valor esperado via operador $omega$:
+
+$"EvalRule"(r, "ctx") = "ctx"[r."attr"] med omega_r med r."value"$
+
+com $omega in {=, in, >, >=, <, <=, "contains", "regex"}$.
+
+==== Algoritmo de Decisão
+
+O conjunto $P$ é ordenado por prioridade $pi(p) in NN$ e avaliado em duas passagens sequenciais, refletindo o _deny-overrides_ com _short-circuit_:
+
+$D = cases(
+  "Deny" & "se" exists p in P : "effect"(p) = "DENY" and "Eval"(p, "ctx") = top,
+  "Allow" & "se" exists p in P : "effect"(p) = "ALLOW" and "Eval"(p, "ctx") = top,
+  "Deny" & "caso contrário"
+)$
+
+avaliando _deny policies_ primeiro, em ordem $pi$ descendente — um _match_ causa retorno imediato sem avaliar _allow policies_.
+
+==== Cache
+
+A decisão real passa por _lookup_ antes da avaliação:
+
+$D = cases(
+  D_"cache" & "se" exists "cache"(u, r, a) and "valid"("cache"),
+  "Decide"(u, r, a, "ctx") & "caso contrário"
+)$
+
+onde $"valid"("cache")$ verifica TTL e $"PolicyVersions"$ — a string concatenada de $(p."id" : p."updatedAt")$ de todas as políticas contribuintes. Se qualquer política foi modificada, o cache é descartado.
+
+==== Filtragem em Nível de Linha
+
+A decisão binária é complementada por uma função de filtragem que opera sobre conjuntos de recursos:
+
+$"Filter"(u, r, a, S) = cases(
+  S & "se" not "IsRestricted"(u, r, a),
+  {x in S : x."createdBy" = u} & "caso contrário"
+)$
+
+onde $"IsRestricted"$ é determinado avaliando $"Decide"$ com um recurso sintético de _owner_ aleatório — se negar, o usuário está restrito aos próprios recursos.
+
+Esta versão captura os três aspectos que o modelo original omitia: o conector lógico por política, o _short-circuit_ do _deny_, e o cache como camada anterior à decisão.
 
 == Sistema de Autenticação
 
