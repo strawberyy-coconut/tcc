@@ -581,6 +581,16 @@ O processo de autorização segue uma sequência bem definida que balanceia segu
 #linebreak()
 Métricas típicas de performance: avaliação com cache em tempo constante, avaliação sem cache com latência proporcional à complexidade das políticas avaliadas.
 
+=== Filtragem de Resultados Baseada em Permissões
+
+Além da autorização binária (permitir ou negar uma operação), o sistema aplica filtragem em nível de linha (_row-level filtering_) sobre consultas que retornam múltiplos recursos. Quando um usuário solicita uma lista de entradas, coleções ou assets, o sistema determina, com base nas políticas ABAC aplicáveis, se o usuário está restrito a visualizar apenas recursos de sua própria propriedade ou se pode acessar recursos de outros usuários.
+#linebreak()
+O mecanismo opera da seguinte forma: antes de executar uma consulta que retorna uma coleção de recursos, o sistema verifica se existem políticas que restringem o acesso do usuário aos recursos que ele próprio criou. Caso essa restrição esteja configurada, a consulta é enriquecida com uma condição que filtra o resultado, retornando apenas os registros cujo criador corresponde ao identificador do usuário requisitante.
+#linebreak()
+Este comportamento garante que, por exemplo, um editor comum visualize apenas seus próprios rascunhos em uma listagem, enquanto um editor-chefe, sujeito a políticas diferentes, possa visualizar todos os artigos de todos os autores. A filtragem ocorre de forma transparente para o cliente da API, que recebe apenas os dados autorizados sem necessidade de aplicar filtros adicionais.
+#linebreak()
+A combinação de autorização por operação (impedir que um usuário execute `Publish` sem permissão) e filtragem de resultados (garantir que ele apenas visualize o que pode acessar) constitui uma defesa em profundidade: mesmo que um usuário descubra a existência de recursos alheios, não consegue lê-los nem operar sobre eles.
+
 == Sistema de Autenticação
 
 O sistema prevê dois mecanismos de autenticação complementares: autenticação baseada em sessão para usuários humanos e autenticação por chave de API para integrações _machine-to-machine_.
