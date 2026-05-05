@@ -607,6 +607,22 @@ Este comportamento garante que, por exemplo, um editor comum visualize apenas se
 #linebreak()
 A combinação de autorização por operação (impedir que um usuário execute `Publish` sem permissão) e filtragem de resultados (garantir que ele apenas visualize o que pode acessar) constitui uma defesa em profundidade: mesmo que um usuário descubra a existência de recursos alheios, não consegue lê-los nem operar sobre eles.
 
+=== Modelo Formal de Decisão
+
+O sistema implementa controle de acesso baseado em atributos como função de decisão matemática. Seja $u in U$ o usuário (sujeito), $r in R$ o tipo de recurso, $a in A$ a ação requisitada, e $"ctx"$ o contexto de avaliação composto por atributos do sujeito, recurso, ação e ambiente. A função de decisão $D$ produz um veredicto no conjunto $"Allow", "Deny"$:
+
+$D = "Decide"(u, r, a, "ctx")$
+
+A combinação de políticas segue o algoritmo *deny-overrides*, onde qualquer negação explícita prevalece sobre permissões:
+
+$D = cases(
+  "Deny" & "se" exists p in P_"deny" : "Eval"(p, "ctx") = "true",
+  "Allow" & "se" exists p in P_"allow" : "Eval"(p, "ctx") = "true",
+  "Deny" & "caso contrário (negar por padrão)"
+)$
+
+Onde $P_"deny"$ é o conjunto de políticas com efeito de negação e $P_"allow"$ é o conjunto de políticas com efeito de permissão. A função $"Eval"(p, "ctx")$ avalia se todas as regras da política $p$ são satisfeitas pelo contexto $"ctx"$, considerando o conector lógico (`AND` ou `OR`) definido na política. Este modelo formal assegura decisões determinísticas e auditáveis, fundamentais para conformidade regulatória.
+
 == Sistema de Autenticação
 
 O sistema prevê dois mecanismos de autenticação complementares: autenticação baseada em sessão para usuários humanos e autenticação por chave de API para integrações _machine-to-machine_.
@@ -1043,21 +1059,7 @@ A propriedade fundamental é que todo o pipeline (autorização, filtragem, orde
 
 == Motor ABAC
 
-O motor ABAC (`Services/AbacService.cs`, ~700 linhas) implementa a arquitetura NIST SP 800-162 com quatro componentes: PAP, PDP, PIP e PEP.
-
-=== Modelo Formal
-
-O sistema implementa controle de acesso baseado em atributos como função de decisão:
-
-$D = "Decide"(u, r, a, "ctx")$
-
-Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $"ctx"$ é o contexto de avaliação, e $D in "Allow", "Deny"$. A função implementa combinação *deny-overrides*:
-
-$D = cases(
-  "Deny" & "se" exists p in P_"deny" : "Eval"(p, "ctx") = "true",
-  "Allow" & "se" exists p in P_"allow" : "Eval"(p, "ctx") = "true",
-  "Deny" & "caso contrário (negar por padrão)"
-)$
+O motor ABAC (`Services/AbacService.cs`, ~700 linhas) implementa a arquitetura NIST SP 800-162 com quatro componentes: PAP, PDP, PIP e PEP, conforme o modelo formal descrito no Capítulo 3.
 
 === Policy Information Point (PIP)
 
