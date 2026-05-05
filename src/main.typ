@@ -637,6 +637,58 @@ O processo de geração ocorre em duas fases: descoberta e materialização. Na 
 
 Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface.
 
+=== Tradução de Filtros e Ordenação para Consultas de Banco
+
+Um diferencial do sistema de filtragem e ordenação é a tradução direta dos argumentos GraphQL para cláusulas nativas do banco de dados relacional. Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema converte cada operador de filtro em uma condição equivalente a uma cláusula `WHERE` de SQL, e cada campo de ordenação em uma cláusula `ORDER BY`.
+#linebreak()
+*Operadores de Filtro*: Para cada tipo de dado, o sistema disponibiliza operadores semanticamente apropriados. Campos de texto suportam igualdade, contém, início com e término com. Campos numéricos e de data suportam comparações de maior, menor, maior ou igual, menor ou igual e igualdade. Campos booleanos suportam apenas igualdade. Campos de relacionamento suportam existência e pertencimento a conjuntos. Cada operador é mapeado para uma função de extração que opera diretamente sobre a coluna semi-estruturada, permitindo que o banco execute a filtragem sem materializar as entidades em memória.
+#linebreak()
+*Ordenação*: A ordenação por múltiplos campos é suportada através de uma lista de critérios, onde cada critério especifica um campo e uma direção (ascendente ou descendente). O sistema traduz essa lista para uma sequência de cláusulas `ORDER BY` aplicadas diretamente na consulta do banco.
+#linebreak()
+*Paginação*: Consultas que retornam coleções de entradas utilizam paginação baseada em cursor, onde o sistema traduz os parâmetros de paginação para cláusulas `LIMIT` e `OFFSET` (ou equivalentes) no SQL gerado. Isso evita o carregamento de grandes conjuntos de dados em memória e garante tempos de resposta consistentes mesmo com volumes elevados de conteúdo.
+#linebreak()
+A propriedade fundamental deste pipeline é que toda a filtragem, ordenação e paginação é expressa como uma única consulta composta, traduzida para um único comando SQL. Nenhum dado é materializado em memória até a projeção final dos campos solicitados pelo cliente GraphQL.
+
+=== Exemplo de Query Dinâmica
+
+Para ilustrar o funcionamento do schema dinâmico, considere uma coleção "Artigos de Blog" com campos `title` (texto), `publishedAt` (data) e `author` (relacionamento com usuários). O sistema gera automaticamente os tipos e operações necessários para que um cliente possa executar consultas como:
+#pagebreak()
+```graphql
+query {
+  blogPosts(
+    where: {
+      data: {
+        title: { contains: "GraphQL" }
+        publishedAt: { gte: "2025-01-01" }
+      }
+    }
+    order: { publishedAt: DESC }
+    first: 10
+  ) {
+    edges {
+      node {
+        id
+        name
+        status
+        data {
+          title
+          publishedAt
+        }
+        author {
+          name
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+Neste exemplo, o cliente solicita os dez artigos mais recentes cujo título contém "GraphQL" e cuja data de publicação é posterior a 1º de janeiro de 2025, ordenados pela data de publicação em ordem decrescente. O sistema traduz esta consulta GraphQL para uma única query SQL que aplica as condições de filtro na coluna semi-estruturada, ordena pelo campo de data, limita o resultado a dez registros e retorna apenas os campos solicitados. Se o usuário requisitante estiver sujeito a políticas ABAC que restrinjam a visualização a recursos próprios, a consulta SQL também incluirá a cláusula de filtragem row-level antes da execução.
+
 == APIs e Protocolos de Comunicação
 
 O design da interface de comunicação prioriza uma API GraphQL como canal exclusivo para todas as operações de conteúdo, autenticação, autorização e administração. Não há API REST para CRUD de conteúdo, gerenciamento de sessões ou administração de políticas.
@@ -981,12 +1033,12 @@ O motor ABAC (`Services/AbacService.cs`, ~700 linhas) implementa a arquitetura N
 
 O sistema implementa controle de acesso baseado em atributos como função de decisão:
 
-$D = text{"Decide"}(u, r, a, text{"ctx"})$
+$D = "Decide"(u, r, a, "ctx")$
 
-Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $text{"ctx"}$ é o contexto de avaliação, e $D in {text{"Allow"}, text{"Deny"}}$. A função implementa combinação *deny-overrides*:
+Onde $u in U$ é o usuário (sujeito), $r in R$ é o tipo de recurso, $a in A$ é a ação, $"ctx"$ é o contexto de avaliação, e $D in {"Allow"}, {"Deny"}$. A função implementa combinação *deny-overrides*:
 
 $D = cases(
-  text{"Deny"} & "se" exists p in P_text{"deny"} : text{"Eval"}(p, text{"ctx"}) = text{"true"},
+  "Deny" & "se" exists p in P_"deny" : "Eval"(p, text{"ctx"}) = text{"true"},
   text{"Allow"} & "se" exists p in P_text{"allow"} : text{"Eval"}(p, text{"ctx"}) = text{"true"},
   text{"Deny"} & "caso contrário (negar por padrão)"
 )$
