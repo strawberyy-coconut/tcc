@@ -42,27 +42,32 @@
   set par(
     justify: true,
     leading: 1.5em,
-    first-line-indent: 1.5cm
+    first-line-indent: 0cm,
+    linebreaks: "optimized"
+    
   )
-  
+
+  show par: it => {
+    it
+    v(0.43cm)
+  }
+
   // Set heading formatting
   show heading.where(level: 1): it => {
     v(1cm)
     set text(size: 14pt, weight: "bold")
     pagebreak()
     it
- 
     v(1cm)
   }
-  
+
   show heading.where(level: 2): it => {
     v(0.7cm)
     set text(size: 12pt, weight: "bold")
-    //pagebreak()
     it
     v(0.7cm)
   }
-  
+
   show heading.where(level: 3): it => {
     v(0.7cm)
     set text(size: 12pt, weight: "bold")

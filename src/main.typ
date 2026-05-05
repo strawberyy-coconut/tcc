@@ -15,23 +15,19 @@
   bibliography: "../src/refs.yml"
 )
 
-#let breakpar = () => [
-  #linebreak()
-  #linebreak()
-]
-
 // ===========================================
 // CAPÍTULO 1 - DEFINIÇÃO DO PROBLEMA, OBJETIVOS E METODOLOGIA
 // ===========================================
 
 = Introdução
 
+
 O desenvolvimento de aplicações web modernas que integram conteúdo dinâmico com bancos de dados representa um desafio significativo para desenvolvedores, exigindo domínio de múltiplas tecnologias que abrangem desde a camada de apresentação até a lógica de negócios e persistência de dados. A complexidade aumenta quando consideramos requisitos não-funcionais como performance, responsividade, segurança e controle de acesso granular, além da necessidade de distribuir conteúdo através de múltiplos canais — sites, aplicativos móveis, assistentes de voz, dispositivos IoT @headless2021decoupled.
-#breakpar()
+
 Sistemas de gerenciamento de conteúdo (CMS) consolidaram-se como ferramentas essenciais da infraestrutura digital moderna. O WordPress, exemplo mais emblemático desta categoria, é utilizado por mais de 40% de todos os sites da internet @w3techs2024usage. Entretanto, a arquitetura monolítica de CMS tradicionais, onde backend e frontend estão fortemente acoplados, apresenta limitações evidentes frente às demandas de distribuição _omnichannel_ e personalização em escala @headless2021decoupled; @boiko2005.
-#breakpar()
+
 A arquitetura _headless_ emerge como resposta a estas limitações, propondo desacoplamento completo entre gestão de conteúdo e apresentação através de APIs @headless2021decoupled. Esta separação oferece flexibilidade tecnológica sem precedentes, enquanto requisitos crescentes de conformidade regulatória — como GDPR e LGPD — demandam controle de acesso granular com políticas baseadas em atributos contextuais @nist2014abac.
-#breakpar()
+
 Este trabalho apresenta o TechtonicCMS, um sistema de gerenciamento de conteúdo _headless_ que combina arquitetura desacoplada _API-first_, controle de acesso baseado em atributos (ABAC), e criação dinamica de esquemas GraphQL. O sistema demonstra como balancear usabilidade para editores não-técnicos, flexibilidade para desenvolvedores e requisitos rigorosos de segurança.
 
 == Objetivos
@@ -81,7 +77,7 @@ Este capítulo apresenta o referencial teórico fundamental para compreensão do
 == Sistemas de Gerenciamento de Conteúdo (CMS)
 
 Um Sistema de Gerenciamento de Conteúdo (ou CMS, da sigla em inglês _Content Management System_) é como um painel de controle para gerenciar o conteúdo de um site @nath2010content. Ele permite que pessoas sem conhecimento técnico possam criar, editar e publicar textos, imagens e vídeos em um site, sem precisar saber programação.
-#breakpar()
+
 Pense no CMS como um editor de documentos, similar ao Microsoft Word, mas para sites. Em vez de precisar escrever código para adicionar uma nova notícia ou atualizar uma foto, você simplesmente usa uma interface visual, clica em botões e preenche formulários @boiko2005.
 
 === A Evolução dos CMS
@@ -90,7 +86,7 @@ Os sistemas de gerenciamento de conteúdo evoluíram significativamente desde o 
 #linebreak()
 #linebreak()
 Com o amadurecimento da web nos anos 2000, surgiram plataformas que simplificaram radicalmente este processo. Sistemas como WordPress (lançado em 2003) e Joomla (2005) democratizaram a criação de sites ao oferecer interfaces visuais intuitivas, permitindo que usuários sem conhecimento de programação pudessem gerenciar conteúdo @headless2021decoupled; @boiko2005; @wordpress2024docs; @joomla2024docs. Esta abordagem foi tão bem-sucedida que, atualmente, o WordPress sozinho é utilizado por mais de 40% de todos os sites da internet @w3techs2024usage.
-#breakpar()
+
 Mais recentemente, observa-se o crescimento de uma arquitetura conhecida como CMS headless, onde o backend de gerenciamento de conteúdo é completamente separado do frontend de apresentação através de APIs @headless2021decoupled; @boiko2005. Esta separação oferece maior flexibilidade para distribuir o mesmo conteúdo através de múltiplos canais (web, aplicativos móveis, dispositivos IoT, etc.), respondendo às demandas de uma experiência digital cada vez mais diversificada.
 
 === Funções Fundamentais de um CMS
@@ -167,13 +163,13 @@ Isso causa dois problemas principais @banks2018learning:
 2. *_Under-fetching_*: Precisar fazer várias requisições separadas para conseguir todos os dados necessários (lentidão)
 
 O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning. O GraphQL trabalha com duas operações principais: _queries_ (consultas de leitura) e _mutations_ (operações de escrita) @banks2018learning. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
-#breakpar()
+
 Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens específicas: suporte a _Union Types_ que permitem campos com diferentes tipos de dados, e argumentos de filtragem que viabilizam buscas precisas em campos de texto, numéricos e de data @banks2018learning.
 
 === Autenticação e Autorização em APIs
 
 A autenticação em APIs modernas emprega diferentes mecanismos conforme o cenário de uso. Tokens de sessão baseados em JWT (_JSON Web Token_) constituem fichas de autenticação compactas e assinadas digitalmente, permitindo que o cliente prove sua identidade sem reenviar credenciais a cada requisição @jones2015jwt.
-#breakpar()
+
 Para integração _machine-to-machine_, APIs frequentemente empregam chaves de acesso (API keys) transmitidas via _header_ de autorização, seguindo o padrão _Bearer_ definido pelo OAuth 2.0 @rfc6750. Este modelo diferencia-se de tokens de sessão por ser _stateless_ do ponto de vista do cliente, embora o servidor mantenha metadados de controle para rastreamento e revogação @habib2025gateway.
 
 === Rate Limiting e Controle de Tráfego
@@ -199,7 +195,7 @@ A camada de transporte HTTP emprega _headers_ de segurança como mecanismo de de
 === Controle de Acesso Baseado em Atributos (ABAC)
 
 Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
-#breakpar()
+
 O ABAC (_Attribute-Based Access Control_) representa evolução dos modelos de controle de acesso ao basear decisões de autorização em atributos de múltiplas dimensões @nist2014abac. Diferentemente do RBAC, que avalia apenas o papel do usuário, o ABAC considera atributos do sujeito (usuário), do recurso (objeto sendo acessado), da ação (operação requisitada) e do ambiente (contexto situacional como horário e localização) @servos2017abac.
 
 ==== Arquitetura e Componentes
@@ -219,9 +215,9 @@ Esta arquitetura permite expressar regras como "usuários do departamento X pode
 ==== Padrões e Implementações
 
 XACML (_eXtensible Access Control Markup Language_) constitui o padrão OASIS para especificação de políticas ABAC @oasis2013xacml. XACML define estrutura hierárquica de _rules_, _policies_ e _policy sets_, além de algoritmos de combinação (`deny-overrides`, `permit-overrides`) para resolução determinística de conflitos entre políticas @combiningpolicies2009.
-#breakpar()
+
 _Open Policy Agent_ (OPA) emergiu como implementação moderna de ABAC, oferecendo linguagem declarativa Rego para especificação de políticas e arquitetura desacoplada _policy-as-code_ @openpolicyagentcontributors2024opa. Outras implementações incluem Casbin (biblioteca multi-linguagem) @casbin2024docs, AWS IAM com atributos baseados em tags @aws2024abac, e Apache Ranger para segurança de dados @ranger2024docs.
-#breakpar()
+
 Para sistemas de gerenciamento de conteúdo, o ABAC oferece controle granular essencial: diferentes campos podem ter diferentes níveis de sensibilidade, e o acesso pode variar baseado em propriedade do conteúdo, status de publicação e contexto do usuário. Esta flexibilidade permite implementar requisitos complexos de segurança mantendo políticas centralizadas e auditáveis @nist2014abac.
 
 == Modelagem de Dados Dinâmica e Flexível
@@ -245,7 +241,6 @@ O padrão _Entity-Attribute-Value_ (EAV), também conhecido como _object-attribu
 
 #align(left)[#text(size: 10pt)[Fonte: Dinu e Nadkarni (2007) via ResearchGate (https://www.researchgate.net/figure/Basic-Class-Model-of-the-EAV-Storage-Structure-The-basic-class-model-of-the-EAV-storage_fig1_257884193).]]
 
-#breakpar()
 Esta abordagem oferece flexibilidade máxima, pois novos atributos podem ser adicionados sem alterações na estrutura da tabela @batra2016eav. No entanto, o padrão EAV apresenta limitações significativas @nadkarni2007eav:
 #linebreak()
 *_Performance_ de Consultas*: Cada atributo requer uma linha separada na tabela, resultando em operações de JOIN complexas para reconstruir entidades completas. Consultas que em modelos tradicionais seriam simples tornam-se substancialmente mais lentas.
@@ -321,7 +316,7 @@ O WordPress é o sistema de gerenciamento de conteúdo mais popular do mundo, us
 *Diferenças Arquiteturais*:
 #linebreak()
 *Arquitetura*: O WordPress adota modelo monolítico onde backend, frontend e camada de apresentação estão fortemente acoplados @headless2021decoupled. Embora existam extensões para operar em modo _headless_, o sistema não foi projetado para essa arquitetura, resultando em complexidade adicional quando usado apenas como backend de APIs. Este projeto, por outro lado, adota arquitetura _headless_ nativa desde a concepção, priorizando desacoplamento e distribuição multi-canal.
-#linebreak()
+
 *Escopo e Maturidade*: O WordPress é um produto com mais de vinte anos de desenvolvimento contínuo, testado em escala global e com garantias de estabilidade comprovadas. O TechtonicCMS é um protótipo acadêmico que explora conceitos arquiteturais específicos (ABAC, schemas GraphQL dinâmicos, armazenamento híbrido), não concorrente direto em termos de funcionalidade geral, ecossistema ou confiabilidade operacional.
 
 === Joomla: O Meio-Termo
@@ -445,11 +440,11 @@ A Figura 3.2 apresenta em detalhe como essas entidades se relacionam, com destaq
 === Estratégia de Armazenamento
 
 Diferentemente do padrão EAV discutido no referencial teórico, o sistema utiliza uma abordagem de *armazenamento semi-estruturado unificado* para todos os valores dinâmicos de entrada. Cada entrada possui uma coluna `Data` que armazena todos os valores de campos — texto, números, booleanos, datas, objetos, listas — em uma única estrutura de dados semi-estruturada. Os metadados sobre quais campos existem e seus tipos permanecem na tabela `fields`, mas os valores concretos habitam em `Entry.Data`.
-#breakpar()
+
 Esta estratégia elimina a necessidade de múltiplas tabelas de valores tipados (EAV), simplificando o schema e reduzindo a complexidade de joins. Para viabilizar filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções customizadas de extração de dados que operam diretamente sobre a coluna semi-estruturada, permitindo que queries como "título igual a 'Hello'" sejam executadas no banco sem carregar todas as entidades em memória.
-#breakpar()
+
 *Relacionamentos entre Entradas*: Relacionamentos tipados entre entradas (ex: "Autor" referenciando "Usuários") utilizam uma tabela de junção `entry_relations` com restrição de unicidade por `(EntryId, FieldId)`, garantindo que cada campo de relacionamento em uma entrada aponte para no máximo um alvo. A integridade referencial é preservada via chaves estrangeiras em cascata.
-#breakpar()
+
 *Exemplo Prático de Armazenamento*: Para uma coleção "Artigos de Blog" com campos heterogêneos, a entrada armazena todos os valores em `Data`:
 
 #table(
@@ -474,7 +469,7 @@ O banco de dados inclui um conjunto completo de tabelas para implementar o siste
 ) <fig-security-content>
 
 #align(left)[#text(size: 10pt)[Fonte: Criação do autor.]]
-#breakpar()
+
 As tabelas principais de segurança incluem:
 #linebreak()
 *users*: Armazena credenciais de autenticação com hash criptográfico de senha, status do usuário (`ACTIVE`, `INACTIVE`, `BANNED`), e timestamps de criação, último acesso e última modificação.
@@ -675,7 +670,6 @@ $D = cases(
   "Allow" & "se" exists p in P : "effect"(p) = "ALLOW" and "Eval"(p, "ctx") = top,
   "Deny" & "caso contrário"
 )$
-
 avaliando _deny policies_ primeiro, em ordem $pi$ descendente — um _match_ causa retorno imediato sem avaliar _allow policies_.
 
 ==== Cache
@@ -686,7 +680,6 @@ $D = cases(
   D_"cache" & "se" exists "cache"(u, r, a) and "valid"("cache"),
   "Decide"(u, r, a, "ctx") & "caso contrário"
 )$
-
 onde $"valid"("cache")$ verifica TTL e $"PolicyVersions"$ — a string concatenada de $(p."id" : p."updatedAt")$ de todas as políticas contribuintes. Se qualquer política foi modificada, o cache é descartado.
 
 ==== Filtragem em Nível de Linha
