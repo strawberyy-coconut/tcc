@@ -308,33 +308,65 @@ Para entender melhor o que este projeto oferece, é importante comparar com outr
 
 === WordPress: O Gigante Tradicional
 
-O WordPress é o sistema de gerenciamento de conteúdo mais popular do mundo, usado por mais de 40% de todos os sites @w3techs2024usage. Ele representa o modelo tradicional de CMS monolítico onde todas as camadas estão fortemente acopladas @headless2021decoupled; @wordpress2024docs.
+O WordPress é o sistema de gerenciamento de conteúdo mais popular do mundo, usado por mais de 40% de todos os sites @w3techs2024usage. Lançado em 2003, consolidou-se como padrão _de facto_ para publicação web, com ecossistema de temas e plugins que cobre praticamente qualquer necessidade de site @wordpress2024docs.
 #linebreak()
-*Pontos Fortes*: Fácil de usar, ecossistema extenso com milhares de temas e plugins, grande comunidade de suporte @wordpress2024docs.
+*Vantagens do WordPress sobre este projeto*:
+- Ecossistema maduro com dezenas de milhares de plugins e temas verificados
+- Instalação e configuração em minutos, sem necessidade de conhecimento técnico
+- Comunidade de suporte massiva, documentação extensa e hospedagem otimizada disponível em praticamente qualquer provedor
+- Sistema de _blocks_ (Gutenberg) para edição visual de conteúdo
+- SEO integrado, cache, CDN e otimização de mídia via plugins consolidados
+- Economia de escala: hospedagem barata, desenvolvedores abundantes, curva de aprendizado mínima
 #linebreak()
-*Limitações*: A arquitetura monolítica dificulta escalabilidade em ambientes de alto tráfego e integração com múltiplos canais de distribuição @headless2021decoupled. Embora existam extensões para funcionar como headless CMS, o sistema não foi originalmente projetado para essa arquitetura, resultando em performance subótima quando usado apenas como backend.
+*Diferenças Arquiteturais*:
+#linebreak()
+*Arquitetura*: O WordPress adota modelo monolítico onde backend, frontend e camada de apresentação estão fortemente acoplados @headless2021decoupled. Embora existam extensões para operar em modo _headless_, o sistema não foi projetado para essa arquitetura, resultando em complexidade adicional quando usado apenas como backend de APIs. Este projeto, por outro lado, adota arquitetura _headless_ nativa desde a concepção, priorizando desacoplamento e distribuição multi-canal.
+#linebreak()
+*Escopo e Maturidade*: O WordPress é um produto com mais de vinte anos de desenvolvimento contínuo, testado em escala global e com garantias de estabilidade comprovadas. O TechtonicCMS é um protótipo acadêmico que explora conceitos arquiteturais específicos (ABAC, schemas GraphQL dinâmicos, armazenamento híbrido), não concorrente direto em termos de funcionalidade geral, ecossistema ou confiabilidade operacional.
 
 === Joomla: O Meio-Termo
 
-O Joomla é uma alternativa ao WordPress que oferece controle de usuários e sistema de permissões mais robusto, mantendo a estrutura tradicional monolítica característica de CMS acoplados @headless2021decoupled; @joomla2024docs. Assim como outros CMS tradicionais, enfrenta limitações similares ao WordPress quando se trata de arquiteturas multi-canal e escalabilidade distribuída.
+O Joomla é um CMS tradicional lançado em 2005, conhecido por oferecer controle de usuários e sistema de permissões mais granular que o WordPress, com suporte nativo a múltiplos níveis de acesso (_Access Control Levels_) e gerenciamento de conteúdo multilíngue @joomla2024docs.
+#linebreak()
+*Vantagens do Joomla sobre este projeto*:
+- Sistema de ACL nativo com grupos de usuários, níveis de acesso e permissões configuráveis por categoria e artigo
+- Suporte multilíngue integrado sem necessidade de plugins adicionais
+- Templates e extensões maduras, com comunidade ativa de desenvolvedores
+- Interface administrativa completa com gerenciamento de menus, módulos e componentes
+- Estabilidade comprovada em produção por quase duas décadas
+#linebreak()
+*Diferenças Arquiteturais*:
+#linebreak()
+*Arquitetura*: O Joomla mantém a estrutura monolítica característica de CMS tradicionais @headless2021decoupled, com forte acoplamento entre gestão de conteúdo e apresentação. Embora ofereça APIs para integração, não foi projetado como sistema _headless first_, apresentando limitações em arquiteturas multi-canal e escalabilidade distribuída. Este projeto explora uma abordagem oposta: desacoplamento total desde a concepção.
+#linebreak()
+*Escopo e Maturidade*: O Joomla é um produto consolidado com quase vinte anos de evolução, ecossistema de extensões estabelecido e uso comprovado em produção. O TechtonicCMS é um protótipo acadêmico focado em demonstrar conceitos específicos de arquitetura moderna (ABAC, schemas dinâmicos, GraphQL nativo), sem pretensão de equivalência funcional ou operacional.
 
 === Strapi: O Principal Concorrente _Headless_
 
-O Strapi é o CMS _headless open-source_ (código aberto) mais conhecido atualmente @strapi2024docs. Ele compartilha várias ideias com este projeto:
+O Strapi é o CMS _headless open-source_ mais maduro e amplamente adotado atualmente @strapi2024docs, com mais de cinco anos de desenvolvimento contínuo, ecossistema extenso de plugins e comunidade ativa. Como produto consolidado, oferece funcionalidades que excedem o escopo deste trabalho acadêmico:
 #linebreak()
-*Semelhanças*:
-- Permite criar coleções de conteúdo personalizadas @strapi2024docs
+*Vantagens do Strapi sobre este projeto*:
+- Suporte nativo a múltiplos bancos de dados (PostgreSQL, MySQL, MariaDB, SQLite)
+- Sistema de plugins extensível com marketplace oficial
+- Interface administrativa visual completa com internacionalização de UI
+- Documentação de API automática (Swagger/OpenAPI)
+- Migrations de banco de dados automatizadas e versionamento de schema
+- Suporte a _webhooks_, _emailing_ e notificações integradas
+- Editor de conteúdo rico (_rich text_) e componentes reutilizáveis
+- Testes de produção, _performance tuning_ e estabilidade comprovada em larga escala
+#linebreak()
+*Semelhanças com este projeto*:
+- Permite criar coleções de conteúdo personalizadas com tipos dinâmicos
 - Oferece APIs GraphQL e REST para acesso ao conteúdo
-- Tem sistema de permissões baseado em papéis (roles)
-- Suporta vários tipos de dados diferentes
+- Suporta múltiplos tipos de dados (texto, número, mídia, relacionamentos)
 #linebreak()
-*Diferenças Importantes*:
+*Diferenças Arquiteturais*:
 #linebreak()
-*Controle de Permissões*: O Strapi usa apenas o sistema tradicional RBAC (controle por papéis) @strapi2024docs, que só permite definir permissões por tipo de conteúdo inteiro. Este projeto usa ABAC, permitindo controle muito mais fino - até mesmo por campo individual e considerando o contexto (horário, localização, etc.) conforme especificado por @nist2014abac.
+*Controle de Acesso*: O Strapi utiliza RBAC tradicional @strapi2024docs, onde permissões são concedidas por papel e por tipo de conteúdo. Este projeto explora ABAC como prova de conceito, permitindo regras baseadas em atributos contextuais (horário, localização, propriedade de recurso) conforme @nist2014abac, embora sem a maturidade e cobertura funcional de um produto em produção.
 #linebreak()
-*Organização dos Dados*: Este projeto usa uma estratégia híbrida que organiza os dados de forma mais otimizada dependendo do tipo de informação, evitando as limitações do padrão EAV @nadkarni2007eav enquanto mantém flexibilidade de schema.
+*Interface e APIs*: O Strapi oferece tanto REST quanto GraphQL como opções de primeira classe, enquanto este projeto adota GraphQL como interface exclusiva — uma decisão deliberada de simplicidade que reduz a superfície de manutenção, mas limita a compatibilidade com clientes que esperam REST.
 #linebreak()
-*Regras Contextuais*: O Strapi não consegue criar regras como "só pode publicar durante horário comercial" ou "só pode acessar deste local". Este projeto implementa essas capacidades através do ABAC @nist2014abac.
+*Escopo e Maturidade*: O Strapi é um produto pronto para produção com garantias de estabilidade, _LTS_ e suporte comercial. O TechtonicCMS é um protótipo acadêmico focado em demonstrar conceitos específicos (ABAC, schema GraphQL dinâmico, armazenamento híbrido), não concorrente direto em termos de funcionalidade ou confiabilidade operacional.
 
 // ================================
 // CAPÍTULO 3 - CONCEITO E DESIGN DO SISTEMA
