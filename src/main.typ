@@ -615,6 +615,28 @@ As entradas transitam entre quatro estados principais: `DRAFT` (rascunho em edi�
 
 Cada agendamento vincula uma entrada a uma ação futura, especificando o horário de execução desejado. Um serviço de processamento assíncrono verifica periodicamente agendamentos pendentes cuja data de execução já foi atingida, aplica a transição de estado correspondente e marca o agendamento como executado. Este modelo garante que transições programadas ocorram mesmo que o sistema tenha sido indisponível no horário exato, desde que a verificação subsequente alcance o agendamento.
 
+== Geração Dinâmica de Schema
+
+Um dos pilares do design do sistema é a capacidade de gerar o schema da API de forma dinâmica, refletindo em tempo real as definições de coleções e campos armazenadas no banco de dados. Este mecanismo elimina a necessidade de recompilar ou reiniciar o serviço quando novos tipos de conteúdo são criados pela interface administrativa.
+
+=== Modelo de Geração
+
+Para cada coleção definida no banco de dados, o sistema constrói automaticamente um conjunto de tipos e operações GraphQL:
+#linebreak()
+*Tipos de Dados*: Representam a estrutura de cada entrada da coleção, incluindo campos escalares (texto, número, booleano, data) e campos de relacionamento que referenciam outras coleções.
+#linebreak()
+*Tipos de Entrada*: Definem o formato esperado para criação e atualização de entradas, com validações de obrigatoriedade e unicidade derivadas dos metadados da coleção.
+#linebreak()
+*Filtros e Ordenação*: Para cada campo tipado, o sistema gera inputs de filtro com operadores específicos ao tipo de dado (igualdade, comparação, contém, intervalo) e inputs de ordenação para classificação ascendente ou descendente.
+#linebreak()
+*Mutações*: Operações de escrita são geradas por coleção, incluindo criação, atualização, exclusão, publicação, despublicação, arquivamento e restauração de entradas.
+
+=== Ciclo de Vida do Schema
+
+O processo de geração ocorre em duas fases: descoberta e materialização. Na fase de descoberta, o sistema consulta as tabelas de metadados (`collections` e `fields`) para identificar todas as coleções e seus atributos. Na fase de materialização, os tipos são construídos e integrados ao schema executável da API. Quando uma nova coleção é criada ou um campo é modificado, o schema é reconstruído automaticamente, tornando as novas operações disponíveis imediatamente.
+
+Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface.
+
 == APIs e Protocolos de Comunicação
 
 O design da interface de comunicação prioriza uma API GraphQL como canal exclusivo para todas as operações de conteúdo, autenticação, autorização e administração. Não há API REST para CRUD de conteúdo, gerenciamento de sessões ou administração de políticas.
