@@ -88,7 +88,7 @@ diagrams() {
             local output_file="$diagram_dir/$basename.png"
 
             echo "  -> $mmd_file"
-            if mmdc -i "$mmd_file" -o "$output_file" -p puppeteer-config.json -s 20 -b transparent; then
+            if mmdc -i "$mmd_file" -o "$output_file" -p puppeteer-config.json -s 10 -b transparent; then
                 echo "     [SUCCESS] $output_file"
             else
                 echo "     [ERROR] Failed to compile $mmd_file"

@@ -9,7 +9,7 @@
     (name: "Gustavo Medeiros Lima", student-id: "31466281"),
   ),
   course: "Ciência da Computação",
-  advisor: "",
+  advisor: "Eliel Dias",
   city: "Brasília",
   year: 2025,
   bibliography: "../src/refs.yml"

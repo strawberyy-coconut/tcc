@@ -4,11 +4,22 @@ Guide for agentic coding agents working in this repository.
 
 ## Project Overview
 
-This is an academic thesis (TCC — Trabalho de Conclusão de Curso) for a Computer Science degree at Centro Universitário do Distrito Federal (UDF). The document is written in **Typst** (a modern typesetting system) and compiles to PDF. The thesis documents the design of "TechtonicCMS", a headless CMS with attribute-based access control (ABAC).
+This repository is a **monorepo** containing:
 
-**This is a document project, not a software project.** There are no source code tests, linters, or typecheckers. The "build" compiles a Typst document to PDF.
+1. **An academic thesis (TCC)** for a Computer Science degree at Centro Universitário do Distrito Federal (UDF). The document is written in **Typst** and compiles to PDF. It documents the design of "TechtonicCMS", a headless CMS with attribute-based access control (ABAC).
 
-## Build Commands
+2. **The TechtonicCMS implementation**, split into three subprojects:
+   - `techtoniccms-api/` — .NET 10 API with Hot Chocolate GraphQL, PostgreSQL, Redis, and a custom ABAC engine
+   - `techtoniccms-app/` — SvelteKit 5 management frontend (Deno-based)
+   - `techtoniccms-blog/` — Astro blog frontend
+
+Each subproject has its own `AGENTS.md` with detailed conventions. See the sections below for a quick reference and links.
+
+---
+
+## Thesis Document (`src/`, `udf-tcc-template/`)
+
+### Build Commands
 
 ```bash
 # One-time compilation (outputs to build/tcc.pdf)
@@ -29,30 +40,92 @@ typst watch src/main.typ build/tcc.pdf
 
 ### Testing and Linting
 
-There are **no tests or lint commands** for this project. The only validation is whether `typst compile` succeeds without errors. After making changes, always run `./project.sh build` to verify the document compiles cleanly.
+There are **no tests or lint commands** for the thesis. The only validation is whether `typst compile` succeeds without errors. After making changes, always run `./project.sh build` to verify the document compiles cleanly.
 
-## Repository Structure
+### Thesis Document Structure
 
 ```
-├── .devcontainer/          # VS Code dev container config (Alpine + typst)
-├── .opencode/              # OpenCode agent config and plugins
-│   └── agents/
-│       └── review.md       # Review agent — checks writing quality and citations
-├── build/
-│   └── tcc.pdf             # Compiled output (gitignored)
-├── compose.dev.yaml        # Docker Compose for dev environment
-├── Containerfile.dev       # Alpine image with typst, node, poppler-utils
-├── project.sh              # Build script (build/dev/clean)
-├── references/             # PDF references for citation verification
-└── src/
-    ├── main.typ            # Main document — all thesis content
-    ├── refs.yml            # Bibliography in Hayagriva YAML format
-    ├── diagramas/          # Figures and diagrams (PNG, SVG, drawio)
-    └── udf-tcc-template/   # Custom UDF/ABNT Typst template
-        ├── template.typ    # Template with cover, approval page, ABNT formatting
-        ├── associacao-brasileira-de-normas-tecnicas.csl  # ABNT citation style
-        └── udf-logo.png    # University logo
+src/
+  main.typ                  # Main document — all thesis content
+  refs.yml                  # Bibliography in Hayagriva YAML format
+  diagramas/                # Figures and diagrams (PNG, SVG, drawio)
+udf-tcc-template/           # Custom UDF/ABNT Typst template
+  template.typ              # Template with cover, approval page, ABNT formatting
+  associacao-brasileira-de-normas-tecnicas.csl  # ABNT citation style
+  udf-logo.png              # University logo
+references/                 # PDF references for citation verification
+build/                      # Compiled output (gitignored)
 ```
+
+## API (`techtoniccms-api/`)
+
+A .NET 10 headless CMS API built with Hot Chocolate GraphQL, EF Core (PostgreSQL), Redis sessions, and S3-compatible asset storage. Authorization uses a custom ABAC engine with deny-first, priority-based policies.
+
+**Quick commands:**
+```bash
+cd techtoniccms-api
+dotnet build
+docker compose -f compose.dev.yaml up -d   # Run infrastructure + app
+dotnet tool restore
+dotnet ef migrations add <Name> --project TechtonicCmsApi
+dotnet ef database update --project TechtonicCmsApi
+```
+
+GraphQL endpoint: `http://localhost:5095/graphql`
+
+**Key conventions:**
+- PascalCase for C# types/methods; camelCase for GraphQL fields; UPPERCASE for enum string values
+- Entity IDs always serialized as strings
+- DateTimes always UTC ISO 8601
+- GraphQL type pattern: root types are minimal partial classes extended via `[ExtendObjectType]`
+- Authorization: `[Authorize]`, `[Authorize(Policy = "Resource:Action")]`, `[AllowAnonymous]`
+- Error codes: `NOT_FOUND`, `CONFLICT`, `BAD_REQUEST`, `UNAUTHENTICATED`, `FORBIDDEN`, `INVALID_ENUM`
+
+**See `techtoniccms-api/AGENTS.md` for full details.**
+
+## Management App (`techtoniccms-app/`)
+
+A SvelteKit 5 management UI for TechtonicCMS. Talks exclusively to the GraphQL API.
+
+**Quick commands:**
+```bash
+cd techtoniccms-app
+deno task dev               # Start dev server
+deno task build             # Production build
+deno task check             # Type-check with svelte-check
+deno task lint              # Prettier format check
+deno task format            # Auto-format with Prettier
+deno task codegen:gql       # Regenerate GraphQL types from API schema
+```
+
+**Key conventions:**
+- Uses **Deno** (NOT node/npm)
+- Svelte 5 runes mode
+- **Remote functions only** — do NOT use `load` functions or `+page.server.ts`. Use `query()` and `form()` from SvelteKit experimental remote functions
+- GraphQL client in `src/lib/server/gql.ts` with `gqlFetch<TResult, TVariables>()` — always pass explicit generics
+- Error handling via `handleGraphQLError()` and `handleGraphQLErrorForm()` helpers
+
+**See `techtoniccms-app/AGENTS.md` for full details.**
+
+## Blog (`techtoniccms-blog/`)
+
+An Astro-based blog frontend for TechtonicCMS.
+
+**Quick commands:**
+```bash
+cd techtoniccms-blog
+npm run dev                 # Start dev server
+npm run build               # Production build
+npm run preview             # Preview production build
+npm run codegen:gql         # Regenerate GraphQL types
+```
+
+**Key conventions:**
+- Astro 6 with Tailwind CSS v4
+- Node adapter (`@astrojs/node`)
+- Uses the shared `techtonic-client-gql/` package for GraphQL types
+
+---
 
 ## Typst Style Conventions
 
@@ -142,6 +215,10 @@ query { ... }
 3. Place any new diagrams in `src/diagramas/`
 4. Run `./project.sh build` to verify compilation
 
+### Working on the API, App, or Blog
+
+Each subproject has its own build system and conventions. Always check the subproject's `AGENTS.md` before making changes. Use the quick commands listed in the sections above.
+
 ### Review Agent
 
 A review agent is configured at `.opencode/agents/review.md`. It operates in read-only subagent mode (cannot edit files) and focuses on:
@@ -149,7 +226,7 @@ A review agent is configured at `.opencode/agents/review.md`. It operates in rea
 - **Writing quality**: Checks that prose is concise, grammatically correct, and maintains academic register (formal, third person, passive voice).
 - **Citation verification**: Cross-references claims in `src/main.typ` against the actual PDFs stored in `references/` to confirm that cited sources support the assertions made. Uses bash commands (e.g., `pdftotext`) to extract and search PDF content when direct reading is not possible.
 
-Invoke this agent when you want to validate new or existing content without making changes.
+Invoke this agent when you want to validate thesis content without making changes.
 
 ### Editing the Template
 
@@ -162,9 +239,13 @@ The template at `src/udf-tcc-template/template.typ` handles:
 
 ## Dev Environment
 
-- **Container**: Alpine Linux with `typst`, `bash`, `git`, `nodejs`, `poppler-utils`, and Microsoft core fonts
-- **VS Code extensions**: tinymist (Typst LSP), PDF viewer, Copilot Vision, Foam
-- **Required tools**: `typst` (installed in container, or install locally from https://github.com/typst/typst)
+- **Container**: Alpine Linux with `typst`, `bash`, `git`, `nodejs`, `poppler-utils`, `dotnet-sdk-10.0`, `deno`, and Microsoft core fonts
+- **VS Code extensions**: tinymist (Typst LSP), PDF viewer, Copilot Vision, Foam, C# Dev Kit
+- **Required tools**:
+  - `typst` — for thesis compilation
+  - `dotnet` — for API development
+  - `deno` — for management app development
+  - `node` (v22+) — for blog development
 
 ## Key Constraints
 
