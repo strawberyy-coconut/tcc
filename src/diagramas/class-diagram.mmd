@@ -1,0 +1,47 @@
+classDiagram
+    class AbacService {
+        +CheckPermissionAsync(userId, resource, action, resourceData) bool
+        +RequirePermissionAsync(userId, resource, action, resourceData) void
+        +IsRestrictedToOwnResourcesAsync(userId, resource, action) bool
+        -GetApplicablePoliciesAsync(userId, resource, action) List~AbacPolicy~
+        -EvaluatePolicyRulesAsync(policy, context) bool
+        -LookupCacheAsync(userId, resource, resourceId, action) bool?
+        -WriteCacheAsync(...) void
+        -WriteAuditAsync(...) void
+    }
+
+    class AuthService {
+        +GenerateAccessTokenAsync(userId, name, status) (string, string)
+        +GenerateRefreshTokenAsync(userId, sessionId) string
+        +ValidateAccessToken(token) ClaimsPrincipal
+        +ValidateRefreshToken(token) ClaimsPrincipal
+    }
+
+    class SessionService {
+        +CreateSessionAsync(sessionId, userId, name, status) SessionData
+        +GetSessionAsync(sessionId) SessionData?
+        +DeleteSessionAsync(sessionId, userId) void
+        +DeleteAllUserSessionsAsync(userId) void
+    }
+
+    class PasswordService {
+        +HashPassword(password) string
+        +VerifyPassword(password, existingHash) (bool, string?)
+        +ValidatePasswordStrength(password) void
+    }
+
+    class CollectionTypeModule {
+        +RegisterTypesAsync(context, cancellationToken) IEnumerable~TypeSystemObjectBase~
+        -BuildCollectionTypeMap(collections) Dictionary
+        -BuildQueryTypesAsync(...) void
+        -BuildMutationTypes(collections, types) void
+    }
+
+    class CollectionConnectionTypeInterceptor {
+        +OnAfterCompleteType(context, definition) void
+        -BuildConnectionTypes(...) (ObjectTypeDefinition, ObjectTypeDefinition)
+    }
+
+    AbacService --> AuthService : uses for identity
+    AuthService --> SessionService : manages sessions
+    CollectionTypeModule --> CollectionConnectionTypeInterceptor : coordinates

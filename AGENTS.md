@@ -46,7 +46,12 @@ There are **no tests or lint commands** for the thesis. The only validation is w
 
 ```
 src/
-  main.typ                  # Main document — all thesis content
+  main.typ                  # Main document — imports template and includes all chapters
+  chapter-1.typ             # Chapter 1 content
+  chapter-2.typ             # Chapter 2 content
+  chapter-3.typ             # Chapter 3 content
+  chapter-4.typ             # Chapter 4 content
+  chapter-5.typ             # Chapter 5 content
   refs.yml                  # Bibliography in Hayagriva YAML format
   diagramas/                # Figures and diagrams (PNG, SVG, drawio)
 udf-tcc-template/           # Custom UDF/ABNT Typst template
@@ -210,7 +215,7 @@ query { ... }
 
 ### Adding Content to the Thesis
 
-1. Edit `src/main.typ` — this is the single source file for all content
+1. Edit the relevant `src/chapter-N.typ` file for the chapter you are working on
 2. Add references to `src/refs.yml` if citing new sources
 3. Place any new diagrams in `src/diagramas/`
 4. Run `./project.sh build` to verify compilation
