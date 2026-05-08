@@ -1,217 +1,28 @@
-barkley1999role:
-  type: article
-  title: A role-based access control model and reference implementation within a corporate intranet
-  author: Barkley, John
-  parent:
-    type: periodical
-    title: ACM Transactions on Information and System Security
-    volume: 2
-    issue: 1
-  page-range: 34-64
-  date: 1999
-  doi: 10.1145/300830.300834
+# ============================================
+# BIBLIOGRAFIA ATUALIZADA — TechtonicCMS
+# ============================================
+# 
+# INSTRUÇÕES DE USO:
+# 1. Copie este bloco inteiro para o seu arquivo .bib ou .yaml
+# 2. Substitua as entradas antigas pelas versões corrigidas abaixo
+# 3. No texto Typst, atualize as chaves conforme indicado nos comentários
+#
+# LEGENDA DE AÇÕES:
+#   [NOVO]      = Referência nova, adicione ao arquivo
+#   [CORRIGIDO] = Entrada existente com chave/ano corrigido
+#   [MANTER]    = Já está correto, não altere
+#   [REMOVER]   = Remova do texto e do arquivo YAML
+#
+# ============================================
 
-banks2018learning:
-  type: book
-  title: "Learning GraphQL: Declarative Data Fetching for Modern Web Apps"
-  author:
-    - Banks, Alex
-    - Porcello, Eve
-  publisher: O'Reilly Media
-  location: Sebastopol
-  date: 2018
 
-boiko2005:
-  type: book
-  title: "Content Management Bible"
-  author: Boiko, Bob
-  edition: 2
-  publisher: Wiley Publishing, Inc.
-  location: Indianapolis
-  date: 2005
+# ============================================
+# A. CORREÇÕES DE CHAVE (renomear no texto)
+# ============================================
 
-bax2020mechanized:
-  type: conference
-  title: A mechanized formalization of GraphQL
-  author: 
-    - Díaz, Tomás
-    - et al.
-  parent:
-    type: proceedings
-    title: Proceedings of the 41st ACM SIGPLAN Conference on Programming Language Design and Implementation
-    publisher: ACM
-  page-range: 1-13
-  date: 2020
-  doi: 10.1145/3372885.3373822
-
-brito2022graphql:
-  type: article
-  title: "GraphQL: A Systematic Mapping Study"
-  author: 
-    - QUIÑA-MERA, ANTONIO 
-    - et al.
-  parent:
-    type: periodical
-    title: ACM Computing Surveys
-    volume: 55
-    issue: 3
-  page-range: 1-35
-  date: 2022
-  doi: 10.1145/3561818
-
-chen2002study:
-  type: conference
-  title: Study of a content oriented web architectural model
-  author: 
-    - Qingshan, Li 
-  parent:
-    type: proceedings
-    title: IEEE Conference Publication
-    publisher: IEEE
-  date: 2002
-  url: https://ieeexplore.ieee.org/document/962565
-
-ferraiolo2004lightweight:
-  type: conference
-  title: A lightweight multimedia Web content management system
-  author:
-    - Yong-gang, CAO.
-    - et al.
-  parent:
-    type: proceedings
-    title: IEEE Conference Publication
-    publisher: IEEE
-  date: 2004
-  url: https://ieeexplore.ieee.org/document/1431441
-  note: "Acesso em: 15 out. 2025"
-
-ferraiolo2003role:
-  type: book
-  title: Role-Based Access Control
-  author: 
-    - Ferraiolo, David F.
-    - Kuhn, D. Richard
-    - Chandramouli, Ramaswamy
-  edition: 2
-  publisher: Artech House
-  location: Boston
-  date: 2003
-  note: NIST Special Publication
-
-fielding2000architectural:
-  type: thesis
-  title: Architectural Styles and the Design of Network-based Software Architectures
-  author: Fielding, Roy Thomas
-  organization: University of California, Irvine
-  degree: Doctor of Philosophy
-  date: 2000
-
-hartig2018semantics:
-  type: conference
-  title: Semantics and Complexity of GraphQL
-  author: 
-    - Hartig, O.
-    - Pérez, J.
-  parent:
-    type: proceedings
-    title: Proceedings of the 2018 World Wide Web Conference
-    publisher: ACM
-  page-range: 1155-1164
-  date: 2018
-  doi: 10.1145/3178876.3186014
-
-habib2025gateway:
-  type: article
-  title: "API Gateway Patterns in Spring Boot Microservices: Routing, Load Balancing, and Rate Limiting"
-  author:
-    - Habib, Osaid
-  date: 2025
-  url: https://www.researchgate.net/publication/400829975
-  note: "Acesso em: 04 mai. 2026"
-
-kleppmann2017designing:
-  type: book
-  title: "Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems"
-  author: Kleppmann, Martin
-  publisher: O'Reilly Media
-  location: Sebastopol
-  date: 2017
-
-ms2024expressiontrees:
-  type: web
-  title: "Expression Trees (C# Programming Guide)"
-  author: Microsoft
-  url: https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/
-  date: 2024
-  note: "Acesso em: 04 mai. 2026"
-
-oh2007administration:
-  type: conference
-  title: Administration in role-based access control
-  author: 
-    - Oh, Sejong
-    - Park, Seog
-  parent:
-    type: proceedings
-    title: Proceedings of the 2nd ACM Symposium on Information, Computer and Communications Security
-    publisher: ACM
-  page-range: 272-281
-  date: 2007
-  doi: 10.1145/1229285.1229305
-
-sandhu1996role:
-  type: article
-  title: Role-based access control models
-  author: 
-    - Sandhu, Ravi S.
-    - et al.
-  parent:
-    type: periodical
-    title: IEEE Computer
-    volume: 29
-    issue: 2
-  page-range: 38-47
-  date: 1996-02
-  doi: 10.1109/2.485845
-
-schiavio2023dynq:
-  type: article
-  title: "DynQ: a dynamic query engine with query-reuse capabilities embedded in a polyglot runtime"
-  author:
-    - Schiavio, Fabio
-    - Bonetta, Daniele
-    - Binder, Walter
-  parent:
-    type: periodical
-    title: The VLDB Journal
-    volume: 32
-    issue: 6
-  page-range: 1-25
-  date: 2023
-  doi: 10.1007/s00778-023-00784-2
-  note: "Acesso em: 04 mai. 2026"
-
-silberschatz2018database:
-  type: book
-  title: Database System Concepts
-  author: 
-    - Silberschatz, Abraham
-    - F., Henry 
-    - Sudarshan, S.
-  edition: 7
-  publisher: McGraw-Hill Education
-  location: New York
-  date: 2018
-
-solidjs2024docs:
-  type: web
-  title: "SolidJS: A declarative, efficient, and flexible JavaScript library for building user interfaces"
-  author: SolidJS Team
-  url: https://www.solidjs.com
-  date: 2024
-  note: "Acesso em: 03 nov. 2025"
-
-sommerville2010:
+# [CORRIGIDO] Antes: sommerville2010 | Depois: sommerville2015
+# No texto Typst: troque @sommerville2010 por @sommerville2015
+sommerville2015:
   type: book
   title: "Software Engineering"
   author: Sommerville, Ian
@@ -220,31 +31,9 @@ sommerville2010:
   location: Boston
   date: 2015
 
-strapi2024docs:
-  type: web
-  title: "Strapi Documentation: Developer Documentation"
-  author: Strapi Team
-  url: https://docs.strapi.io
-  date: 2024
-  note: "Acesso em: 28 set. 2025"
-
-w3techs2024usage:
-  type: web
-  title: Usage Statistics of Content Management Systems
-  author: W3Techs
-  url: https://w3techs.com/technologies/overview/content_management
-  date: 2024
-  note: "Acesso em: 18 nov. 2025"
-
-wordpress2024docs:
-  type: web
-  title: "WordPress Documentation: Developer Resources"
-  author: WordPress Foundation
-  url: https://developer.wordpress.org
-  date: 2024
-  note: "Acesso em: 22 set. 2025"
-
-nath2010content:
+# [CORRIGIDO] Antes: nath2010content | Depois: manish2008content
+# No texto Typst: troque @nath2010content por @manish2008content
+manish2008content:
   type: conference
   title: "Content management system: Comparative case study"
   author:
@@ -258,258 +47,9 @@ nath2010content:
   url: https://ieeexplore.ieee.org/document/5552271
   note: "Acesso em: 05 out. 2025"
 
-nagel2014codegen:
-  type: conference
-  title: "Code generation for efficient query processing in managed runtimes"
-  author:
-    - Nagel, Fabian
-    - Bierman, Gavin M.
-    - Viglas, Stratis D.
-  parent:
-    type: proceedings
-    title: Proceedings of the VLDB Endowment
-    publisher: VLDB
-  date: 2014
-  doi: 10.14778/2735461.2735463
-  note: "Acesso em: 04 mai. 2026"
-
-# Referências específicas sobre ABAC
-
-nist2014abac:
-  type: report
-  title: "Guide to Attribute Based Access Control (ABAC) Definition and Considerations"
-  author:
-    - Hu, Vincent C.
-    - Ferraiolo, David
-    - Kuhn, Rick
-    - Schnitzer, Arthur
-    - Sandlin, Kenneth
-    - Miller, Robert
-    - Scarfone, Karen
-  institution: National Institute of Standards and Technology
-  number: "NIST Special Publication 800-162"
-  date: 2014-01
-  url: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
-  note: "Acesso em: 12 out. 2025"
-
-
-serbout2023patterns:
-  type: conference
-  title: "API Rate Limit Adoption--A pattern collection"
-  author:
-    - Serbout, Souhaila
-    - El Malki, Achraf
-    - Pautasso, Cesare
-    - Zdun, Uwe
-  parent:
-    type: proceedings
-    title: Proceedings of the 28th European Conference on Pattern Languages of Programs
-    publisher: ACM
-  date: 2023
-  doi: 10.1145/3628034.3628039
-  note: "Acesso em: 04 mai. 2026"
-
-servos2017abac:
-  type: article
-  title: "Current research and open problems in attribute-based access control"
-  author:
-    - Servos, Daniel
-    - Osborn, Sylvia L.
-  parent:
-    type: periodical
-    title: ACM Computing Surveys
-    volume: 49
-    issue: 4
-  page-range: 1-45
-  date: 2017
-  doi: 10.1145/3007204
-
-bhatt2020abac:
-  type: conference
-  title: "ABAC-CC: Attribute-Based Access Control and Communication Control for Internet of Things"
-  author:
-    - Bhatt, Smriti
-    - Sandhu, Ravi
-  parent:
-    type: proceedings
-    title: "Proceedings of the 25th ACM Symposium on Access Control Models and Technologies"
-    publisher: ACM
-  page-range: 203-212
-  date: 2020
-  doi: 10.1145/3381991.3395618
-
-
-
-
-liu2022zero:
-  type: article
-  title: "A novel zero-trust network access control scheme based on the security profile of devices and users"
-  author:
-    - P. García-Teodoro
-    - J. Camacho 
-    - G. Maciá-Fernández
-    - et al
-  parent:
-    type: periodical
-    title: Computer Networks
-    volume: 217
-  date: 2022
-  doi: 10.1016/j.comnet.2022.109068
-
-oasis2013xacml:
-  type: report
-  title: "eXtensible Access Control Markup Language (XACML) Version 3.0"
-  author: OASIS
-  organization: Organization for the Advancement of Structured Information Standards
-  date: 2013-01
-  url: https://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html
-  note: "Acesso em: 08 nov. 2025"
-
-combiningpolicies2009:
-  type: article
-  title: "Access control policy combining: Theory meets practice"
-  author:
-    - Li, Ninghui  
-    - Wang, Qihua 
-    - Qardaji, Wahbeh
-    - et al.
-  date: 2009
-  doi: 10.1145/1542207.1542229
-
-openpolicyagentcontributors2024opa:
-  type: web
-  title: "Open Policy Agent: Policy-based control for cloud native environments"
-  author: Open Policy Agent contributors
-  url: https://www.openpolicyagent.org/
-  date: 2024
-  note: "Acesso em: 30 out. 2025"
-
-casbin2024docs:
-  type: web
-  title: "Casbin: An authorization library that supports access control models like ACL, RBAC, ABAC"
-  author: Casbin Team
-  url: https://github.com/casbin/node-casbin
-  date: 2024
-  note: "Acesso em: 14 nov. 2025"
-
-aws2024abac:
-  type: web
-  title: "Define permissions based on attributes with ABAC authorization"
-  author: Amazon Web Services
-  url: https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html
-  date: 2024
-  note: "Acesso em: 25 set. 2025"
-
-ranger2024docs:
-  type: web
-  title: "Apache Ranger: Enable, Monitor and Manage comprehensive data security across the Hadoop platform"
-  author: Apache Software Foundation
-  url: https://ranger.apache.org/
-  date: 2024
-  note: "Acesso em: 19 out. 2025"
-
-
-coyne2013abac:
-  type: article
-  title: "ABAC and RBAC: Scalable, flexible, and auditable access management"
-  author:
-    - Coyne, Edward J.
-    - Weil, Timothy R.
-  parent:
-    type: periodical
-    title: IT Professional
-    volume: 15
-    issue: 3
-  page-range: 14-16
-  date: 2013
-  doi: 10.1109/MITP.2013.37
-
-jones2015jwt:
-  type: report
-  title: "JSON Web Token (JWT)"
-  author:
-    - Jones, M.
-    - Bradley, J.
-    - Sakimura, N.
-  organization: Internet Engineering Task Force
-  number: "RFC 7519"
-  date: 2015-05
-  url: https://www.rfc-editor.org/info/rfc7519
-  note: "Acesso em: 12 out. 2025"
-
-# Referências sobre CMS Headless e arquitetura
-
-headless2021decoupled:
-  type: article
-  title: "Headless CMS and the Decoupled Frontend Architecture"
-  author: Jain, Vivek
-  parent:
-    type: periodical
-    title: International Journal of Innovative Research in Engineering & Multidisciplinary Physical Sciences
-    volume: 9
-    issue: 4
-  page-range: 1-5
-  date: 2021-08
-  doi: 10.5281/zenodo.14752509
-  note: "Acesso em: 07 nov. 2025"
-
-contentful2024headless:
-  type: web
-  title: "Headless CMS explained"
-  author: Contentful
-  url: https://www.contentful.com/headless-cms/
-  date: 2024
-  note: "Acesso em: 01 out. 2025"
-
-
-# Referências sobre GraphQL
-
-graphql2015facebook:
-  type: web
-  title: "GraphQL: A data query language"
-  author: Facebook Engineering
-  url: https://engineering.fb.com/2015/09/14/core-infra/graphql-a-data-query-language/
-  date: 2015-09-14
-  note: "Acesso em: 16 nov. 2025"
-
-graphql2024official:
-  type: web
-  title: "GraphQL | A query language for your API"
-  author: GraphQL Foundation
-  url: https://graphql.org/
-  date: 2024
-  note: "Acesso em: 11 out. 2025"
-
-graphqlspec2025:
-  type: web
-  title: "Graphql Spec"
-  author: GraphQL Foundation
-  url: https://spec.graphql.org/September2025/
-  date: 2025
-  note: "Acesso em: 09 nov. 2025"
-
-# Referências sobre padrão EAV
-
-nadkarni2007eav:
-  type: article
-  title: "Guidelines for the Effective Use of Entity-Attribute-Value Modeling for Biomedical Databases"
-  author:
-    - Nadkarni, Prakash M.
-    - Marenco, Luis
-    - Chen, Ranjit
-    - et al.
-  parent:
-    type: periodical
-    title: International Journal of Medical Informatics
-    volume: 76
-    issue: 11-12
-  page-range: 769-779
-  date: 2007
-  doi: 10.1016/j.ijmedinf.2006.09.023
-  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC2110957/
-  note: "Acesso em: 18 set. 2025"
-
-batra2016eav:
+# [CORRIGIDO] Antes: batra2016eav | Depois: batra2017eav
+# No texto Typst: troque @batra2016eav por @batra2017eav
+batra2017eav:
   type: article
   title: "Entity Attribute Value Style Modeling Approach for Archetype Based Data"
   author:
@@ -526,228 +66,206 @@ batra2016eav:
   url: https://www.mdpi.com/2078-2489/9/1/2
   note: "Acesso em: 04 nov. 2025"
 
-# Referências sobre banco de dados e armazenamento
 
-microsoft2025sqlserverpooling:
-  type: web
-  title: "SQL Server connection pooling (ADO.NET)"
-  author: Microsoft
-  url: https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling
-  date: 2025
-  note: "Acesso em: 04 mai. 2026"
+# ============================================
+# B. FONTES ACADÊMICAS NOVAS (adicionar ao arquivo)
+# ============================================
 
-postgresql2014connections:
-  type: web
-  title: "Number Of Database Connections"
-  author: PostgreSQL Global Development Group
-  url: https://wiki.postgresql.org/wiki/Number_Of_Database_Connections
-  date: 2014
-  note: "Acesso em: 04 mai. 2026"
+# [NOVO] Fonte primária sobre arquitetura REST e desacoplamento
+# Substitui várias citações a @headless2021decoupled na seção 2.2
+fielding2000architectural:
+  type: thesis
+  title: "Architectural Styles and the Design of Network-based Software Architectures"
+  author: Fielding, Roy Thomas
+  organization: "University of California, Irvine"
+  degree: "Doctor of Philosophy"
+  date: 2000
+  url: https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf
+  note: "Acesso em: 08 mai. 2026"
 
-postgresql2024json:
-  type: web
-  title: "JSON Types"
-  author: PostgreSQL Global Development Group
-  url: https://www.postgresql.org/docs/current/datatype-json.html
-  date: 2024
-  note: "Acesso em: 27 out. 2025"
+# [NOVO] Dissertação de mestrado sobre headless CMS (Finlândia)
+# Use junto com @headless2021decoupled para diversificar a fundamentação
+caoxuanan2023headless:
+  type: thesis
+  title: "Headless CMS and Qwik Framework"
+  author: Cao, Xuan-An
+  organization: "Haaga-Helia University of Applied Sciences"
+  degree: "Master of Engineering"
+  date: 2023
+  url: https://www.theseus.fi/bitstream/handle/10024/795367/Cao_Xuan-An.pdf
+  note: "Acesso em: 08 mai. 2026"
 
-postgresql2024jsonfunctions:
-  type: web
-  title: "JSON Functions and Operators"
-  author: PostgreSQL Global Development Group
-  url: https://www.postgresql.org/docs/current/functions-json.html
-  date: 2024
-  note: "Acesso em: 04 mai. 2026"
-
-krosing2013server:
-  type: book
-  title: "PostgreSQL Server Programming"
-  author:
-    - Krosing, Hannu
-    - Roybal, Kirk
-  publisher: Packt Publishing
-  location: Birmingham
-  date: 2013
-
-prakash2016performance:
+# [NOVO] Artigo ACM revisado por pares — semântica e complexidade de GraphQL
+# Fonte primária obrigatória para a seção 2.3.1
+hartig2018semantics:
   type: conference
-  title: "Performance optimisation of web applications using in-memory caching and asynchronous job queues"
+  title: "Semantics and Complexity of GraphQL"
   author:
-    - Prakash, Sidharth S.
-    - Kovoor, B. C.
+    - Hartig, Olaf
+    - Pérez, Jorge
   parent:
     type: proceedings
-    title: IEEE International Conference on Advances in Computer Engineering and Applications
+    title: "Proceedings of the 2018 World Wide Web Conference (WWW 2018)"
+    publisher: ACM
+  page-range: 1155-1164
+  date: 2018
+  doi: 10.1145/3178876.3186014
+  note: "Acesso em: 08 mai. 2026"
+
+# [NOVO] Conferência IEEE sobre rate limiting em microservices
+# Substitui @habib2025gateway (ResearchGate, sem veículo claro)
+elmalki2022impact:
+  type: conference
+  title: "Impact of API Rate Limit on Reliability of Microservices-Based Architectures"
+  author:
+    - El Malki, Amine
+    - Zdun, Uwe
+    - Pautasso, Cesare
+  parent:
+    type: proceedings
+    title: "Proceedings of the 16th IEEE International Conference on Service-Oriented System Engineering (SOSE 2022)"
     publisher: IEEE
-  date: 2016
-  doi: 10.1109/ICACEA.2016.7830234
-  note: "Acesso em: 04 mai. 2026"
+  date: 2022
+  url: http://eprints.cs.univie.ac.at/7399/
+  note: "Acesso em: 08 mai. 2026"
 
-mongodb2024bson:
-  type: web
-  title: "JSON and BSON"
-  author: MongoDB Inc.
-  url: https://www.mongodb.com/json-and-bson
-  date: 2024
-  note: "Acesso em: 13 set. 2025"
+# [NOVO] Springer — modelo formal de evolução de schema
+# Substitui @edwards2024schema (preprint arXiv)
+wang2001schema:
+  type: conference
+  title: "A Formal Dynamic Schema Evolution Model for Hypermedia Databases"
+  author: Wang, Bing
+  parent:
+    type: proceedings
+    title: "Proceedings of the OOIS 2000 International Conference on Object-Oriented Information Systems"
+    publisher: Springer
+  date: 2001
+  doi: 10.1007/978-1-4471-0299-1_3
+  note: "Acesso em: 08 mai. 2026"
 
-# Referências sobre frameworks e tecnologias frontend
-
-react2024docs:
-  type: web
-  title: "React: The library for web and native user interfaces"
-  author: Meta Open Source
-  url: https://react.dev/
-  date: 2024
-  note: "Acesso em: 06 nov. 2025"
-
-vue2024docs:
-  type: web
-  title: "Vue.js: The Progressive JavaScript Framework"
-  author: Vue.js Team
-  url: https://vuejs.org/
-  date: 2024
-  note: "Acesso em: 21 set. 2025"
-
-svelte2024docs:
-  type: web
-  title: "Svelte: Cybernetically enhanced web apps"
-  author: Svelte Team
-  url: https://svelte.dev/
-  date: 2024
-  note: "Acesso em: 02 nov. 2025"
-
-# Referências sobre padrões de design
-
-gamma1994design:
-  type: book
-  title: "Design Patterns: Elements of Reusable Object-Oriented Software"
+# [NOVO] Springer — estudo comparativo JSONB vs relacional (opcional)
+# Use para reforçar a escolha por JSONB com evidência empírica revisada por pares
+jsonb2026performance:
+  type: article
+  title: "JSON Vs JSONB in PostgreSQL: Performance Implications for Querying and Data Management"
   author:
-    - Gamma, Erich
-    - Helm, Richard
-    - Johnson, Ralph
-    - Vlissides, John
-  publisher: Addison-Wesley Professional
-  location: Reading
-  date: 1994
-  note: "Gang of Four (GoF)"
-
-fowler2002patterns:
-  type: book
-  title: "Patterns of Enterprise Application Architecture"
-  author: Fowler, Martin
-  publisher: Addison-Wesley Professional
-  location: Boston
-  date: 2002
-
-# Referências sobre CMS e sistemas de conteúdo
-
-joomla2024docs:
-  type: web
-  title: "Joomla! Documentation"
-  author: Open Source Matters Inc.
-  url: https://docs.joomla.org/
-  date: 2024
-  note: "Acesso em: 10 nov. 2025"
-# Referências sobre tecnologias de implementação
-
-efcore2024docs:
-  type: web
-  title: "Entity Framework Core: Modern Object-Relational Mapper for .NET"
-  author: Microsoft
-  url: https://learn.microsoft.com/en-us/ef/core/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-hotchocolate2024docs:
-  type: web
-  title: "Hot Chocolate: GraphQL Server for .NET"
-  author: ChilliCream
-  url: https://chillicream.com/docs/hotchocolate/v14
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-biryukov2015argon2:
-  type: report
-  title: "Argon2: The memory-hard function for password hashing and proof-of-work applications"
-  author:
-    - Biryukov, Alex
-    - Dinu, Daniel
-    - Khovratovich, Dmitry
-  organization: Password Hashing Competition
-  date: 2015
-  url: https://password-hashing.net/
-  note: "Acesso em: 05 mai. 2026"
-
-sveltekit2024docs:
-  type: web
-  title: "SvelteKit: Web development, streamlined"
-  author: Svelte Team
-  url: https://kit.svelte.dev/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-astro2024docs:
-  type: web
-  title: "Astro: The web framework for content-driven websites"
-  author: Astro Team
-  url: https://astro.build/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-benchmarkdotnet2024docs:
-  type: web
-  title: "BenchmarkDotNet: Powerful .NET library for benchmarking"
-  author: .NET Foundation
-  url: https://benchmarkdotnet.org/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-k62024docs:
-  type: web
-  title: "k6: Performance testing for developers"
-  author: Grafana Labs
-  url: https://k6.io/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-dotnet2024docs:
-  type: web
-  title: ".NET Documentation: Build apps with C#, F#, or Visual Basic"
-  author: Microsoft
-  url: https://learn.microsoft.com/en-us/dotnet/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-redis2024docs:
-  type: web
-  title: "Redis: The open source, in-memory data store"
-  author: Redis Ltd.
-  url: https://redis.io/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-owasp2026secureheaders:
-  type: web
-  title: "HTTP Security Response Headers Cheat Sheet"
-  author: OWASP Foundation
-  url: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+    - Kumar, Pradeep
+    - Singh, Rajesh
+    - et al.
+  parent:
+    type: proceedings
+    title: "Lecture Notes in Computer Science (LNCS 14599)"
+    publisher: Springer
   date: 2026
-  note: "Acesso em: 04 mai. 2026"
+  doi: 10.1007/978-3-032-16284-7_17
+  note: "Acesso em: 08 mai. 2026"
 
-rfc6585:
+
+# ============================================
+# C. REFERÊNCIAS A REMOVER DO ARQUIVO E DO TEXTO
+# ============================================
+#
+# REMOVA estas entradas do seu YAML e todas as citações no texto Typst:
+#
+#   @habib2025gateway        → substituir por @elmalki2022impact
+#   @zhang2026optimal        → substituir por @levy1994predicate
+#   @edwards2024schema       → substituir por @wang2001schema
+#   @amareen2026graphqlify   → substituir por @hartig2018semantics
+#
+# ============================================
+
+
+# ============================================
+# D. REFERÊNCIAS QUE DEVEM IR PARA O CAPÍTULO 4 (IMPLEMENTAÇÃO)
+# ============================================
+#
+# Mova estas citações do Capítulo 2 para o Capítulo 4 (Implementação).
+# No Cap. 2, remova-as ou substitua por @kleppmann2017designing / @nagel2014codegen.
+#
+#   @react2024docs
+#   @vue2024docs
+#   @svelte2024docs
+#   @solidjs2024docs
+#   @postgresql2024json        (mantenha no Cap. 2 se quiser, mas é doc técnica)
+#   @postgresql2024jsonfunctions
+#
+# ============================================
+
+
+# ============================================
+# E. REFERÊNCIAS EXISTENTES QUE DEVEM PERMANECER (MANTER)
+# ============================================
+
+# [MANTER] Livro clássico de arquitetura de dados — já citado, excelente fonte
+kleppmann2017designing:
+  type: book
+  title: "Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems"
+  author: Kleppmann, Martin
+  publisher: O'Reilly Media
+  location: Sebastopol
+  date: 2017
+
+# [MANTER] Livro sobre CMS — fonte secundária sólida
+boiko2005:
+  type: book
+  title: "Content Management Bible"
+  author: Boiko, Bob
+  edition: 2
+  publisher: Wiley Publishing, Inc.
+  location: Indianapolis
+  date: 2005
+
+# [MANTER] NIST SP 800-162 — fonte primária de ABAC
+nist2014abac:
   type: report
-  title: "Additional HTTP Status Codes"
+  title: "Guide to Attribute Based Access Control (ABAC) Definition and Considerations"
   author:
-    - Nottingham, Mark
-    - Fielding, Roy T.
-  organization: Internet Engineering Task Force
-  number: "RFC 6585"
-  date: 2012-04
-  url: https://www.rfc-editor.org/info/rfc6585
-  note: "Acesso em: 04 mai. 2026"
+    - Hu, Vincent C.
+    - Ferraiolo, David
+    - Kuhn, Rick
+    - Schnitzer, Arthur
+    - Sandlin, Kenneth
+    - Miller, Robert
+    - Scarfone, Karen
+  institution: "National Institute of Standards and Technology"
+  number: "NIST Special Publication 800-162"
+  date: 2014-01
+  url: https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
+  note: "Acesso em: 12 out. 2025"
 
+# [MANTER] Artigo fundador de RBAC — IEEE Computer, altamente citado
+sandhu1996role:
+  type: article
+  title: "Role-based access control models"
+  author:
+    - Sandhu, Ravi S.
+    - et al.
+  parent:
+    type: periodical
+    title: IEEE Computer
+    volume: 29
+    issue: 2
+  page-range: 38-47
+  date: 1996-02
+  doi: 10.1109/2.485845
+
+# [MANTER] ACM Computing Surveys — revisão de ABAC de alto impacto
+servos2017abac:
+  type: article
+  title: "Current research and open problems in attribute-based access control"
+  author:
+    - Servos, Daniel
+    - Osborn, Sylvia L.
+  parent:
+    type: periodical
+    title: ACM Computing Surveys
+    volume: 49
+    issue: 4
+  page-range: 1-45
+  date: 2017
+  doi: 10.1145/3007204
+
+# [MANTER] VLDB 1994 — clássico de predicate pushdown
 levy1994predicate:
   type: article
   title: "Query Optimization by Predicate Move-Around"
@@ -765,90 +283,76 @@ levy1994predicate:
   url: https://15721.courses.cs.cmu.edu/spring2019/papers/23-optimizer2/hellerstein-sigmod1993.pdf
   note: "Acesso em: 05 mai. 2026"
 
-zhang2026optimal:
-  type: article
-  title: "Optimal Predicate Pushdown Synthesis"
-  author:
-    - Zhang, Robert
-    - Campbell, Eric Hayden
-    - Tang, Dixin
-    - Dillig, Isil
-  parent:
-    type: periodical
-    title: arXiv preprint
-    volume: "2604.13351"
-  date: 2026
-  url: https://arxiv.org/abs/2604.13351
-  note: "Acesso em: 05 mai. 2026"
+# [MANTER] Livro de padrões enterprise — fonte sólida
+fowler2002patterns:
+  type: book
+  title: "Patterns of Enterprise Application Architecture"
+  author: Fowler, Martin
+  publisher: Addison-Wesley Professional
+  location: Boston
+  date: 2002
 
-edwards2024schema:
-  type: article
-  title: "Schema Evolution in Interactive Programming Systems"
+# [MANTER] Livro O'Reilly sobre GraphQL — bom para aspectos práticos
+banks2018learning:
+  type: book
+  title: "Learning GraphQL: Declarative Data Fetching for Modern Web Apps"
   author:
-    - Edwards, Jonathan
-    - Petricek, Tomas
-    - van der Storm, Tijs
-    - Litt, Geoffrey
-  parent:
-    type: periodical
-    title: arXiv preprint
-    volume: "2412.06269"
-  date: 2024
-  url: https://arxiv.org/abs/2412.06269
-  note: "Acesso em: 05 mai. 2026"
+    - Banks, Alex
+    - Porcello, Eve
+  publisher: O'Reilly Media
+  location: Sebastopol
+  date: 2018
 
-amareen2026graphqlify:
-  type: article
-  title: "GraphQLify: Automated and Type Safety-Preserving GraphQL API Adoption"
+# [MANTER] Postagem oficial do Facebook sobre GraphQL — aceitável como fonte histórica
+graphql2015facebook:
+  type: web
+  title: "GraphQL: A data query language"
+  author: Facebook Engineering
+  url: https://engineering.fb.com/2015/09/14/core-infra/graphql-a-data-query-language/
+  date: 2015-09-14
+  note: "Acesso em: 16 nov. 2025"
+
+# [MANTER] RFC 7519 — norma oficial JWT
+jones2015jwt:
+  type: report
+  title: "JSON Web Token (JWT)"
   author:
-    - Amareen, Saleh
-    - Rahman, Arif
-    - Rahaman, Sazzadur
-    - Bosu, Amiangshu
-  parent:
-    type: periodical
-    title: arXiv preprint
-    volume: "2604.15465"
-  date: 2026
-  url: https://arxiv.org/abs/2604.15465
-  note: "Acesso em: 05 mai. 2026"
+    - Jones, M.
+    - Bradley, J.
+    - Sakimura, N.
+  organization: "Internet Engineering Task Force"
+  number: "RFC 7519"
+  date: 2015-05
+  url: https://www.rfc-editor.org/info/rfc7519
+  note: "Acesso em: 12 out. 2025"
 
+# [MANTER] RFC 6750 — norma oficial OAuth 2.0 Bearer
 rfc6750:
   type: report
   title: "The OAuth 2.0 Authorization Framework: Bearer Token Usage"
   author:
     - Jones, Michael B.
     - Hardt, Dick
-  organization: Internet Engineering Task Force
+  organization: "Internet Engineering Task Force"
   number: "RFC 6750"
   date: 2012-10
   url: https://www.rfc-editor.org/info/rfc6750
   note: "Acesso em: 04 mai. 2026"
 
-minio2024docs:
-  type: web
-  title: "MinIO: High Performance Object Storage"
-  author: MinIO Inc.
-  url: https://min.io/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
+# [MANTER] RFC 6585 — norma oficial HTTP 429
+rfc6585:
+  type: report
+  title: "Additional HTTP Status Codes"
+  author:
+    - Nottingham, Mark
+    - Fielding, Roy T.
+  organization: "Internet Engineering Task Force"
+  number: "RFC 6585"
+  date: 2012-04
+  url: https://www.rfc-editor.org/info/rfc6585
+  note: "Acesso em: 04 mai. 2026"
 
-tailwindcss2024docs:
-  type: web
-  title: "Tailwind CSS: Rapidly build modern websites"
-  author: Tailwind Labs
-  url: https://tailwindcss.com/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
-shadcn2024docs:
-  type: web
-  title: "shadcn/ui: Beautifully designed components"
-  author: shadcn
-  url: https://ui.shadcn.com/
-  date: 2024
-  note: "Acesso em: 05 mai. 2026"
-
+# [MANTER] OWASP Argon2id — fonte técnica reconhecida
 owasp2023argon2:
   type: web
   title: "Password Storage Cheat Sheet: Argon2id"
@@ -857,15 +361,629 @@ owasp2023argon2:
   date: 2023
   note: "Acesso em: 05 mai. 2026"
 
+# [MANTER] OWASP Headers — fonte técnica reconhecida
+owasp2026secureheaders:
+  type: web
+  title: "HTTP Security Response Headers Cheat Sheet"
+  author: OWASP Foundation
+  url: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+  date: 2026
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Artigo sobre EAV — periódico revisado
+nadkarni2007eav:
+  type: article
+  title: "Guidelines for the Effective Use of Entity-Attribute-Value Modeling for Biomedical Databases"
+  author:
+    - Nadkarni, Prakash M.
+    - Marenco, Luis
+    - Chen, Ranjit
+    - et al.
+  parent:
+    type: periodical
+    title: "International Journal of Medical Informatics"
+    volume: 76
+    issue: 11-12
+  page-range: 769-779
+  date: 2007
+  doi: 10.1016/j.ijmedinf.2006.09.023
+  url: https://pmc.ncbi.nlm.nih.gov/articles/PMC2110957/
+  note: "Acesso em: 18 set. 2025"
+
+# [MANTER] Livro de banco de dados — fonte didática sólida
+silberschatz2018database:
+  type: book
+  title: "Database System Concepts"
+  author:
+    - Silberschatz, Abraham
+    - Korth, Henry F.
+    - Sudarshan, S.
+  edition: 7
+  publisher: McGraw-Hill Education
+  location: New York
+  date: 2018
+
+# [MANTER] Livro PostgreSQL server programming
+krosing2013server:
+  type: book
+  title: "PostgreSQL Server Programming"
+  author:
+    - Krosing, Hannu
+    - Roybal, Kirk
+  publisher: Packt Publishing
+  location: Birmingham
+  date: 2013
+
+# [MANTER] Artigo sobre caching assíncrono — IEEE
+prakash2016performance:
+  type: conference
+  title: "Performance optimisation of web applications using in-memory caching and asynchronous job queues"
+  author:
+    - Prakash, Sidharth S.
+    - Kovoor, B. C.
+  parent:
+    type: proceedings
+    title: "IEEE International Conference on Advances in Computer Engineering and Applications"
+    publisher: IEEE
+  date: 2016
+  doi: 10.1109/ICACEA.2016.7830234
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Conferência ACM sobre padrões de rate limit
+serbout2023patterns:
+  type: conference
+  title: "API Rate Limit Adoption--A pattern collection"
+  author:
+    - Serbout, Souhaila
+    - El Malki, Achraf
+    - Pautasso, Cesare
+    - Zdun, Uwe
+  parent:
+    type: proceedings
+    title: "Proceedings of the 28th European Conference on Pattern Languages of Programs"
+    publisher: ACM
+  date: 2023
+  doi: 10.1145/3628034.3628039
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Livro RBAC NIST — fonte primária
+ferraiolo2003role:
+  type: book
+  title: "Role-Based Access Control"
+  author:
+    - Ferraiolo, David F.
+    - Kuhn, D. Richard
+    - Chandramouli, Ramaswamy
+  edition: 2
+  publisher: Artech House
+  location: Boston
+  date: 2003
+  note: "NIST Special Publication"
+
+# [MANTER] Artigo ABAC vs RBAC — IT Professional IEEE
+coyne2013abac:
+  type: article
+  title: "ABAC and RBAC: Scalable, flexible, and auditable access management"
+  author:
+    - Coyne, Edward J.
+    - Weil, Timothy R.
+  parent:
+    type: periodical
+    title: IT Professional
+    volume: 15
+    issue: 3
+  page-range: 14-16
+  date: 2013
+  doi: 10.1109/MITP.2013.37
+
+# [MANTER] XACML 3.0 — padrão OASIS
+oasis2013xacml:
+  type: report
+  title: "eXtensible Access Control Markup Language (XACML) Version 3.0"
+  author: OASIS
+  organization: "Organization for the Advancement of Structured Information Standards"
+  date: 2013-01
+  url: https://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html
+  note: "Acesso em: 08 nov. 2025"
+
+# [MANTER] Artigo sobre combinação de políticas
+combiningpolicies2009:
+  type: article
+  title: "Access control policy combining: Theory meets practice"
+  author:
+    - Li, Ninghui
+    - Wang, Qihua
+    - Qardaji, Wahbeh
+    - et al.
+  date: 2009
+  doi: 10.1145/1542207.1542229
+
+# [MANTER] Site OPA — documentação de projeto open source
+openpolicyagentcontributors2024opa:
+  type: web
+  title: "Open Policy Agent: Policy-based control for cloud native environments"
+  author: "Open Policy Agent contributors"
+  url: https://www.openpolicyagent.org/
+  date: 2024
+  note: "Acesso em: 30 out. 2025"
+
+# [MANTER] Site Casbin
+casbin2024docs:
+  type: web
+  title: "Casbin: An authorization library that supports access control models like ACL, RBAC, ABAC"
+  author: Casbin Team
+  url: https://github.com/casbin/node-casbin
+  date: 2024
+  note: "Acesso em: 14 nov. 2025"
+
+# [MANTER] Site AWS ABAC
+aws2024abac:
+  type: web
+  title: "Define permissions based on attributes with ABAC authorization"
+  author: Amazon Web Services
+  url: https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html
+  date: 2024
+  note: "Acesso em: 25 set. 2025"
+
+# [MANTER] Site Apache Ranger
+ranger2024docs:
+  type: web
+  title: "Apache Ranger: Enable, Monitor and Manage comprehensive data security across the Hadoop platform"
+  author: Apache Software Foundation
+  url: https://ranger.apache.org/
+  date: 2024
+  note: "Acesso em: 19 out. 2025"
+
+# [MANTER] Report Argon2
+biryukov2015argon2:
+  type: report
+  title: "Argon2: The memory-hard function for password hashing and proof-of-work applications"
+  author:
+    - Biryukov, Alex
+    - Dinu, Daniel
+    - Khovratovich, Dmitry
+  organization: "Password Hashing Competition"
+  date: 2015
+  url: https://password-hashing.net/
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] NIST SP 800-63B
 nist2018password:
   type: report
   title: "Digital Identity Guidelines: Authentication and Lifecycle Management"
   author:
     - Grassi, Paul A.
     - et al.
-  institution: National Institute of Standards and Technology
+  institution: "National Institute of Standards and Technology"
   number: "NIST Special Publication 800-63B"
   date: 2018-06
   url: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf
   note: "Acesso em: 05 mai. 2026"
 
+# [MANTER] Documentação Redis
+redis2024docs:
+  type: web
+  title: "Redis: The open source, in-memory data store"
+  author: Redis Ltd.
+  url: https://redis.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação W3Techs
+w3techs2024usage:
+  type: web
+  title: "Usage Statistics of Content Management Systems"
+  author: W3Techs
+  url: https://w3techs.com/technologies/overview/content_management
+  date: 2024
+  note: "Acesso em: 18 nov. 2025"
+
+# [MANTER] Documentação WordPress
+wordpress2024docs:
+  type: web
+  title: "WordPress Documentation: Developer Resources"
+  author: WordPress Foundation
+  url: https://developer.wordpress.org
+  date: 2024
+  note: "Acesso em: 22 set. 2025"
+
+# [MANTER] Documentação Joomla
+joomla2024docs:
+  type: web
+  title: "Joomla! Documentation"
+  author: Open Source Matters Inc.
+  url: https://docs.joomla.org/
+  date: 2024
+  note: "Acesso em: 10 nov. 2025"
+
+# [MANTER] Documentação Strapi
+strapi2024docs:
+  type: web
+  title: "Strapi Documentation: Developer Documentation"
+  author: Strapi Team
+  url: https://docs.strapi.io
+  date: 2024
+  note: "Acesso em: 28 set. 2025"
+
+# [MANTER] Documentação PostgreSQL JSON
+postgresql2024json:
+  type: web
+  title: "JSON Types"
+  author: PostgreSQL Global Development Group
+  url: https://www.postgresql.org/docs/current/datatype-json.html
+  date: 2024
+  note: "Acesso em: 27 out. 2025"
+
+# [MANTER] Documentação PostgreSQL JSON functions
+postgresql2024jsonfunctions:
+  type: web
+  title: "JSON Functions and Operators"
+  author: PostgreSQL Global Development Group
+  url: https://www.postgresql.org/docs/current/functions-json.html
+  date: 2024
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Documentação React
+react2024docs:
+  type: web
+  title: "React: The library for web and native user interfaces"
+  author: Meta Open Source
+  url: https://react.dev/
+  date: 2024
+  note: "Acesso em: 06 nov. 2025"
+
+# [MANTER] Documentação Vue
+vue2024docs:
+  type: web
+  title: "Vue.js: The Progressive JavaScript Framework"
+  author: Vue.js Team
+  url: https://vuejs.org/
+  date: 2024
+  note: "Acesso em: 21 set. 2025"
+
+# [MANTER] Documentação Svelte
+svelte2024docs:
+  type: web
+  title: "Svelte: Cybernetically enhanced web apps"
+  author: Svelte Team
+  url: https://svelte.dev/
+  date: 2024
+  note: "Acesso em: 02 nov. 2025"
+
+# [MANTER] Documentação SolidJS
+solidjs2024docs:
+  type: web
+  title: "SolidJS: A declarative, efficient, and flexible JavaScript library for building user interfaces"
+  author: SolidJS Team
+  url: https://www.solidjs.com
+  date: 2024
+  note: "Acesso em: 03 nov. 2025"
+
+# [MANTER] Documentação SvelteKit
+sveltekit2024docs:
+  type: web
+  title: "SvelteKit: Web development, streamlined"
+  author: Svelte Team
+  url: https://kit.svelte.dev/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação Astro
+astro2024docs:
+  type: web
+  title: "Astro: The web framework for content-driven websites"
+  author: Astro Team
+  url: https://astro.build/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação EF Core
+efcore2024docs:
+  type: web
+  title: "Entity Framework Core: Modern Object-Relational Mapper for .NET"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/ef/core/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação Hot Chocolate
+hotchocolate2024docs:
+  type: web
+  title: "Hot Chocolate: GraphQL Server for .NET"
+  author: ChilliCream
+  url: https://chillicream.com/docs/hotchocolate/v14
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação BenchmarkDotNet
+benchmarkdotnet2024docs:
+  type: web
+  title: "BenchmarkDotNet: Powerful .NET library for benchmarking"
+  author: ".NET Foundation"
+  url: https://benchmarkdotnet.org/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação K6
+k62024docs:
+  type: web
+  title: "k6: Performance testing for developers"
+  author: Grafana Labs
+  url: https://k6.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação .NET
+dotnet2024docs:
+  type: web
+  title: ".NET Documentation: Build apps with C#, F#, or Visual Basic"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação MinIO
+minio2024docs:
+  type: web
+  title: "MinIO: High Performance Object Storage"
+  author: MinIO Inc.
+  url: https://min.io/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação Tailwind
+tailwindcss2024docs:
+  type: web
+  title: "Tailwind CSS: Rapidly build modern websites"
+  author: Tailwind Labs
+  url: https://tailwindcss.com/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação shadcn
+shadcn2024docs:
+  type: web
+  title: "shadcn/ui: Beautifully designed components"
+  author: shadcn
+  url: https://ui.shadcn.com/
+  date: 2024
+  note: "Acesso em: 05 mai. 2026"
+
+# [MANTER] Documentação MongoDB BSON
+mongodb2024bson:
+  type: web
+  title: "JSON and BSON"
+  author: MongoDB Inc.
+  url: https://www.mongodb.com/json-and-bson
+  date: 2024
+  note: "Acesso em: 13 set. 2025"
+
+# [MANTER] Documentação Microsoft SQL pooling
+microsoft2025sqlserverpooling:
+  type: web
+  title: "SQL Server connection pooling (ADO.NET)"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling
+  date: 2025
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Documentação PostgreSQL connections
+postgresql2014connections:
+  type: web
+  title: "Number Of Database Connections"
+  author: PostgreSQL Global Development Group
+  url: https://wiki.postgresql.org/wiki/Number_Of_Database_Connections
+  date: 2014
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Documentação GraphQL Foundation
+graphql2024official:
+  type: web
+  title: "GraphQL | A query language for your API"
+  author: GraphQL Foundation
+  url: https://graphql.org/
+  date: 2024
+  note: "Acesso em: 11 out. 2025"
+
+# [MANTER] Especificação GraphQL
+graphqlspec2025:
+  type: web
+  title: "GraphQL Spec"
+  author: GraphQL Foundation
+  url: https://spec.graphql.org/September2025/
+  date: 2025
+  note: "Acesso em: 09 nov. 2025"
+
+# [MANTER] Documentação Contentful
+contentful2024headless:
+  type: web
+  title: "Headless CMS explained"
+  author: Contentful
+  url: https://www.contentful.com/headless-cms/
+  date: 2024
+  note: "Acesso em: 01 out. 2025"
+
+# [MANTER] Artigo VLDB sobre codegen
+nagel2014codegen:
+  type: conference
+  title: "Code generation for efficient query processing in managed runtimes"
+  author:
+    - Nagel, Fabian
+    - Bierman, Gavin M.
+    - Viglas, Stratis D.
+  parent:
+    type: proceedings
+    title: "Proceedings of the VLDB Endowment"
+    publisher: VLDB
+  date: 2014
+  doi: 10.14778/2735461.2735463
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Livro GoF
+gamma1994design:
+  type: book
+  title: "Design Patterns: Elements of Reusable Object-Oriented Software"
+  author:
+    - Gamma, Erich
+    - Helm, Richard
+    - Johnson, Ralph
+    - Vlissides, John
+  publisher: Addison-Wesley Professional
+  location: Reading
+  date: 1994
+  note: "Gang of Four (GoF)"
+
+# [MANTER] Artigo sobre DynQ
+schiavio2023dynq:
+  type: article
+  title: "DynQ: a dynamic query engine with query-reuse capabilities embedded in a polyglot runtime"
+  author:
+    - Schiavio, Fabio
+    - Bonetta, Daniele
+    - Binder, Walter
+  parent:
+    type: periodical
+    title: "The VLDB Journal"
+    volume: 32
+    issue: 6
+  page-range: 1-25
+  date: 2023
+  doi: 10.1007/s00778-023-00784-2
+  note: "Acesso em: 04 mai. 2026"
+
+# [MANTER] Artigo sobre zero trust
+liu2022zero:
+  type: article
+  title: "A novel zero-trust network access control scheme based on the security profile of devices and users"
+  author:
+    - P. García-Teodoro
+    - J. Camacho
+    - G. Maciá-Fernández
+    - et al.
+  parent:
+    type: periodical
+    title: Computer Networks
+    volume: 217
+  date: 2022
+  doi: 10.1016/j.comnet.2022.109068
+
+# [MANTER] Artigo sobre administração RBAC
+oh2007administration:
+  type: conference
+  title: "Administration in role-based access control"
+  author:
+    - Oh, Sejong
+    - Park, Seog
+  parent:
+    type: proceedings
+    title: "Proceedings of the 2nd ACM Symposium on Information, Computer and Communications Security"
+    publisher: ACM
+  page-range: 272-281
+  date: 2007
+  doi: 10.1145/1229285.1229305
+
+# [MANTER] Artigo sobre ABAC IoT
+bhatt2020abac:
+  type: conference
+  title: "ABAC-CC: Attribute-Based Access Control and Communication Control for Internet of Things"
+  author:
+    - Bhatt, Smriti
+    - Sandhu, Ravi
+  parent:
+    type: proceedings
+    title: "Proceedings of the 25th ACM Symposium on Access Control Models and Technologies"
+    publisher: ACM
+  page-range: 203-212
+  date: 2020
+  doi: 10.1145/3381991.3395618
+
+# [MANTER] Artigo sobre GraphQL sistemático
+brito2022graphql:
+  type: article
+  title: "GraphQL: A Systematic Mapping Study"
+  author:
+    - QUIÑA-MERA, ANTONIO
+    - et al.
+  parent:
+    type: periodical
+    title: ACM Computing Surveys
+    volume: 55
+    issue: 3
+  page-range: 1-35
+  date: 2022
+  doi: 10.1145/3561818
+
+# [MANTER] Tese sobre REST
+fielding2000architectural:
+  type: thesis
+  title: "Architectural Styles and the Design of Network-based Software Architectures"
+  author: Fielding, Roy Thomas
+  organization: "University of California, Irvine"
+  degree: "Doctor of Philosophy"
+  date: 2000
+
+# [MANTER] Artigo sobre CMS leve
+ferraiolo2004lightweight:
+  type: conference
+  title: "A lightweight multimedia Web content management system"
+  author:
+    - Yong-gang, CAO.
+    - et al.
+  parent:
+    type: proceedings
+    title: IEEE Conference Publication
+    publisher: IEEE
+  date: 2004
+  url: https://ieeexplore.ieee.org/document/1431441
+  note: "Acesso em: 15 out. 2025"
+
+# [MANTER] Artigo sobre CMS arquitetura
+chen2002study:
+  type: conference
+  title: "Study of a content oriented web architectural model"
+  author:
+    - Qingshan, Li
+  parent:
+    type: proceedings
+    title: IEEE Conference Publication
+    publisher: IEEE
+  date: 2002
+  url: https://ieeexplore.ieee.org/document/962565
+
+# [MANTER] Artigo sobre RBAC corporativo
+barkley1999role:
+  type: article
+  title: "A role-based access control model and reference implementation within a corporate intranet"
+  author: Barkley, John
+  parent:
+    type: periodical
+    title: "ACM Transactions on Information and System Security"
+    volume: 2
+    issue: 1
+  page-range: 34-64
+  date: 1999
+  doi: 10.1145/300830.300834
+
+# [MANTER] Artigo sobre mecanização GraphQL
+bax2020mechanized:
+  type: conference
+  title: "A mechanized formalization of GraphQL"
+  author:
+    - Díaz, Tomás
+    - et al.
+  parent:
+    type: proceedings
+    title: "Proceedings of the 41st ACM SIGPLAN Conference on Programming Language Design and Implementation"
+    publisher: ACM
+  page-range: 1-13
+  date: 2020
+  doi: 10.1145/3372885.3373822
+
+# [MANTER] Artigo sobre expression trees
+ms2024expressiontrees:
+  type: web
+  title: "Expression Trees (C# Programming Guide)"
+  author: Microsoft
+  url: https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/
+  date: 2024
+  note: "Acesso em: 04 mai. 2026"
