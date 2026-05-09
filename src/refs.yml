@@ -83,6 +83,19 @@ fielding2000architectural:
   url: https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf
   note: "Acesso em: 08 mai. 2026"
 
+# [NOVO] Artigo sobre arquitetura headless CMS (Jain, 2021)
+headless2021decoupled:
+  type: article
+  title: "Headless CMS and the Decoupled Frontend Architecture"
+  author: Jain, V.
+  parent:
+    type: periodical
+    title: "International Journal of Innovative Research in Engineering & Multidisciplinary Physical Sciences"
+    volume: 9
+    issue: 4
+  page-range: 1-5
+  date: 2021
+
 # [NOVO] Dissertação de mestrado sobre headless CMS (Finlândia)
 # Use junto com @headless2021decoupled para diversificar a fundamentação
 caoxuanan2023headless:
@@ -912,15 +925,6 @@ brito2022graphql:
   page-range: 1-35
   date: 2022
   doi: 10.1145/3561818
-
-# [MANTER] Tese sobre REST
-fielding2000architectural:
-  type: thesis
-  title: "Architectural Styles and the Design of Network-based Software Architectures"
-  author: Fielding, Roy Thomas
-  organization: "University of California, Irvine"
-  degree: "Doctor of Philosophy"
-  date: 2000
 
 # [MANTER] Artigo sobre CMS leve
 ferraiolo2004lightweight:

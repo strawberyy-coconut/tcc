@@ -371,7 +371,7 @@ Para cada coleção definida no banco de dados, o sistema constrói automaticame
 
 O processo de geração ocorre em duas fases: descoberta e materialização. Na fase de descoberta, o sistema consulta as tabelas de metadados (`collections` e `fields`) para identificar todas as coleções e seus atributos. Na fase de materialização, os tipos são construídos e integrados ao schema executável da API. Quando uma nova coleção é criada ou um campo é modificado, o schema é reconstruído automaticamente, tornando as novas operações disponíveis imediatamente.
 
-Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface. A abordagem de evolução de schema em sistemas interativos, onde mudanças estruturais são propagadas incrementalmente, fundamenta esta capacidade de adaptação dinâmica sem interromper clientes conectados @edwards2024schema.
+Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface. A abordagem de evolução de schema em sistemas interativos, onde mudanças estruturais são propagadas incrementalmente, fundamenta esta capacidade de adaptação dinâmica sem interromper clientes conectados @wang2001schema; @kleppmann2017designing.
 
 === Tradução de Filtros e Ordenação para Consultas de Banco
 
@@ -383,7 +383,7 @@ Um diferencial do sistema de filtragem e ordenação é a tradução direta dos 
 #linebreak()
 *Paginação*: Consultas que retornam coleções de entradas utilizam paginação baseada em cursor, onde o sistema traduz os parâmetros de paginação para cláusulas `LIMIT` e `OFFSET` (ou equivalentes) no SQL gerado. Isso evita o carregamento de grandes conjuntos de dados em memória e garante tempos de resposta consistentes mesmo com volumes elevados de conteúdo.
 #linebreak()
-A propriedade fundamental deste pipeline é que toda a filtragem, ordenação e paginação é expressa como uma única consulta composta, traduzida para um único comando SQL. Nenhum dado é materializado em memória até a projeção final dos campos solicitados pelo cliente GraphQL. Esta técnica de _predicate pushdown_ — empurrar os predicados de filtragem para a camada de persistência — é reconhecida como estratégia central de otimização de consultas em sistemas com grandes volumes de dados, pois minimiza a transferência de registros desnecessários entre o banco de dados e a aplicação @levy1994predicate; @zhang2026optimal.
+A propriedade fundamental deste pipeline é que toda a filtragem, ordenação e paginação é expressa como uma única consulta composta, traduzida para um único comando SQL. Nenhum dado é materializado em memória até a projeção final dos campos solicitados pelo cliente GraphQL. Esta técnica de _predicate pushdown_ — empurrar os predicados de filtragem para a camada de persistência — é reconhecida como estratégia central de otimização de consultas em sistemas com grandes volumes de dados, pois minimiza a transferência de registros desnecessários entre o banco de dados e a aplicação @levy1994predicate.
 
 === Exemplo de Query Dinâmica
 
