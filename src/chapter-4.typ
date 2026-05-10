@@ -35,7 +35,7 @@ A interface administrativa é implementada em SvelteKit com TypeScript, Tailwind
 
 O ponto de entrada `Program.cs` configura o contêiner de DI do ASP.NET Core e o pipeline de middleware:
 
-```csharp
+```cs
 var builder = WebApplication.CreateBuilder(args);
 
 // Fábrica de DbContext (pooled)
@@ -88,7 +88,7 @@ Decisões arquiteturais notáveis: `AddPooledDbContextFactory` fornece instânci
 
 === Pipeline de Middleware e Fluxo de Requisição
 
-```csharp
+```cs
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope()) {
@@ -125,7 +125,7 @@ O sistema utiliza 17 tabelas com 12 enums nativos do PostgreSQL. O schema comple
 
 A entidade `Entry` armazena conteúdo dinâmico em uma única coluna `jsonb`:
 
-```csharp
+```cs
 public class Entry {
     [Key] public required Guid Id { get; set; }
     public required Guid CollectionId { get; set; }
@@ -148,7 +148,7 @@ A propriedade `Data` é `JsonDocument`, serializando para PostgreSQL `jsonb`. To
 
 Para permitir filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL:
 
-```csharp
+```cs
 public static class CmsDbFunctions {
     public static string? CmsExtractText(JsonDocument data, string fieldName)
         => throw new NotSupportedException();
@@ -167,7 +167,7 @@ Quando a query LINQ `CmsDbFunctions.CmsExtractText(e.Data, "title") == "Hello"` 
 
 Relacionamentos entre entradas utilizam tabela de junção com restrição de unicidade por campo:
 
-```csharp
+```cs
 modelBuilder.Entity<EntryRelation>(e => {
     e.HasIndex(r => new { r.EntryId, r.FieldId }).IsUnique();
     e.HasOne(r => r.Entry)
