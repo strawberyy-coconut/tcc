@@ -44,7 +44,8 @@ jobs:
       - name: Compile Typst document
         run: |
           mkdir -p build
-          ./project build
+          chmod +x ./project.sh
+          ./project.sh build
 
       - name: Generate index.html
         run: |
