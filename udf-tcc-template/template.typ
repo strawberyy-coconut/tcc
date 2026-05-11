@@ -355,9 +355,9 @@
       #v(1fr)
       #align(center)[
         #set par(first-line-indent: 0pt)
-        #emph["A educação é a arma mais poderosa que você pode usar para mudar o mundo."]
+        #emph["A prática é o critério da verdade"]
         
-        Nelson Mandela
+        Mao Zedong
       ]
     ]
   )
