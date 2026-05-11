@@ -31,9 +31,9 @@ sommerville2015:
   location: Boston
   date: 2015
 
-# [CORRIGIDO] Antes: nath2010content | Depois: manish2008content
-# No texto Typst: troque @nath2010content por @manish2008content
-manish2008content:
+# [CORRIGIDO] Antes: nath2010content | Depois: manish2010content
+# No texto Typst: troque @nath2010content por @manish2010content
+manish2010content:
   type: conference
   title: "Content management system: Comparative case study"
   author:
@@ -43,7 +43,7 @@ manish2008content:
     type: proceedings
     title: IEEE International Conference
     publisher: IEEE
-  date: 2008
+  date: 2010
   url: https://ieeexplore.ieee.org/document/5552271
   note: "Acesso em: 05 out. 2025"
 
@@ -491,7 +491,7 @@ serbout2023patterns:
   note: "Acesso em: 04 mai. 2026"
 
 # [MANTER] Livro RBAC NIST — fonte primária
-ferraiolo2003role:
+ferraiolo2007role:
   type: book
   title: "Role-Based Access Control"
   author:
@@ -501,7 +501,7 @@ ferraiolo2003role:
   edition: 2
   publisher: Artech House
   location: Boston
-  date: 2003
+  date: 2007
 
 # [MANTER] Artigo ABAC vs RBAC — IT Professional IEEE
 coyne2013abac:
@@ -538,6 +538,10 @@ combiningpolicies2009:
     - Wang, Qihua
     - Qardaji, Wahbeh
     - et al.
+  parent:
+    type: proceedings
+    title: "Proceedings of the 14th ACM Symposium on Access Control Models and Technologies"
+    publisher: ACM
   date: 2009
   doi: 10.1145/1542207.1542229
 
