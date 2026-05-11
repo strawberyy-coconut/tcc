@@ -98,7 +98,7 @@ Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens especí
 
 A autenticação em APIs modernas emprega diferentes mecanismos conforme o cenário de uso. Tokens de sessão baseados em JWT (_JSON Web Token_) constituem fichas de autenticação compactas e assinadas digitalmente, permitindo que o cliente prove sua identidade sem reenviar credenciais a cada requisição @jones2015jwt.
 
-Para integração _machine-to-machine_, APIs frequentemente empregam chaves de acesso (API keys) transmitidas via _header_ de autorização, seguindo o padrão _Bearer_ definido pelo OAuth 2.0 @rfc6750. Este modelo diferencia-se de tokens de sessão por ser _stateless_ do ponto de vista do cliente, embora o servidor mantenha metadados de controle para rastreamento e revogação @elmalki2022impact.
+Para integração _machine-to-machine_, APIs frequentemente empregam chaves de acesso (API keys) transmitidas via _header_ de autorização, seguindo o padrão _Bearer_ definido pelo OAuth 2.0 @rfc6750. Tanto as chaves de acesso quanto os tokens JWT operam de forma _stateless_ do ponto de vista do cliente: em ambos os casos, o cliente transmite o token em cada requisição sem manter estado de sessão local, enquanto o servidor pode manter informações de controle para rastreamento e revogação.
 
 === Rate Limiting e Controle de Tráfego
 

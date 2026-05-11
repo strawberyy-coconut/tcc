@@ -143,7 +143,6 @@ elmalki2022impact:
   note: "Acesso em: 08 mai. 2026"
 
 # [NOVO] Springer — modelo formal de evolução de schema
-# Substitui @edwards2024schema (preprint arXiv)
 wang2001schema:
   type: conference
   title: "A Formal Dynamic Schema Evolution Model for Hypermedia Databases"
@@ -182,7 +181,6 @@ jsonb2026performance:
 #
 #   @habib2025gateway        → substituir por @elmalki2022impact
 #   @zhang2026optimal        → substituir por @levy1994predicate
-#   @edwards2024schema       → substituir por @wang2001schema
 #   @amareen2026graphqlify   → substituir por @hartig2018semantics
 #
 # ============================================
