@@ -211,7 +211,7 @@ Abordagens modernas de síntese automática de _predicate pushdown_ empregam té
 
 A geração dinâmica de schemas em APIs GraphQL permite que o contrato da interface evolua em tempo real, refletindo as definições de tipos de conteúdo armazenadas em metadados @martins2022graphql. Diferentemente de APIs estáticas, onde os tipos são definidos em tempo de compilação, sistemas com geração dinâmica consultam o repositório de metadados para construir o schema executável e mantê-lo sincronizado com o modelo de dados subjacente @martins2022graphql.
 #linebreak()
-A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução. A evolução de schema representa um desafio em sistemas interativos, onde mudanças estruturais podem interromper fluxos de trabalho em andamento @edwards2024schema.
+A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução. A evolução contínua de schema requer mecanismos que propaguem mudanças estruturais de forma condicional, permitindo que aplicações dependentes continuem executando enquanto são migradas gradualmente para a nova versão @deshpande2026living.
 #linebreak()
 Estas abordagens fundamentam o design de sistemas que permitem aos usuários finais definir novos tipos de conteúdo sem intervenção de desenvolvedores, mantendo a integridade do contrato da API e a performance das consultas.
 

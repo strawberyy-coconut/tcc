@@ -1041,3 +1041,16 @@ edwards2024schema:
   date: 2024
   doi: 10.22152/programming-journal.org/2025/9/2
   note: "Acesso em: 11 mai. 2026"
+
+# [NOVO] arXiv — modelo unificado para evolução contínua de schema
+# Fonte primária para propagação condicional de mudanças e sync bidirecional
+deshpande2026living:
+  type: article
+  title: "Living Databases: A Unified Model for Continuous Schema Evolution, Versioning, and Transformations"
+  author: Deshpande, Amol
+  parent:
+    type: periodical
+    title: "arXiv preprint"
+  date: 2026
+  url: https://arxiv.org/abs/2605.00676
+  note: "Acesso em: 11 mai. 2026"
