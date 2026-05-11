@@ -1,3 +1,4 @@
+#import "../udf-tcc-template/template.typ"
 
 = Referencial Teórico
 
@@ -52,7 +53,7 @@ Antes de entender a arquitetura headless, é importante conhecer dois conceitos 
 #parbreak()
 Em um CMS tradicional, a camada de apresentação (frontend) está fortemente acoplada à camada de gerenciamento de conteúdo (backend), formando uma aplicação monolítica. Isso significa que alterações na interface requerem modificações no sistema como um todo.
 
-#linebreak()
+#pagebreak()
 Um CMS _Headless_ implementa uma arquitetura desacoplada: a "cabeça" (_frontend_ - a camada de apresentação) está completamente separada do "corpo" (_backend_ - as camadas de dados e lógica de negócios) @headless2021decoupled; @fielding2000architectural. A comunicação entre essas camadas acontece exclusivamente através de uma API (_Application Programming Interface_ - Interface de Programação de Aplicações). Essa separação permite que cada camada seja desenvolvida, mantida e escalada de forma independente.
 
 === _API-First_: Construindo Pela Ponte de Comunicação
@@ -64,7 +65,7 @@ Essa abordagem permite o "_Content as a Service_" (CaaS), ou "Conteúdo como Ser
 === Vantagens da Arquitetura _Headless_
 
 *Liberdade Tecnológica*: Você pode usar as melhores ferramentas para cada parte @headless2021decoupled; @caoxuanan2023headless. Diferentes tecnologias de interface podem coexistir - site, aplicativo móvel e painel administrativo podem usar tecnologias distintas, mas todos consomem os mesmos dados do backend.
-#linebreak()
+#pagebreak()
 *Escalabilidade Independente*: A arquitetura desacoplada permite que cada componente escale de forma independente conforme sua demanda específica. Aplicando princípios de arquiteturas _shared-nothing_, onde cada componente utiliza recursos computacionais independentes @kleppmann2017designing, é possível aumentar recursos do frontend quando há picos de tráfego ou expandir o backend quando necessário processar mais conteúdo, sem afetar outros componentes do sistema.
 #linebreak()
 *Reutilização Máxima de Conteúdo*: O mesmo conteúdo pode ser consumido por múltiplos canais sem necessidade de duplicação @headless2021decoupled; @caoxuanan2023headless. Um artigo criado uma vez pode ser distribuído automaticamente para site, aplicativo móvel, assistentes de voz, smartwatches e outros dispositivos conectados.
@@ -85,13 +86,11 @@ A comunicação entre as camadas de um sistema _headless_ ocorre exclusivamente 
 
 === GraphQL: Uma Forma Mais Inteligente de Buscar Dados
 
-Imagine que você vai a um restaurante e pede um prato específico. Com APIs REST tradicionais, é como se o garçom trouxesse a refeição completa mesmo que você só quisesse a salada. Ou então você precisasse fazer três pedidos diferentes para conseguir montar sua refeição completa - um pedido para o prato principal, outro para a bebida, outro para a sobremesa.
-#linebreak()
-Isso causa dois problemas principais @banks2018learning:
+Para ilustrar esses problemas, considere a seguinte analogia: ao pedir um prato específico em um restaurante, o garçom traz a refeição completa mesmo que o cliente só queira a salada; ou então o cliente precisa fazer três pedidos separados para montar sua refeição completa — um para o prato principal, outro para a bebida, outro para a sobremesa. Essa situação reflete dois problemas bem documentados na literatura sobre APIs @banks2018learning:
 1. *_Over-fetching_*: Receber mais dados do que você precisa (desperdício de internet e processamento)
 2. *_Under-fetching_*: Precisar fazer várias requisições separadas para conseguir todos os dados necessários (lentidão)
 
-O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning; @hartig2018semantics. O GraphQL trabalha com duas operações principais: _queries_ (consultas de leitura) e _mutations_ (operações de escrita) @hartig2018semantics. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
+O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning; @hartig2018semantics. O GraphQL trabalha com duas operações principais: _queries_ (consultas de leitura) e _mutations_ (operações de escrita) @banks2018learning; @graphqlspec2025. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
 
 Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens específicas: suporte a _Union Types_ que permitem campos com diferentes tipos de dados, e argumentos de filtragem que viabilizam buscas precisas em campos de texto, numéricos e de data @banks2018learning; @hartig2018semantics.
 
@@ -130,7 +129,7 @@ O ABAC (_Attribute-Based Access Control_) representa evolução dos modelos de c
 ==== Arquitetura e Componentes
 
 A arquitetura ABAC, conforme especificada por @nist2014abac, compreende quatro componentes principais:
-#linebreak()
+#pagebreak()
 *Policy Decision Point (PDP)*: Motor de decisão que avalia políticas e atributos para produzir veredictos de autorização.
 #linebreak()
 *Policy Enforcement Point (PEP)*: Ponto de interceptação que requisita decisões ao PDP e aplica os veredictos.
@@ -202,17 +201,17 @@ Sistemas modernos de gerenciamento de conteúdo empregam filas de tarefas assín
 
 === Otimização de Consultas por Push-Down de Predicados
 
-A eficiência de consultas em sistemas com schemas dinâmicos depende da capacidade de empurrar condições de filtragem o mais próximo possível da fonte de dados — técnica conhecida como _predicate pushdown_ (empurrar predicado para baixo). Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema traduz os predicados da consulta diretamente para cláusulas nativas do banco de dados, como `WHERE` e `ORDER BY` @levy1994predicate.
+A eficiência de consultas em sistemas com schemas dinâmicos depende da capacidade de empurrar condições de filtragem o mais próximo possível da fonte de dados — técnica conhecida como _predicate pushdown_ (empurrar predicado para baixo) @yan2023predicate. Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema traduz os predicados da consulta diretamente para cláusulas nativas do banco de dados, como `WHERE` e `ORDER BY`.
 #linebreak()
 A otimização por _predicate move-around_ estende o conceito de _pushdown_ ao permitir que predicados sejam movidos entre blocos de consulta (views e subqueries), ampliando as oportunidades de aplicação de filtros em diferentes partes do grafo de consulta @levy1994predicate. Esta técnica é particularmente relevante em sistemas que gerenciam grandes volumes de dados semi-estruturados, onde a materialização prematura de resultados intermediários comprometeria a performance.
 #linebreak()
-Abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de síntese de programas para gerar planos de execução ótimos, determinando automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta @levy1994predicate. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
+Abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de síntese de programas para gerar planos de execução ótimos, determinando automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
 
 === Geração Dinâmica de Schemas em APIs
 
 A geração dinâmica de schemas em APIs GraphQL permite que o contrato da interface evolua em tempo real, refletindo as definições de tipos de conteúdo armazenadas em metadados. Diferentemente de APIs estáticas, onde os tipos são definidos em tempo de compilação, sistemas com geração dinâmica consultam o repositório de metadados para construir o schema executável @hartig2018semantics.
 #linebreak()
-A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução @hartig2018semantics. Técnicas de evolução de schema em sistemas interativos exploram modelos onde as mudanças estruturais são propagadas incrementalmente, minimizando o impacto sobre clientes já conectados @wang2001schema; @kleppmann2017designing.
+A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução @hartig2018semantics. Técnicas de evolução de schema em sistemas interativos exploram modelos onde as mudanças estruturais são propagadas incrementalmente, minimizando o impacto sobre clientes já conectados @edwards2024schema.
 #linebreak()
 Estas abordagens fundamentam o design de sistemas que permitem aos usuários finais definir novos tipos de conteúdo sem intervenção de desenvolvedores, mantendo a integridade do contrato da API e a performance das consultas.
 

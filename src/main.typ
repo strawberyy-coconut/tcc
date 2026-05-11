@@ -16,7 +16,7 @@
   course: "Ciência da Computação",
   advisor: "Eliel Dias",
   city: "Brasília",
-  year: 2025,
+  year: 2026,
   bibliography: "../src/refs.yml"
 )
 

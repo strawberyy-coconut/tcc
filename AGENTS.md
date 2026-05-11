@@ -226,12 +226,13 @@ Each subproject has its own build system and conventions. Always check the subpr
 
 ### Review Agent
 
-A review agent is configured at `.opencode/agents/review.md`. It operates in read-only subagent mode (cannot edit files) and focuses on:
+A review agent is configured at `.github/agents/review.agent.md`. It operates in read-only subagent mode (cannot edit files) and focuses on:
 
 - **Writing quality**: Checks that prose is concise, grammatically correct, and maintains academic register (formal, third person, passive voice).
 - **Citation verification**: Cross-references claims in `src/main.typ` against the actual PDFs stored in `references/` to confirm that cited sources support the assertions made. Uses bash commands (e.g., `pdftotext`) to extract and search PDF content when direct reading is not possible.
+- **Bibliography formatting**: Validates that `src/refs.yml` entries follow ABNT completeness rules.
 
-Invoke this agent when you want to validate thesis content without making changes.
+Invoke this agent when you want to validate thesis content without making changes. You can also use the `/thesis-review` skill for a guided workflow with bundled helper scripts.
 
 ### Editing the Template
 

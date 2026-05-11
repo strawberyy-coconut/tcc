@@ -10,8 +10,8 @@ Uma decisão arquitetural fundamental que permeia toda a implementação é a au
 
 == Stack Tecnológico
 
-A #linebreak() escolha das tecnologias seguiu o princípio de adequação às restrições do problema: tipagem estática para correção em schemas dinâmicos, banco relacional com suporte nativo a JSON para armazenamento híbrido, e cache em memória para sessões e decisões ABAC.
-
+A escolha das tecnologias seguiu o princípio de adequação às restrições do problema: tipagem estática para correção em schemas dinâmicos, banco relacional com suporte nativo a JSON para armazenamento híbrido, e cache em memória para sessões e decisões ABAC.
+#pagebreak()
 #table(
   columns: 4,
   [*Domínio*], [*Tecnologia*], [*Versão*], [*Função*],
@@ -124,7 +124,7 @@ O sistema utiliza 17 tabelas com 12 enums nativos do PostgreSQL. O schema comple
 === Armazenamento JSONB e Tradução de Queries
 
 A entidade `Entry` armazena conteúdo dinâmico em uma única coluna `jsonb`:
-
+#pagebreak()
 ```cs
 public class Entry {
     [Key] public required Guid Id { get; set; }
@@ -147,7 +147,7 @@ public class Entry {
 A propriedade `Data` é `JsonDocument`, serializando para PostgreSQL `jsonb`. Todos os valores de campos dinâmicos — texto, números, booleanos, datas, objetos — residem nesta coluna. A tabela `Field` define quais campos existem para cada coleção e seus tipos, mas os valores concretos habitam `Entry.Data`.
 
 Para permitir filtragem e ordenação a nível de banco em campos dinâmicos, o sistema registra funções de banco mapeadas para stored procedures PostgreSQL:
-
+#pagebreak()
 ```cs
 public static class CmsDbFunctions {
     public static string? CmsExtractText(JsonDocument data, string fieldName)
@@ -166,7 +166,7 @@ Quando a query LINQ `CmsDbFunctions.CmsExtractText(e.Data, "title") == "Hello"` 
 === Relacionamentos entre Entradas
 
 Relacionamentos entre entradas utilizam tabela de junção com restrição de unicidade por campo:
-
+#pagebreak()
 ```cs
 modelBuilder.Entity<EntryRelation>(e => {
     e.HasIndex(r => new { r.EntryId, r.FieldId }).IsUnique();
@@ -291,7 +291,7 @@ Validação de força de senha exige mínimo 12 caracteres, excedendo recomenda�
 Três tiers: Login (janela fixa, 10 req/min, fila 0), Upload (token bucket, 10 tokens, 5/min refill, fila 0), General API (janela fixa, 1000 req/min, fila 0). `QueueLimit = 0` garante rejeição imediata com 429, prevenindo exaustão de recursos por requests enfileirados.
 
 === Modelo de Ameaças
-
+#pagebreak()
 #table(
   columns: 3,
   [*Ameaça*], [*Mitigação*], [*Implementação*],
@@ -307,7 +307,7 @@ Três tiers: Login (janela fixa, 10 req/min, fila 0), Upload (token bucket, 10 t
   [Ameaça interna], [Auditoria ABAC completa], [Toda decisão logada com contexto],
   [Exposição de API key], [Armazenamento hash-only], [Apenas SHA256 armazenado; prefixo para identificação]
 )
-
+#pagebreak()
 == Frontend
 
 A interface administrativa (`techtoniccms-app/`) é SvelteKit com TypeScript. Funções `load` server-side utilizam wrapper `query()` com GraphQL Client. O módulo `permissions.ts` espelha a lógica ABAC do servidor para gating de UI: `canManagePolicies` verifica roles e políticas do usuário. O componente `entry-editor.svelte` renderiza formulários dinamicamente a partir das definições de campos da coleção: `Text` → `Input`, `Boolean` → `Switch`, `Number` → `Input type="number"`, `DateTime` → `DatePicker`, `Relation` → `RelationPicker`, `Asset` → `AssetUploader`.
@@ -377,7 +377,7 @@ O cenário `UnrestrictedQuery` é 5x mais lento que o baseline porque inclui o p
 === Latência de Decisão — Deny vs. Allow
 
 Este benchmark verifica o comportamento do algoritmo deny-overrides com short-circuit, medindo se uma negação por política de alta prioridade é mais rápida que uma permissão que exige varrer todas as políticas de negação primeiro.
-
+#pagebreak()
 #table(
   columns: 6,
   [*Método*], [*Mean*], [*Error*], [*StdDev*], [*Ratio*], [*Allocated*],

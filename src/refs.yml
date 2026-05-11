@@ -278,7 +278,7 @@ servos2017abac:
   date: 2017
   doi: 10.1145/3007204
 
-# [MANTER] VLDB 1994 — clássico de predicate pushdown
+# [MANTER] VLDB 1994 — clássico de predicate move-around
 levy1994predicate:
   type: article
   title: "Query Optimization by Predicate Move-Around"
@@ -295,6 +295,25 @@ levy1994predicate:
   date: 1994
   url: https://15721.courses.cs.cmu.edu/spring2019/papers/23-optimizer2/hellerstein-sigmod1993.pdf
   note: "Acesso em: 05 mai. 2026"
+
+# [NOVO] ACM — predicate pushdown para pipelines de data science
+yan2023predicate:
+  type: article
+  title: "Predicate Pushdown for Data Science Pipelines"
+  author:
+    - Yan, Cong
+    - Lin, Yin
+    - He, Yeye
+  parent:
+    type: periodical
+    title: "Proceedings of the ACM on Management of Data"
+    volume: 1
+    issue: 2
+    article-number: 136
+  page-range: "1-28"
+  date: 2023-06
+  doi: 10.1145/3589281
+  note: "Acesso em: 11 mai. 2026"
 
 # [MANTER] Livro de padrões enterprise — fonte sólida
 fowler2002patterns:
@@ -991,3 +1010,23 @@ ms2024expressiontrees:
   url: https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/
   date: 2024
   note: "Acesso em: 04 mai. 2026"
+
+# [NOVO] Artigo ACM sobre evolução de schema em sistemas interativos
+# Fonte primária para evolução de schema com propagação incremental
+edwards2024schema:
+  type: article
+  title: "Schema Evolution in Interactive Programming Systems"
+  author:
+    - Edwards, Jonathan
+    - Petricek, Tomas
+    - van der Storm, Tijs
+    - Litt, Geoffrey
+  parent:
+    type: periodical
+    title: "The Art, Science, and Engineering of Programming"
+    volume: 9
+    issue: 1
+  page-range: 1-28
+  date: 2024
+  doi: 10.22152/programming-journal.org/2025/9/1
+  note: "Acesso em: 11 mai. 2026"

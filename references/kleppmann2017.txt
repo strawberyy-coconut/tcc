@@ -1,0 +1,809 @@
+Designing
+Data-Intensive
+Applications
+THE BIG IDEAS BEHIND RELIABLE, SCALABLE,
+AND MAINTAINABLE SYSTEMS
+
+Martin Kleppmann
+
+Designing Data-Intensive
+Applications
+
+The Big Ideas Behind Reliable, Scalable,
+and Maintainable Systems
+
+Martin Kleppmann
+
+Beijing
+
+Boston Farnham Sebastopol
+
+Tokyo
+
+Designing Data-Intensive Applications
+by Martin Kleppmann
+Copyright © 2017 Martin Kleppmann. All rights reserved.
+Printed in the United States of America.
+Published by O’Reilly Media, Inc., 1005 Gravenstein Highway North, Sebastopol, CA 95472.
+O’Reilly books may be purchased for educational, business, or sales promotional use. Online editions are
+also available for most titles (http://oreilly.com/safari). For more information, contact our corporate/insti‐
+tutional sales department: 800-998-9938 or corporate@oreilly.com.
+
+Editors: Ann Spencer and Marie Beaugureau
+Production Editor: Kristen Brown
+Copyeditor: Rachel Head
+Proofreader: Amanda Kersey
+
+Indexer: Ellen Troutman-Zaig
+Interior Designer: David Futato
+Cover Designer: Karen Montgomery
+Illustrator: Rebecca Demarest
+
+First Edition
+
+March 2017:
+
+Revision History for the First Edition
+2017-03-01:
+
+First Release
+
+See http://oreilly.com/catalog/errata.csp?isbn=9781449373320 for release details.
+The O’Reilly logo is a registered trademark of O’Reilly Media, Inc. Designing Data-Intensive Applications,
+the cover image, and related trade dress are trademarks of O’Reilly Media, Inc.
+While the publisher and the author have used good faith efforts to ensure that the information and
+instructions contained in this work are accurate, the publisher and the author disclaim all responsibility
+for errors or omissions, including without limitation responsibility for damages resulting from the use of
+or reliance on this work. Use of the information and instructions contained in this work is at your own
+risk. If any code samples or other technology this work contains or describes is subject to open source
+licenses or the intellectual property rights of others, it is your responsibility to ensure that your use
+thereof complies with such licenses and/or rights.
+
+978-1-449-37332-0
+[LSI]
+
+Technology is a powerful force in our society. Data, software, and communication can
+be used for bad: to entrench unfair power structures, to undermine human rights, and
+to protect vested interests. But they can also be used for good: to make underrepresented
+people’s voices heard, to create opportunities for everyone, and to avert disasters. This
+book is dedicated to everyone working toward the good.
+
+Computing is pop culture. […] Pop culture holds a disdain for history. Pop culture is all
+about identity and feeling like you’re participating. It has nothing to do with cooperation,
+the past or the future—it’s living in the present. I think the same is true of most people who
+write code for money. They have no idea where [their culture came from].
+—Alan Kay, in interview with Dr Dobb’s Journal (2012)
+
+Table of Contents
+
+Preface. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . xiii
+
+Part I.
+
+Foundations of Data Systems
+
+1. Reliable, Scalable, and Maintainable Applications. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+Thinking About Data Systems
+Reliability
+Hardware Faults
+Software Errors
+Human Errors
+How Important Is Reliability?
+Scalability
+Describing Load
+Describing Performance
+Approaches for Coping with Load
+Maintainability
+Operability: Making Life Easy for Operations
+Simplicity: Managing Complexity
+Evolvability: Making Change Easy
+Summary
+
+4
+6
+7
+8
+9
+10
+10
+11
+13
+17
+18
+19
+20
+21
+22
+
+2. Data Models and Query Languages. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+Relational Model Versus Document Model
+The Birth of NoSQL
+The Object-Relational Mismatch
+Many-to-One and Many-to-Many Relationships
+Are Document Databases Repeating History?
+
+28
+29
+29
+33
+36
+vii
+
+Relational Versus Document Databases Today
+Query Languages for Data
+Declarative Queries on the Web
+MapReduce Querying
+Graph-Like Data Models
+Property Graphs
+The Cypher Query Language
+Graph Queries in SQL
+Triple-Stores and SPARQL
+The Foundation: Datalog
+Summary
+
+38
+42
+44
+46
+49
+50
+52
+53
+55
+60
+63
+
+3. Storage and Retrieval. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+Data Structures That Power Your Database
+Hash Indexes
+SSTables and LSM-Trees
+B-Trees
+Comparing B-Trees and LSM-Trees
+Other Indexing Structures
+Transaction Processing or Analytics?
+Data Warehousing
+Stars and Snowflakes: Schemas for Analytics
+Column-Oriented Storage
+Column Compression
+Sort Order in Column Storage
+Writing to Column-Oriented Storage
+Aggregation: Data Cubes and Materialized Views
+Summary
+
+70
+72
+76
+79
+83
+85
+90
+91
+93
+95
+97
+99
+101
+101
+103
+
+4. Encoding and Evolution. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 111
+Formats for Encoding Data
+Language-Specific Formats
+JSON, XML, and Binary Variants
+Thrift and Protocol Buffers
+Avro
+The Merits of Schemas
+Modes of Dataflow
+Dataflow Through Databases
+Dataflow Through Services: REST and RPC
+Message-Passing Dataflow
+Summary
+
+viii
+
+| Table of Contents
+
+112
+113
+114
+117
+122
+127
+128
+129
+131
+136
+139
+
+Part II.
+
+Distributed Data
+
+5. Replication. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 151
+Leaders and Followers
+Synchronous Versus Asynchronous Replication
+Setting Up New Followers
+Handling Node Outages
+Implementation of Replication Logs
+Problems with Replication Lag
+Reading Your Own Writes
+Monotonic Reads
+Consistent Prefix Reads
+Solutions for Replication Lag
+Multi-Leader Replication
+Use Cases for Multi-Leader Replication
+Handling Write Conflicts
+Multi-Leader Replication Topologies
+Leaderless Replication
+Writing to the Database When a Node Is Down
+Limitations of Quorum Consistency
+Sloppy Quorums and Hinted Handoff
+Detecting Concurrent Writes
+Summary
+
+152
+153
+155
+156
+158
+161
+162
+164
+165
+167
+168
+168
+171
+175
+177
+177
+181
+183
+184
+192
+
+6. Partitioning. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 199
+Partitioning and Replication
+Partitioning of Key-Value Data
+Partitioning by Key Range
+Partitioning by Hash of Key
+Skewed Workloads and Relieving Hot Spots
+Partitioning and Secondary Indexes
+Partitioning Secondary Indexes by Document
+Partitioning Secondary Indexes by Term
+Rebalancing Partitions
+Strategies for Rebalancing
+Operations: Automatic or Manual Rebalancing
+Request Routing
+Parallel Query Execution
+Summary
+
+200
+201
+202
+203
+205
+206
+206
+208
+209
+210
+213
+214
+216
+216
+
+7. Transactions. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 221
+The Slippery Concept of a Transaction
+
+222
+
+Table of Contents
+
+|
+
+ix
+
+The Meaning of ACID
+Single-Object and Multi-Object Operations
+Weak Isolation Levels
+Read Committed
+Snapshot Isolation and Repeatable Read
+Preventing Lost Updates
+Write Skew and Phantoms
+Serializability
+Actual Serial Execution
+Two-Phase Locking (2PL)
+Serializable Snapshot Isolation (SSI)
+Summary
+
+223
+228
+233
+234
+237
+242
+246
+251
+252
+257
+261
+266
+
+8. The Trouble with Distributed Systems. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 273
+Faults and Partial Failures
+Cloud Computing and Supercomputing
+Unreliable Networks
+Network Faults in Practice
+Detecting Faults
+Timeouts and Unbounded Delays
+Synchronous Versus Asynchronous Networks
+Unreliable Clocks
+Monotonic Versus Time-of-Day Clocks
+Clock Synchronization and Accuracy
+Relying on Synchronized Clocks
+Process Pauses
+Knowledge, Truth, and Lies
+The Truth Is Defined by the Majority
+Byzantine Faults
+System Model and Reality
+Summary
+
+274
+275
+277
+279
+280
+281
+284
+287
+288
+289
+291
+295
+300
+300
+304
+306
+310
+
+9. Consistency and Consensus. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 321
+Consistency Guarantees
+Linearizability
+What Makes a System Linearizable?
+Relying on Linearizability
+Implementing Linearizable Systems
+The Cost of Linearizability
+Ordering Guarantees
+Ordering and Causality
+Sequence Number Ordering
+
+x
+
+|
+
+Table of Contents
+
+322
+324
+325
+330
+332
+335
+339
+339
+343
+
+Total Order Broadcast
+Distributed Transactions and Consensus
+Atomic Commit and Two-Phase Commit (2PC)
+Distributed Transactions in Practice
+Fault-Tolerant Consensus
+Membership and Coordination Services
+Summary
+
+348
+352
+354
+360
+364
+370
+373
+
+Part III. Derived Data
+10. Batch Processing. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 389
+Batch Processing with Unix Tools
+Simple Log Analysis
+The Unix Philosophy
+MapReduce and Distributed Filesystems
+MapReduce Job Execution
+Reduce-Side Joins and Grouping
+Map-Side Joins
+The Output of Batch Workflows
+Comparing Hadoop to Distributed Databases
+Beyond MapReduce
+Materialization of Intermediate State
+Graphs and Iterative Processing
+High-Level APIs and Languages
+Summary
+
+391
+391
+394
+397
+399
+403
+408
+411
+414
+419
+419
+424
+426
+429
+
+11. Stream Processing. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 439
+Transmitting Event Streams
+Messaging Systems
+Partitioned Logs
+Databases and Streams
+Keeping Systems in Sync
+Change Data Capture
+Event Sourcing
+State, Streams, and Immutability
+Processing Streams
+Uses of Stream Processing
+Reasoning About Time
+Stream Joins
+Fault Tolerance
+Summary
+
+440
+441
+446
+451
+452
+454
+457
+459
+464
+465
+468
+472
+476
+479
+
+Table of Contents
+
+|
+
+xi
+
+12. The Future of Data Systems. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 489
+Data Integration
+Combining Specialized Tools by Deriving Data
+Batch and Stream Processing
+Unbundling Databases
+Composing Data Storage Technologies
+Designing Applications Around Dataflow
+Observing Derived State
+Aiming for Correctness
+The End-to-End Argument for Databases
+Enforcing Constraints
+Timeliness and Integrity
+Trust, but Verify
+Doing the Right Thing
+Predictive Analytics
+Privacy and Tracking
+Summary
+
+490
+490
+494
+499
+499
+504
+509
+515
+516
+521
+524
+528
+533
+533
+536
+543
+
+Glossary. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 553
+Index. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 559
+
+xii
+
+|
+
+Table of Contents
+
+Preface
+
+If you have worked in software engineering in recent years, especially in server-side
+and backend systems, you have probably been bombarded with a plethora of buzz‐
+words relating to storage and processing of data. NoSQL! Big Data! Web-scale!
+Sharding! Eventual consistency! ACID! CAP theorem! Cloud services! MapReduce!
+Real-time!
+In the last decade we have seen many interesting developments in databases, in dis‐
+tributed systems, and in the ways we build applications on top of them. There are
+various driving forces for these developments:
+• Internet companies such as Google, Yahoo!, Amazon, Facebook, LinkedIn,
+Microsoft, and Twitter are handling huge volumes of data and traffic, forcing
+them to create new tools that enable them to efficiently handle such scale.
+• Businesses need to be agile, test hypotheses cheaply, and respond quickly to new
+market insights by keeping development cycles short and data models flexible.
+• Free and open source software has become very successful and is now preferred
+to commercial or bespoke in-house software in many environments.
+• CPU clock speeds are barely increasing, but multi-core processors are standard,
+and networks are getting faster. This means parallelism is only going to increase.
+• Even if you work on a small team, you can now build systems that are distributed
+across many machines and even multiple geographic regions, thanks to infra‐
+structure as a service (IaaS) such as Amazon Web Services.
+• Many services are now expected to be highly available; extended downtime due
+to outages or maintenance is becoming increasingly unacceptable.
+Data-intensive applications are pushing the boundaries of what is possible by making
+use of these technological developments. We call an application data-intensive if data
+is its primary challenge—the quantity of data, the complexity of data, or the speed at
+
+Preface
+
+|
+
+xiii
+
+which it is changing—as opposed to compute-intensive, where CPU cycles are the
+bottleneck.
+The tools and technologies that help data-intensive applications store and process
+data have been rapidly adapting to these changes. New types of database systems
+(“NoSQL”) have been getting lots of attention, but message queues, caches, search
+indexes, frameworks for batch and stream processing, and related technologies are
+very important too. Many applications use some combination of these.
+The buzzwords that fill this space are a sign of enthusiasm for the new possibilities,
+which is a great thing. However, as software engineers and architects, we also need to
+have a technically accurate and precise understanding of the various technologies and
+their trade-offs if we want to build good applications. For that understanding, we
+have to dig deeper than buzzwords.
+Fortunately, behind the rapid changes in technology, there are enduring principles
+that remain true, no matter which version of a particular tool you are using. If you
+understand those principles, you’re in a position to see where each tool fits in, how to
+make good use of it, and how to avoid its pitfalls. That’s where this book comes in.
+The goal of this book is to help you navigate the diverse and fast-changing landscape
+of technologies for processing and storing data. This book is not a tutorial for one
+particular tool, nor is it a textbook full of dry theory. Instead, we will look at examples
+of successful data systems: technologies that form the foundation of many popular
+applications and that have to meet scalability, performance, and reliability require‐
+ments in production every day.
+We will dig into the internals of those systems, tease apart their key algorithms, dis‐
+cuss their principles and the trade-offs they have to make. On this journey, we will try
+to find useful ways of thinking about data systems—not just how they work, but also
+why they work that way, and what questions we need to ask.
+After reading this book, you will be in a great position to decide which kind of tech‐
+nology is appropriate for which purpose, and understand how tools can be combined
+to form the foundation of a good application architecture. You won’t be ready to
+build your own database storage engine from scratch, but fortunately that is rarely
+necessary. You will, however, develop a good intuition for what your systems are
+doing under the hood so that you can reason about their behavior, make good design
+decisions, and track down any problems that may arise.
+
+Who Should Read This Book?
+If you develop applications that have some kind of server/backend for storing or pro‐
+cessing data, and your applications use the internet (e.g., web applications, mobile
+apps, or internet-connected sensors), then this book is for you.
+
+xiv |
+
+Preface
+
+This book is for software engineers, software architects, and technical managers who
+love to code. It is especially relevant if you need to make decisions about the architec‐
+ture of the systems you work on—for example, if you need to choose tools for solving
+a given problem and figure out how best to apply them. But even if you have no
+choice over your tools, this book will help you better understand their strengths and
+weaknesses.
+You should have some experience building web-based applications or network serv‐
+ices, and you should be familiar with relational databases and SQL. Any nonrelational databases and other data-related tools you know are a bonus, but not
+required. A general understanding of common network protocols like TCP and
+HTTP is helpful. Your choice of programming language or framework makes no dif‐
+ference for this book.
+If any of the following are true for you, you’ll find this book valuable:
+• You want to learn how to make data systems scalable, for example, to support
+web or mobile apps with millions of users.
+• You need to make applications highly available (minimizing downtime) and
+operationally robust.
+• You are looking for ways of making systems easier to maintain in the long run,
+even as they grow and as requirements and technologies change.
+• You have a natural curiosity for the way things work and want to know what
+goes on inside major websites and online services. This book breaks down the
+internals of various databases and data processing systems, and it’s great fun to
+explore the bright thinking that went into their design.
+Sometimes, when discussing scalable data systems, people make comments along the
+lines of, “You’re not Google or Amazon. Stop worrying about scale and just use a
+relational database.” There is truth in that statement: building for scale that you don’t
+need is wasted effort and may lock you into an inflexible design. In effect, it is a form
+of premature optimization. However, it’s also important to choose the right tool for
+the job, and different technologies each have their own strengths and weaknesses. As
+we shall see, relational databases are important but not the final word on dealing with
+data.
+
+Scope of This Book
+This book does not attempt to give detailed instructions on how to install or use spe‐
+cific software packages or APIs, since there is already plenty of documentation for
+those things. Instead we discuss the various principles and trade-offs that are funda‐
+mental to data systems, and we explore the different design decisions taken by differ‐
+ent products.
+Preface
+
+|
+
+xv
+
+In the ebook editions we have included links to the full text of online resources. All
+links were verified at the time of publication, but unfortunately links tend to break
+frequently due to the nature of the web. If you come across a broken link, or if you
+are reading a print copy of this book, you can look up references using a search
+engine. For academic papers, you can search for the title in Google Scholar to find
+open-access PDF files. Alternatively, you can find all of the references at https://
+github.com/ept/ddia-references, where we maintain up-to-date links.
+We look primarily at the architecture of data systems and the ways they are integrated
+into data-intensive applications. This book doesn’t have space to cover deployment,
+operations, security, management, and other areas—those are complex and impor‐
+tant topics, and we wouldn’t do them justice by making them superficial side notes in
+this book. They deserve books of their own.
+Many of the technologies described in this book fall within the realm of the Big Data
+buzzword. However, the term “Big Data” is so overused and underdefined that it is
+not useful in a serious engineering discussion. This book uses less ambiguous terms,
+such as single-node versus distributed systems, or online/interactive versus offline/
+batch processing systems.
+This book has a bias toward free and open source software (FOSS), because reading,
+modifying, and executing source code is a great way to understand how something
+works in detail. Open platforms also reduce the risk of vendor lock-in. However,
+where appropriate, we also discuss proprietary software (closed-source software, soft‐
+ware as a service, or companies’ in-house software that is only described in literature
+but not released publicly).
+
+Outline of This Book
+This book is arranged into three parts:
+1. In Part I, we discuss the fundamental ideas that underpin the design of dataintensive applications. We start in Chapter 1 by discussing what we’re actually
+trying to achieve: reliability, scalability, and maintainability; how we need to
+think about them; and how we can achieve them. In Chapter 2 we compare sev‐
+eral different data models and query languages, and see how they are appropriate
+to different situations. In Chapter 3 we talk about storage engines: how databases
+arrange data on disk so that we can find it again efficiently. Chapter 4 turns to
+formats for data encoding (serialization) and evolution of schemas over time.
+2. In Part II, we move from data stored on one machine to data that is distributed
+across multiple machines. This is often necessary for scalability, but brings with
+it a variety of unique challenges. We first discuss replication (Chapter 5), parti‐
+tioning/sharding (Chapter 6), and transactions (Chapter 7). We then go into
+
+xvi
+
+|
+
+Preface
+
+more detail on the problems with distributed systems (Chapter 8) and what it
+means to achieve consistency and consensus in a distributed system (Chapter 9).
+3. In Part III, we discuss systems that derive some datasets from other datasets.
+Derived data often occurs in heterogeneous systems: when there is no one data‐
+base that can do everything well, applications need to integrate several different
+databases, caches, indexes, and so on. In Chapter 10 we start with a batch pro‐
+cessing approach to derived data, and we build upon it with stream processing in
+Chapter 11. Finally, in Chapter 12 we put everything together and discuss
+approaches for building reliable, scalable, and maintainable applications in the
+future.
+
+References and Further Reading
+Most of what we discuss in this book has already been said elsewhere in some form or
+another—in conference presentations, research papers, blog posts, code, bug trackers,
+mailing lists, and engineering folklore. This book summarizes the most important
+ideas from many different sources, and it includes pointers to the original literature
+throughout the text. The references at the end of each chapter are a great resource if
+you want to explore an area in more depth, and most of them are freely available
+online.
+
+O’Reilly Safari
+Safari (formerly Safari Books Online) is a membership-based
+training and reference platform for enterprise, government,
+educators, and individuals.
+Members have access to thousands of books, training videos, Learning Paths, interac‐
+tive tutorials, and curated playlists from over 250 publishers, including O’Reilly
+Media, Harvard Business Review, Prentice Hall Professional, Addison-Wesley Pro‐
+fessional, Microsoft Press, Sams, Que, Peachpit Press, Adobe, Focal Press, Cisco
+Press, John Wiley & Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt,
+Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones & Bartlett,
+and Course Technology, among others.
+For more information, please visit http://oreilly.com/safari.
+
+Preface
+
+|
+
+xvii
+
+How to Contact Us
+Please address comments and questions concerning this book to the publisher:
+O’Reilly Media, Inc.
+1005 Gravenstein Highway North
+Sebastopol, CA 95472
+800-998-9938 (in the United States or Canada)
+707-829-0515 (international or local)
+707-829-0104 (fax)
+We have a web page for this book, where we list errata, examples, and any additional
+information. You can access this page at http://bit.ly/designing-data-intensive-apps.
+To comment or ask technical questions about this book, send email to bookques‐
+tions@oreilly.com.
+For more information about our books, courses, conferences, and news, see our web‐
+site at http://www.oreilly.com.
+Find us on Facebook: http://facebook.com/oreilly
+Follow us on Twitter: http://twitter.com/oreillymedia
+Watch us on YouTube: http://www.youtube.com/oreillymedia
+
+Acknowledgments
+This book is an amalgamation and systematization of a large number of other peo‐
+ple’s ideas and knowledge, combining experience from both academic research and
+industrial practice. In computing we tend to be attracted to things that are new and
+shiny, but I think we have a huge amount to learn from things that have been done
+before. This book has over 800 references to articles, blog posts, talks, documenta‐
+tion, and more, and they have been an invaluable learning resource for me. I am very
+grateful to the authors of this material for sharing their knowledge.
+I have also learned a lot from personal conversations, thanks to a large number of
+people who have taken the time to discuss ideas or patiently explain things to me. In
+particular, I would like to thank Joe Adler, Ross Anderson, Peter Bailis, Márton
+Balassi, Alastair Beresford, Mark Callaghan, Mat Clayton, Patrick Collison, Sean
+Cribbs, Shirshanka Das, Niklas Ekström, Stephan Ewen, Alan Fekete, Gyula Fóra,
+Camille Fournier, Andres Freund, John Garbutt, Seth Gilbert, Tom Haggett, Pat Hel‐
+land, Joe Hellerstein, Jakob Homan, Heidi Howard, John Hugg, Julian Hyde, Conrad
+Irwin, Evan Jones, Flavio Junqueira, Jessica Kerr, Kyle Kingsbury, Jay Kreps, Carl
+Lerche, Nicolas Liochon, Steve Loughran, Lee Mallabone, Nathan Marz, Caitie
+xviii
+
+| Preface
+
+McCaffrey, Josie McLellan, Christopher Meiklejohn, Ian Meyers, Neha Narkhede,
+Neha Narula, Cathy O’Neil, Onora O’Neill, Ludovic Orban, Zoran Perkov, Julia
+Powles, Chris Riccomini, Henry Robinson, David Rosenthal, Jennifer Rullmann,
+Matthew Sackman, Martin Scholl, Amit Sela, Gwen Shapira, Greg Spurrier, Sam
+Stokes, Ben Stopford, Tom Stuart, Diana Vasile, Rahul Vohra, Pete Warden, and
+Brett Wooldridge.
+Several more people have been invaluable to the writing of this book by reviewing
+drafts and providing feedback. For these contributions I am particularly indebted to
+Raul Agepati, Tyler Akidau, Mattias Andersson, Sasha Baranov, Veena Basavaraj,
+David Beyer, Jim Brikman, Paul Carey, Raul Castro Fernandez, Joseph Chow, Derek
+Elkins, Sam Elliott, Alexander Gallego, Mark Grover, Stu Halloway, Heidi Howard,
+Nicola Kleppmann, Stefan Kruppa, Bjorn Madsen, Sander Mak, Stefan Podkowinski,
+Phil Potter, Hamid Ramazani, Sam Stokes, and Ben Summers. Of course, I take all
+responsibility for any remaining errors or unpalatable opinions in this book.
+For helping this book become real, and for their patience with my slow writing and
+unusual requests, I am grateful to my editors Marie Beaugureau, Mike Loukides, Ann
+Spencer, and all the team at O’Reilly. For helping find the right words, I thank Rachel
+Head. For giving me the time and freedom to write in spite of other work commit‐
+ments, I thank Alastair Beresford, Susan Goodhue, Neha Narkhede, and Kevin Scott.
+Very special thanks are due to Shabbir Diwan and Edie Freedman, who illustrated
+with great care the maps that accompany the chapters. It’s wonderful that they took
+on the unconventional idea of creating maps, and made them so beautiful and com‐
+pelling.
+Finally, my love goes to my family and friends, without whom I would not have been
+able to get through this writing process that has taken almost four years. You’re the
+best.
+
+Preface
+
+|
+
+xix
+
+PART I
+
+Foundations of Data Systems
+
+The first four chapters go through the fundamental ideas that apply to all data sys‐
+tems, whether running on a single machine or distributed across a cluster of
+machines:
+1. Chapter 1 introduces the terminology and approach that we’re going to use
+throughout this book. It examines what we actually mean by words like reliabil‐
