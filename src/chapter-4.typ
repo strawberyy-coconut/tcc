@@ -262,7 +262,7 @@ A complexidade temporal sem cache é $O(p dot q)$, onde $p$ é o número de pol�
 
 === Cache de Avaliação em Banco de Dados
 
-O cache é persistido em PostgreSQL (tabela `abac_evaluation_cache`), não em memória, possibilitando persistência across restarts e compartilhamento entre réplicas da API. A chave de cache é hash SHA256 determinístico do contexto: $text{"cacheKey"} = text{"SHA256"}(text{"userId"} : text{"resourceType"} : text{"resourceId"} : text{"action"})$.
+O cache é persistido em PostgreSQL (tabela `abac_evaluation_cache`), não em memória, possibilitando persistência across restarts e compartilhamento entre réplicas da API. A chave de cache é hash SHA256 determinístico do contexto: $"cacheKey" = "SHA256"("userId" : "resourceType" : "resourceId" : "action")$.
 
 A invalidação de cache utiliza a estratégia *lazy* via campo `PolicyVersions`: string concatenando pares `(PolicyId:UpdatedAt)` de todas as políticas contribuintes. Quando uma política é modificada, seu `UpdatedAt` muda, a string `currentVersions` deixa de corresponder a `cached.PolicyVersions`, e a entrada é descartada na próxima leitura. TTL diferenciado: 5 minutos para decisões Allow, 2 minutos para Deny.
 
