@@ -345,6 +345,17 @@ graphql2015facebook:
   date: 2015-09-14
   note: "Acesso em: 16 nov. 2025"
 
+# [NOVO] Dissertação de mestrado — geração dinâmica de schemas GraphQL
+martins2022graphql:
+  type: thesis
+  title: "Application of GraphQL for Dynamic Data Models"
+  author: Martins, José Pedro Maia
+  organization: "University of Porto"
+  degree: "Master of Science"
+  date: 2022
+  url: https://repositorio-aberto.up.pt/handle/10216/140849
+  note: "Acesso em: 11 mai. 2026"
+
 # [MANTER] RFC 7519 — norma oficial JWT
 jones2015jwt:
   type: report
