@@ -90,9 +90,9 @@ Para ilustrar esses problemas, considere a seguinte analogia: ao pedir um prato 
 1. *_Over-fetching_*: Receber mais dados do que você precisa (desperdício de internet e processamento)
 2. *_Under-fetching_*: Precisar fazer várias requisições separadas para conseguir todos os dados necessários (lentidão)
 
-O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning; @hartig2018semantics. O GraphQL trabalha com duas operações principais: _queries_ (consultas de leitura) e _mutations_ (operações de escrita) @banks2018learning; @graphqlspec2025. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
+O GraphQL, criado pelo Facebook em 2012 e lançado publicamente em 2015 @graphql2015facebook, funciona como um cardápio inteligente. O cliente especifica exatamente os campos necessários, eliminando _over-fetching_ e _under-fetching_ inerentes a APIs REST tradicionais @banks2018learning. O GraphQL trabalha com três operações principais: _queries_ (consultas de leitura), _mutations_ (operações de escrita) e _subscriptions_ (atualizações em tempo real) @banks2018learning; @graphqlspec2025. Cada campo na API possui um _resolver_ correspondente — uma função que busca dados no repositório subjacente e os retorna no formato e tipo especificados pelo _schema_ @banks2018learning.
 
-Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens específicas: suporte a _Union Types_ que permitem campos com diferentes tipos de dados, e argumentos de filtragem que viabilizam buscas precisas em campos de texto, numéricos e de data @banks2018learning; @hartig2018semantics.
+Para sistemas de gerenciamento de conteúdo, o GraphQL oferece vantagens específicas: suporte a _Union Types_ que permitem campos com diferentes tipos de dados, e argumentos de filtragem que viabilizam buscas precisas em campos de texto e de data @banks2018learning.
 
 === Autenticação e Autorização em APIs
 
@@ -122,7 +122,7 @@ A camada de transporte HTTP emprega _headers_ de segurança como mecanismo de de
 
 === Controle de Acesso Baseado em Atributos (ABAC)
 
-Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
+Sistemas de controle de acesso definem quem pode acessar quais recursos em um sistema. O modelo tradicional RBAC (_Role-Based Access Control_) associa permissões a papéis organizacionais: um usuário com papel "Editor" recebe todas as permissões definidas para esse papel @sandhu1996role. Embora amplamente utilizado @ferraiolo2003role, o RBAC apresenta limitações em ambientes complexos: explosão do número de papéis necessários @nist2014abac, incapacidade de considerar atributos dinâmicos como horário e localização, e dificuldade em implementar controle granular fino @coyne2013abac.
 
 O ABAC (_Attribute-Based Access Control_) representa evolução dos modelos de controle de acesso ao basear decisões de autorização em atributos de múltiplas dimensões @nist2014abac. Diferentemente do RBAC, que avalia apenas o papel do usuário, o ABAC considera atributos do sujeito (usuário), do recurso (objeto sendo acessado), da ação (operação requisitada) e do ambiente (contexto situacional como horário e localização) @servos2017abac.
 
@@ -201,17 +201,17 @@ Sistemas modernos de gerenciamento de conteúdo empregam filas de tarefas assín
 
 === Otimização de Consultas por Push-Down de Predicados
 
-A eficiência de consultas em sistemas com schemas dinâmicos depende da capacidade de empurrar condições de filtragem o mais próximo possível da fonte de dados — técnica conhecida como _predicate pushdown_ (empurrar predicado para baixo) @yan2023predicate. Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema traduz os predicados da consulta diretamente para cláusulas nativas do banco de dados, como `WHERE` e `ORDER BY`.
+A eficiência de consultas em pipelines de processamento de dados depende da capacidade de empurrar condições de filtragem o mais próximo possível da fonte de dados — técnica conhecida como _predicate pushdown_ (empurrar predicado para baixo) @yan2023predicate. Em vez de carregar todos os registros em memória e aplicar filtros posteriormente, o sistema traduz os predicados da consulta diretamente para cláusulas nativas do banco de dados, como `WHERE` e `ORDER BY`.
 #linebreak()
-A otimização por _predicate move-around_ estende o conceito de _pushdown_ ao permitir que predicados sejam movidos entre blocos de consulta (views e subqueries), ampliando as oportunidades de aplicação de filtros em diferentes partes do grafo de consulta @levy1994predicate. Esta técnica é particularmente relevante em sistemas que gerenciam grandes volumes de dados semi-estruturados, onde a materialização prematura de resultados intermediários comprometeria a performance.
+A otimização por _predicate move-around_ estende o conceito de _pushdown_ ao permitir que predicados sejam movidos entre blocos de consulta (views e subqueries), ampliando as oportunidades de aplicação de filtros em diferentes partes do grafo de consulta @levy1994predicate. Esta técnica é particularmente relevante em sistemas que gerenciam grandes volumes de dados, onde a materialização prematura de resultados intermediários comprometeria a performance.
 #linebreak()
 Abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de síntese de programas para gerar planos de execução ótimos, determinando automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
 
 === Geração Dinâmica de Schemas em APIs
 
-A geração dinâmica de schemas em APIs GraphQL permite que o contrato da interface evolua em tempo real, refletindo as definições de tipos de conteúdo armazenadas em metadados. Diferentemente de APIs estáticas, onde os tipos são definidos em tempo de compilação, sistemas com geração dinâmica consultam o repositório de metadados para construir o schema executável @hartig2018semantics.
+A geração dinâmica de schemas em APIs GraphQL permite que o contrato da interface evolua em tempo real, refletindo as definições de tipos de conteúdo armazenadas em metadados. Diferentemente de APIs estáticas, onde os tipos são definidos em tempo de compilação, sistemas com geração dinâmica consultam o repositório de metadados para construir o schema executável.
 #linebreak()
-A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução @hartig2018semantics. Técnicas de evolução de schema em sistemas interativos exploram modelos onde as mudanças estruturais são propagadas incrementalmente, minimizando o impacto sobre clientes já conectados @edwards2024schema.
+A adoção automatizada de APIs GraphQL preservando _type safety_ apresenta desafios significativos: o sistema deve garantir que os tipos gerados dinamicamente sejam consistentes com o modelo de dados subjacente, evitando violações de tipagem em tempo de execução. A evolução de schema representa um desafio em sistemas interativos, onde mudanças estruturais podem interromper fluxos de trabalho em andamento @edwards2024schema.
 #linebreak()
 Estas abordagens fundamentam o design de sistemas que permitem aos usuários finais definir novos tipos de conteúdo sem intervenção de desenvolvedores, mantendo a integridade do contrato da API e a performance das consultas.
 
