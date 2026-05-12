@@ -102,7 +102,7 @@ Para integração _machine-to-machine_, APIs frequentemente empregam chaves de a
 
 === Rate Limiting e Controle de Tráfego
 
-_Rate limiting_ constitui uma camada de defesa contra abuso de APIs e negação de serviço. O código HTTP 429 (_Too Many Requests_), padronizado na RFC 6585 @rfc6585, sinaliza que o cliente excedeu sua cota. Padrões arquiteturais documentados por @serbout2023patterns; @elmalki2022impact descrevem estratégias como janela fixa, _token bucket_ e _sliding window_, cada uma com _trade-offs_ entre precisão e _overhead_ computacional.
+_Rate limiting_ constitui uma camada de defesa contra abuso de APIs e negação de serviço. O código HTTP 429 (_Too Many Requests_), padronizado na RFC 6585 @rfc6585, sinaliza que o cliente excedeu sua cota. Padrões arquiteturais documentados por @serbout2023patterns descrevem estratégias como janela fixa, _token bucket_ e _sliding window_, cada uma com _trade-offs_ entre precisão e _overhead_ computacional. O impacto dessas estratégias na confiabilidade de arquiteturas baseadas em microsserviços é analisado por @elmalki2022impact.
 
 == Segurança e Controle de Acesso
 
@@ -205,7 +205,7 @@ A eficiência de consultas em pipelines de processamento de dados depende da cap
 #linebreak()
 A otimização por _predicate move-around_ estende o conceito de _pushdown_ ao permitir que predicados sejam movidos entre blocos de consulta (views e subqueries), ampliando as oportunidades de aplicação de filtros em diferentes partes do grafo de consulta @levy1994predicate. Esta técnica é particularmente relevante em sistemas que gerenciam grandes volumes de dados, onde a materialização prematura de resultados intermediários comprometeria a performance.
 #linebreak()
-Conforme @yan2023predicate, abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de síntese de programas para gerar planos de execução ótimos, determinando automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
+Conforme @yan2023predicate, abordagens modernas de síntese automática de _predicate pushdown_ empregam técnicas de busca e verificação simbólica para determinar automaticamente quais predicados podem ser empurrados para cada operador do plano de consulta. Esta síntese é especialmente valiosa em sistemas com schemas dinâmicos, onde a estrutura das consultas varia conforme os metadados definidos pelo usuário.
 
 === Geração Dinâmica de Schemas em APIs
 

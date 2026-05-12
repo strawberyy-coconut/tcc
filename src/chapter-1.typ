@@ -30,7 +30,7 @@ Este trabalho adota uma abordagem de pesquisa aplicada, combinando fundamentaç�
 
 === Etapa 1: Pesquisa e Fundamentação Teórica
 
-Revisão bibliográfica de fontes acadêmicas e técnicas sobre CMS, sistemas de controle de acesso (RBAC e ABAC), arquiteturas web modernas e APIs. Análise comparativa de sistemas existentes para identificar padrões e oportunidades de inovação. Analize de metodos de geração de esquemas GraphQL. Especificação dos requisitos funcionais e não-funcionais do sistema.
+Revisão bibliográfica de fontes acadêmicas e técnicas sobre CMS, sistemas de controle de acesso (RBAC e ABAC), arquiteturas web modernas e APIs. Análise comparativa de sistemas existentes para identificar padrões e oportunidades de inovação. Análise de métodos de geração de esquemas GraphQL. Especificação dos requisitos funcionais e não-funcionais do sistema.
 
 === Etapa 2: Design e Modelagem
 
