@@ -142,7 +142,7 @@ Esta arquitetura permite expressar regras como "usuários do departamento X pode
 
 ==== Padrões e Implementações
 
-XACML (_eXtensible Access Control Markup Language_) constitui o padrão OASIS para especificação de políticas ABAC @oasis2013xacml. XACML define estrutura hierárquica de _rules_, _policies_ e _policy sets_, além de algoritmos de combinação (`deny-overrides`, `permit-overrides`) para resolução determinística de conflitos entre políticas @combiningpolicies2009.
+XACML (_eXtensible Access Control Markup Language_) constitui o padrão OASIS para especificação de políticas ABAC @oasis2013xacml. XACML define estrutura hierárquica de _rules_, _policies_ e _policy sets_, além de algoritmos de combinação (`deny-overrides`, `permit-overrides`) para resolução determinística de conflitos entre políticas.
 
 _Open Policy Agent_ (OPA) emergiu como implementação moderna de ABAC, oferecendo linguagem declarativa Rego para especificação de políticas e arquitetura desacoplada _policy-as-code_ @openpolicyagentcontributors2024opa. No ecossistema de código aberto, destaca-se o Casbin, biblioteca multi-linguagem que oferece suporte a diversos modelos de controle de acesso @casbin2024docs. Em ambientes corporativos e de nuvem, soluções como o AWS IAM com atributos baseados em tags @aws2024abac e o Apache Ranger para segurança de dados @ranger2024docs representam adoções práticas do modelo ABAC em larga escala.
 
@@ -187,7 +187,7 @@ Para endereçar as limitações do EAV, arquiteturas modernas de CMS adotam estr
 #linebreak()
 *Armazenamento JSON para Complexidade*: Estruturas complexas como listas, objetos aninhados e dados semi-estruturados aproveitam suporte nativo de bancos relacionais modernos (PostgreSQL, MySQL 8+) para tipos JSON @postgresql2024json. Isso mantém flexibilidade estrutural enquanto oferece operadores de consulta especializados.
 #linebreak()
-*Funções de Banco de Dados para Consultas Dinâmicas*: Bancos relacionais modernos permitem registrar funções e stored procedures customizadas que operam sobre tipos complexos como JSON, viabilizando filtragem, extração e ordenação eficiente em schemas dinâmicos sem recorrer a múltiplos JOINs ou materialização em memória @krosing2013server; @postgresql2024jsonfunctions. Esta extensibilidade permite que o banco de dados execute operações especializadas diretamente sobre dados semi-estruturados, mantendo a performance próxima à de colunas tipadas nativas.
+*Funções de Banco de Dados para Consultas Dinâmicas*: Bancos relacionais modernos permitem registrar funções e stored procedures customizadas que operam sobre tipos complexos como JSON, viabilizando filtragem, extração e ordenação eficiente em schemas dinâmicos sem recorrer a múltiplos JOINs ou materialização em memória @postgresql2024jsonfunctions. Esta extensibilidade permite que o banco de dados execute operações especializadas diretamente sobre dados semi-estruturados, mantendo a performance próxima à de colunas tipadas nativas.
 #linebreak()
 *Metadados de Schema*: Informações sobre a estrutura dos dados (definição de campos, tipos, validações) são mantidas em tabelas de metadados. Esta abordagem de "Metadata Mapping" permite processar mapeamentos objeto-relacional de forma genérica através de código que interpreta os metadados, facilitando operações de leitura, inserção e atualização sem código repetitivo @fowler2002patterns.
 #linebreak()
