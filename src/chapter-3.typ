@@ -374,7 +374,7 @@ Para cada coleção definida no banco de dados, o sistema constrói automaticame
 
 O processo de geração ocorre em duas fases: descoberta e materialização. Na fase de descoberta, o sistema consulta as tabelas de metadados (`collections` e `fields`) para identificar todas as coleções e seus atributos. Na fase de materialização, os tipos são construídos e integrados ao schema executável da API. Quando uma nova coleção é criada ou um campo é modificado, o schema é reconstruído automaticamente, tornando as novas operações disponíveis imediatamente.
 
-Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface. A abordagem de evolução de schema em sistemas interativos, onde mudanças estruturais são propagadas incrementalmente, fundamenta esta capacidade de adaptação dinâmica sem interromper clientes conectados @edwards2024schema.
+Este modelo assegura que o contrato da API esteja sempre sincronizado com o modelo de dados, eliminando inconsistências entre o backend e os consumidores da interface. A evolução de schema em sistemas interativos representa um desafio reconhecido na literatura, uma vez que mudanças estruturais podem interromper fluxos de trabalho e colaboração @edwards2025schema. O modelo proposto endereça este desafio através da reconstrução automática do schema GraphQL em tempo de execução, permitindo adaptação dinâmica sem reinicialização do serviço.
 
 === Tradução de Filtros e Ordenação para Consultas de Banco
 
